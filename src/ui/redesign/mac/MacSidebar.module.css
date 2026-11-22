@@ -1,0 +1,152 @@
+/* Содержимое стеклянной панели. Само стекло и место панели в окне задаёт MacAppShell. */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Высота строки заголовка окна: в ней живут кнопки окна (traffic lights). */
+.titlebar {
+  flex: none;
+  /* Нижний край совпадает с тулбаром контента: панель отстоит от верха окна на inset. */
+  height: calc(var(--mac-toolbar-height) - var(--mac-sidebar-inset));
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--fetchr-space-4) var(--fetchr-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-5);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+/* HIG: заголовок группы — 11 pt, полужирный, вторичный цвет. */
+.groupLabel {
+  margin: 0;
+  padding: var(--fetchr-space-2) var(--fetchr-space-4) var(--fetchr-space-1);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  width: 100%;
+  height: 30px;
+  padding: 0 var(--fetchr-space-4);
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: transparent;
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  text-align: left;
+  transition: background var(--fetchr-transition-fast);
+}
+
+.row:hover {
+  background: var(--mac-row-hover);
+}
+
+.row:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.rowActive,
+.rowActive:hover {
+  background: var(--mac-selection);
+}
+
+/* HIG: иконки боковой панели окрашены в цвет акцента. */
+.icon {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  color: var(--fetchr-color-accent-bright);
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  flex: none;
+  min-width: 20px;
+  padding: 0 var(--fetchr-space-3);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-fill);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.badgeError {
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-hover);
+}
+
+.footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-5) var(--fetchr-space-7) var(--fetchr-space-6);
+  border-top: 0.5px solid var(--mac-glass-border);
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+.brandImage {
+  width: 100%;
+  height: 100%;
+}
+
+.brandText {
+  display: flex;
+  align-items: baseline;
+  gap: var(--fetchr-space-3);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-strong);
+  color: var(--fetchr-color-text);
+}
+
+.version {
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-normal);
+  color: var(--fetchr-color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}

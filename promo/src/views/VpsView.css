@@ -1,0 +1,158 @@
+.vpsView {
+  overflow: hidden;
+  background:
+    radial-gradient(900px 420px at 18% -10%, rgb(var(--fetchr-accent-rgb) / 0.07), transparent 60%),
+    rgb(0 0 0 / 0.25);
+}
+
+.vpsInner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 22px;
+}
+
+.vpsRecChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgb(var(--fetchr-danger-rgb) / 0.14);
+  color: var(--fetchr-color-danger-bright);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.vpsRecChip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fetchr-color-danger);
+}
+
+/* Вкладки: активная подсвечена переезжающей пилюлей, как в приложении */
+.vpsTabs {
+  position: relative;
+}
+
+.vpsTab {
+  position: relative;
+  z-index: 1;
+}
+
+.vpsTabPill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: 100px;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.vpsPanes {
+  position: relative;
+  height: 640px;
+}
+
+.vpsGrid {
+  position: absolute;
+  inset: 0 0 auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.vpsCard {
+  cursor: default;
+}
+
+.vpsCardTitle {
+  white-space: normal;
+}
+
+.vpsPlans {
+  position: absolute;
+  inset: 0 0 auto;
+  gap: 10px;
+  padding: 18px 20px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.vpsCurrency {
+  position: relative;
+}
+
+.vpsCurrency > span:not(.vpsCurrencyPill) {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vpsCurrencyPill {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 30px;
+  border-radius: 7px;
+  background: var(--fetchr-color-panel-raised);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+
+.vpsPlanGrid {
+  grid-template-columns: repeat(6, 1fr);
+  margin-bottom: 4px;
+}
+
+.vpsPlan {
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* Активная рамка — отдельным слоем, чтобы её можно было проявить твином */
+.vpsPlanActive {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--fetchr-color-accent);
+  border-radius: inherit;
+  background: rgb(var(--fetchr-accent-rgb) / 0.09);
+  opacity: 0;
+}
+
+.vpsPlanPrice {
+  position: relative;
+  display: grid;
+}
+
+.vpsPrice {
+  grid-area: 1 / 1;
+}
+
+.vpsDetails {
+  position: relative;
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+
+.vpsQuotaFill {
+  width: 100%;
+  transform-origin: 0 50%;
+}
+
+.vpsStep {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vpsBuy {
+  position: relative;
+  min-width: 340px;
+  border-radius: 10px;
+}

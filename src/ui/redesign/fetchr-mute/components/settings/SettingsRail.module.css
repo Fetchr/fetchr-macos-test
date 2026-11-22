@@ -1,0 +1,328 @@
+/* ---------- Правая колонка ----------
+   Общие стили секций настроек. .saveDir висит рядом с shared.secondaryButton
+   и несёт только переопределения. */
+
+/* Обёртка секций не ломает раскладку колонки: дети остаются её flex-детьми. */
+.lockable {
+  display: contents;
+}
+
+/* Блокировку несёт inert на обёртке; здесь — только вид. */
+.sidebarDisabled > * {
+  opacity: 0.55;
+}
+
+.lockReason {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--fetchr-space-3);
+  margin: var(--fetchr-space-6) var(--fetchr-space-6) 0;
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  line-height: var(--fetchr-line-height-compact);
+}
+
+.lockReason svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin-top: 2px;
+}
+
+.trackRerun {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+  margin-top: var(--fetchr-space-4);
+}
+
+.sidebarTitleSpaced {
+  margin-top: var(--fetchr-space-6);
+}
+
+.methods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.method {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-5) var(--fetchr-space-6);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color var(--fetchr-transition-base),
+    background-color var(--fetchr-transition-base);
+}
+
+.method:hover {
+  border-color: var(--fetchr-color-border-strong);
+}
+
+.method:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.methodActive,
+.methodActive:hover {
+  border-color: color-mix(in srgb, var(--fetchr-color-accent) 55%, transparent);
+  background: var(--fetchr-color-accent-soft);
+}
+
+.methodText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.methodName {
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.methodHint {
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.track {
+  composes: method;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--fetchr-space-1);
+}
+
+.trackActive {
+  composes: methodActive;
+}
+
+.trackName {
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.trackMeta {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.saveRow {
+  display: flex;
+  gap: var(--fetchr-space-3);
+}
+
+[data-fetchr-mute-page] .saveDir {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-start;
+}
+
+[data-fetchr-mute-page] .saveDir svg {
+  flex: none;
+  width: 15px;
+  height: 15px;
+}
+
+.saveDirText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-2);
+}
+
+.fieldLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  cursor: pointer;
+}
+
+.toggleText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.toggleText strong {
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.toggleText em {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-style: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .method {
+    transition: none;
+  }
+}
+
+.coverage {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--fetchr-space-2);
+}
+
+.coverageOption {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  padding: var(--fetchr-space-3) var(--fetchr-space-2);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.coverageOption b {
+  font-size: var(--fetchr-font-size-md, 14px);
+  font-variant-numeric: tabular-nums;
+}
+
+.coverageOption span {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs, 11px);
+}
+
+.coverageOption:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.coverageOptionActive {
+  border-color: var(--fetchr-color-accent);
+  background: var(--fetchr-color-accent-subtle, var(--fetchr-color-hover));
+  color: var(--fetchr-color-text);
+}
+
+.toggleWarning {
+  margin: var(--fetchr-space-2) 0 0;
+  color: var(--fetchr-color-warning);
+  font-size: var(--fetchr-font-size-xs, 11px);
+  line-height: 1.4;
+}
+
+/* ── «Дополнительно» ─────────────────────────────────────────────── */
+
+.advancedToggle {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  margin: calc(var(--fetchr-space-3) * -1) 0;
+  padding: var(--fetchr-space-3) 0;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.advancedToggle:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.advancedToggle:hover .advancedChevron {
+  color: var(--fetchr-color-text);
+}
+
+.advancedChevron {
+  flex: none;
+  color: var(--fetchr-color-text-tertiary);
+  transition:
+    transform var(--fetchr-transition-base),
+    color var(--fetchr-transition-fast);
+}
+
+.advancedChevronOpen {
+  transform: rotate(90deg);
+}
+
+.advancedText {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.advancedHint {
+  overflow: hidden;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.advancedBadge {
+  flex: none;
+  padding: 1px var(--fetchr-space-3);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-accent-soft);
+  color: var(--fetchr-color-accent);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.advancedBody:not([hidden]) {
+  animation: advancedIn var(--fetchr-dur-base) var(--fetchr-ease-out);
+}
+
+@keyframes advancedIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .advancedChevron,
+  .advancedBody:not([hidden]) {
+    transition: none;
+    animation: none;
+  }
+}

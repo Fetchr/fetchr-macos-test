@@ -1,0 +1,127 @@
+.panel {
+  display: grid;
+  width: min(360px, 100%);
+  gap: var(--fetchr-space-4);
+  text-align: left;
+}
+
+.compact {
+  width: auto;
+  gap: var(--fetchr-space-3);
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.compact .head {
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.percent {
+  color: var(--fetchr-color-text-tertiary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.bar {
+  position: relative;
+  height: 3px;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-hover-strong);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--fetchr-gradient-rail);
+  transition: width var(--fetchr-dur-slower) var(--fetchr-ease-standard);
+}
+
+.list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: var(--fetchr-space-3);
+  list-style: none;
+}
+
+.compact .list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-3) var(--fetchr-space-6);
+}
+
+.item {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.name {
+  color: var(--fetchr-color-text-secondary);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.hint {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.compact .stage {
+  margin-left: 0;
+}
+
+.icon {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  margin: 0 3.5px;
+  border-radius: 50%;
+  background: var(--fetchr-color-border-strong);
+}
+
+.item[data-stage="started"] .icon,
+.item[data-stage="cloudflare"] .icon {
+  color: var(--fetchr-color-accent-bright);
+}
+
+.item[data-stage="cloudflare"] .stage {
+  color: var(--fetchr-color-warning);
+}
+
+.item[data-stage="done"] .icon {
+  color: var(--fetchr-color-success);
+}
+
+.item[data-stage="failed"] .icon,
+.item[data-stage="failed"] .stage {
+  color: var(--fetchr-color-danger);
+}
+
+.item[data-stage="skipped"] {
+  opacity: 0.6;
+}

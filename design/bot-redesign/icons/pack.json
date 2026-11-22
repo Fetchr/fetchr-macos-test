@@ -1,0 +1,175 @@
+{
+  "name": "Fetchr Line",
+  "tile": "emoji/*.png — обычный набор",
+  "adaptive": "adaptive/*.png — набор с needs_repainting",
+  "items": [
+    {
+      "file": "emoji/key.png",
+      "adaptive": "adaptive/key.png",
+      "emoji": "🔑",
+      "use": "Получить ключ, Мой ключ, строка ключа"
+    },
+    {
+      "file": "emoji/archive.png",
+      "adaptive": "adaptive/archive.png",
+      "emoji": "🗄",
+      "use": "Архив VPS, тарифы"
+    },
+    {
+      "file": "emoji/restream.png",
+      "adaptive": "adaptive/restream.png",
+      "emoji": "📡",
+      "use": "Рестрим, апселл после оплаты"
+    },
+    {
+      "file": "emoji/card.png",
+      "adaptive": "adaptive/card.png",
+      "emoji": "💳",
+      "use": "Оплатить"
+    },
+    {
+      "file": "emoji/copy.png",
+      "adaptive": "adaptive/copy.png",
+      "emoji": "📋",
+      "use": "Скопировать ключ (copy_text)"
+    },
+    {
+      "file": "emoji/check.png",
+      "adaptive": "adaptive/check.png",
+      "emoji": "✅",
+      "use": "Ключ активен, оплачено, подписка есть"
+    },
+    {
+      "file": "emoji/live.png",
+      "adaptive": "adaptive/live.png",
+      "emoji": "🔴",
+      "use": "Запись идёт, LIVE"
+    },
+    {
+      "file": "emoji/spark.png",
+      "adaptive": "adaptive/spark.png",
+      "emoji": "✨",
+      "use": "Популярный тариф, новое"
+    },
+    {
+      "file": "emoji/chat.png",
+      "adaptive": "adaptive/chat.png",
+      "emoji": "💬",
+      "use": "Поддержка, ответ поддержки"
+    },
+    {
+      "file": "emoji/channel.png",
+      "adaptive": "adaptive/channel.png",
+      "emoji": "📢",
+      "use": "Канал, подписка"
+    },
+    {
+      "file": "emoji/home.png",
+      "adaptive": "adaptive/home.png",
+      "emoji": "🏠",
+      "use": "Меню"
+    },
+    {
+      "file": "emoji/doc.png",
+      "adaptive": "adaptive/doc.png",
+      "emoji": "📄",
+      "use": "Условия, оферта"
+    },
+    {
+      "file": "emoji/plus.png",
+      "adaptive": "adaptive/plus.png",
+      "emoji": "➕",
+      "use": "Доп. услуги, +10 ГБ"
+    },
+    {
+      "file": "emoji/minus.png",
+      "adaptive": "adaptive/minus.png",
+      "emoji": "➖",
+      "use": "Счётчики допов"
+    },
+    {
+      "file": "emoji/play.png",
+      "adaptive": "adaptive/play.png",
+      "emoji": "▶️",
+      "use": "Как начать запись"
+    },
+    {
+      "file": "emoji/back.png",
+      "adaptive": "adaptive/back.png",
+      "emoji": "⬅️",
+      "use": "Назад (только в кнопках, adaptive)"
+    },
+    {
+      "file": "emoji/wait.png",
+      "adaptive": "adaptive/wait.png",
+      "emoji": "⏳",
+      "use": "Ждём Machine ID, ждём эфир, осталось N дней"
+    },
+    {
+      "file": "emoji/error.png",
+      "adaptive": "adaptive/error.png",
+      "emoji": "⚠️",
+      "use": "Ошибка, ID не подошёл, сервер не отвечает"
+    },
+    {
+      "file": "emoji/gift.png",
+      "adaptive": "adaptive/gift.png",
+      "emoji": "🎁",
+      "use": "Free, бонус, рефералка"
+    },
+    {
+      "file": "emoji/calendar.png",
+      "adaptive": "adaptive/calendar.png",
+      "emoji": "🗓",
+      "use": "Срок тарифа"
+    },
+    {
+      "file": "emoji/device.png",
+      "adaptive": "adaptive/device.png",
+      "emoji": "💻",
+      "use": "Machine ID, устройство"
+    },
+    {
+      "file": "emoji/lock.png",
+      "adaptive": "adaptive/lock.png",
+      "emoji": "🔒",
+      "use": "Одно устройство, лимит"
+    },
+    {
+      "file": "emoji/refresh.png",
+      "adaptive": "adaptive/refresh.png",
+      "emoji": "🔄",
+      "use": "Проверить оплату, Я подписался"
+    },
+    {
+      "file": "emoji/user.png",
+      "adaptive": "adaptive/user.png",
+      "emoji": "👤",
+      "use": "Стример (доп. канал), кабинет"
+    },
+    {
+      "file": "emoji/memory.png",
+      "adaptive": "adaptive/memory.png",
+      "emoji": "💾",
+      "use": "Память, +10 ГБ"
+    },
+    {
+      "file": "emoji/mute.png",
+      "adaptive": "adaptive/mute.png",
+      "emoji": "🔇",
+      "use": "Мат заглушён (drip, советы)"
+    },
+    {
+      "file": "emoji/clip.png",
+      "adaptive": "adaptive/clip.png",
+      "emoji": "✂️",
+      "use": "Клип готов, нарезка"
+    },
+    {
+      "file": "emoji/trash.png",
+      "adaptive": "adaptive/trash.png",
+      "emoji": "🗑",
+      "use": "Удалить площадку"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+/* Подтверждение «Заново» при наличии правок: строка-уведомление с кнопками. */
+[data-fetchr-mute-page] .confirm {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-3);
+}

@@ -1,0 +1,55 @@
+/* ---------- Ручной участок ---------- */
+/* .timeInput висит рядом с shared.input и несёт только переопределения. */
+
+.manual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-5);
+}
+
+/* .manualToggle висит рядом с shared.buttonDashed, .timeInput — рядом с
+   shared.input; префикс страницы — чтобы перебить поздние копии примитивов. */
+[data-fetchr-mute-page] .manualToggle {
+  align-self: flex-start;
+  height: 28px;
+  padding: 0 var(--fetchr-space-5);
+  font-size: var(--fetchr-font-size-md);
+}
+
+[data-fetchr-mute-page] .manualToggle:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.manualRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  flex-wrap: wrap;
+}
+
+.manualForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.fieldError {
+  margin: 0;
+  color: var(--fetchr-color-danger);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+[data-fetchr-mute-page] .timeInput[aria-invalid="true"] {
+  border-color: var(--fetchr-color-danger);
+}
+
+[data-fetchr-mute-page] .timeInput {
+  width: 88px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.dash {
+  color: var(--fetchr-color-text-tertiary);
+}

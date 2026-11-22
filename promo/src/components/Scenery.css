@@ -1,0 +1,429 @@
+/* ── Атмосфера ──────────────────────────────────────────────────── */
+.bd {
+  pointer-events: none;
+}
+
+.bdGlow {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.bdGlowA {
+  top: -420px;
+  left: -360px;
+  width: 1500px;
+  height: 1100px;
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--fetchr-accent-rgb) / 0.17),
+    rgb(var(--fetchr-accent-rgb) / 0.05) 48%,
+    rgb(var(--fetchr-accent-rgb) / 0) 100%
+  );
+}
+
+.bdGlowB {
+  right: -520px;
+  bottom: -560px;
+  width: 1600px;
+  height: 1200px;
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--fetchr-zone-rgb) / 0.11),
+    rgb(var(--fetchr-accent-rgb) / 0.05) 50%,
+    rgb(var(--fetchr-accent-rgb) / 0) 100%
+  );
+}
+
+/* Свет под окном приложения: окно «стоит» на нём, а не висит в пустоте */
+.bdFloor {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  width: 1500px;
+  height: 520px;
+  margin: -260px 0 0 -750px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--fetchr-accent-rgb) / 0.22),
+    rgb(var(--fetchr-accent-rgb) / 0.06) 55%,
+    rgb(var(--fetchr-accent-rgb) / 0) 100%
+  );
+  opacity: 0;
+}
+
+.bdVignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 75% 70% at 50% 48%, rgb(0 0 0 / 0) 55%, rgb(0 0 0 / 0.55) 100%);
+}
+
+/* ── Манифест ───────────────────────────────────────────────────── */
+.mf {
+  pointer-events: none;
+}
+
+.mfEyebrow {
+  position: absolute;
+  top: 372px;
+  left: 0;
+  right: 0;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 17px;
+  letter-spacing: 0.24em;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0;
+}
+
+.mfSlot {
+  position: absolute;
+  top: 430px;
+  left: 0;
+  right: 0;
+  height: 190px;
+  overflow: hidden;
+}
+
+.mfWord {
+  position: absolute;
+  top: 18px;
+  left: 0;
+  right: 0;
+  font-size: 138px;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.mfQuestion {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.mfTicks {
+  position: absolute;
+  top: 668px;
+  left: 50%;
+  display: flex;
+  gap: 12px;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+.mfTick {
+  width: 40px;
+  height: 3px;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.12);
+}
+
+/* ── Логотип ────────────────────────────────────────────────────── */
+.lk {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--mark) * 8 / 18);
+}
+
+.lkMarkWrap {
+  position: relative;
+  flex: none;
+  width: var(--mark);
+  height: var(--mark);
+}
+
+.lkGlow {
+  position: absolute;
+  inset: calc(var(--mark) * -2.2);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--fetchr-accent-rgb) / 0.34),
+    rgb(var(--fetchr-accent-rgb) / 0.1) 42%,
+    rgb(var(--fetchr-accent-rgb) / 0) 100%
+  );
+  opacity: 0;
+}
+
+.lkMark {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.lkWordWrap {
+  --wipe: 100%;
+
+  margin: -0.4em -0.5em;
+  padding: 0.4em 0.5em;
+  font-size: calc(var(--mark) * 13 / 18);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  white-space: nowrap;
+  -webkit-mask: linear-gradient(90deg, #000 40%, transparent 60%) var(--wipe) 0 / 300% 100% no-repeat;
+  mask: linear-gradient(90deg, #000 40%, transparent 60%) var(--wipe) 0 / 300% 100% no-repeat;
+}
+
+.lkWord {
+  display: block;
+  opacity: 0;
+}
+
+/* ── Герой ──────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.heroStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 58px;
+  padding-bottom: 40px;
+}
+
+.heroTagline {
+  color: var(--fetchr-color-text-secondary);
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* ── Заголовок раскрытия ────────────────────────────────────────── */
+.rv {
+  pointer-events: none;
+}
+
+.rvEyebrow {
+  position: absolute;
+  top: 92px;
+  left: 0;
+  right: 0;
+  color: var(--fetchr-color-accent-bright);
+  font-size: 16px;
+  letter-spacing: 0.26em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.rvTitle {
+  position: absolute;
+  top: 124px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  font-size: 76px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-align: center;
+}
+
+/* ── Тексты фич ─────────────────────────────────────────────────── */
+.ft {
+  pointer-events: none;
+}
+
+.ftBlock {
+  position: absolute;
+  top: 318px;
+  left: 124px;
+  width: 640px;
+}
+
+.ftEyebrow {
+  color: var(--fetchr-color-accent-bright);
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.ftEyebrow b {
+  color: var(--fetchr-color-text);
+  font-weight: 600;
+}
+
+.ftEyebrow i {
+  margin-right: 18px;
+  color: var(--fetchr-color-text-tertiary);
+  font-style: normal;
+}
+
+.ftTitle {
+  margin: 26px 0 30px;
+  font-size: 66px;
+  font-weight: 600;
+  letter-spacing: -0.042em;
+  line-height: 1.04;
+  white-space: nowrap;
+}
+
+.ftBody {
+  margin: 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+}
+
+.ftProgress {
+  position: absolute;
+  top: 806px;
+  left: 124px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+}
+
+.ftSeg {
+  position: relative;
+  width: 46px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.1);
+}
+
+.ftSegFill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fetchr-color-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* ── «И ещё» ────────────────────────────────────────────────────── */
+.pw {
+  pointer-events: none;
+}
+
+.pwHead {
+  position: absolute;
+  top: 96px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.pwEyebrow {
+  color: var(--fetchr-color-accent-bright);
+  font-size: 16px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.pwTitle {
+  margin: 14px 0 0;
+  font-size: 72px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.pwLegend {
+  position: absolute;
+  bottom: 92px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 64px;
+}
+
+.pwItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+}
+
+.pwKey {
+  padding: 7px 12px 6px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #17181a, #0f1011);
+  color: var(--fetchr-color-text);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+}
+
+.pwLabel {
+  color: var(--fetchr-color-text-secondary);
+  font-size: 22px;
+}
+
+/* ── Финал ──────────────────────────────────────────────────────── */
+.ou {
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.ouStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+.ouTitle {
+  margin: 64px 0 52px;
+  font-size: 84px;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  text-align: center;
+}
+
+.ouCta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.ouButton {
+  position: relative;
+  display: inline-flex;
+  height: 72px;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+  padding: 0 38px 0 32px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #5a93ff 0%, #3d7dff 55%, #2e63d6 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    0 18px 60px -12px rgb(var(--fetchr-accent-rgb) / 0.65);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  opacity: 0;
+}
+
+.ouButtonSheen {
+  position: absolute;
+  top: -40%;
+  bottom: -40%;
+  left: 0;
+  width: 90px;
+  background: linear-gradient(100deg, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0.45) 50%, rgb(255 255 255 / 0) 100%);
+  transform: translateX(-160px) skewX(-18deg);
+}
+
+.ouMeta {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  opacity: 0;
+}

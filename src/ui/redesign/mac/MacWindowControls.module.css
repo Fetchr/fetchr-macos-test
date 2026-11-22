@@ -1,0 +1,41 @@
+/* Там же, где системные кнопки окна на macOS: 20 px от левого края, по центру строки заголовка. */
+.controls {
+  position: absolute;
+  z-index: 40;
+  top: calc(var(--mac-sidebar-inset) + 16px);
+  left: calc(var(--mac-sidebar-inset) + 12px);
+  display: flex;
+  gap: var(--fetchr-space-4);
+}
+
+.light {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--fetchr-radius-pill);
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.25);
+}
+
+.light:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+/* Цвета системных кнопок macOS — фиксированные, у них нет токенов темы. */
+.close {
+  background: #ff5f57;
+}
+
+.minimize {
+  background: #febc2e;
+}
+
+.zoom {
+  background: #28c840;
+}
+
+/* Как в системе: при наведении на группу кнопки становятся ярче. */
+.controls:hover .light {
+  filter: brightness(1.08);
+}

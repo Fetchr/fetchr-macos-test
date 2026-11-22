@@ -1,0 +1,11 @@
+[Unit]
+Description=Fetchr daily data cleanup (telemetry rollup and retention)
+
+[Service]
+Type=oneshot
+# Run as the same user as fetchr-api, or the rewritten files change owner.
+EnvironmentFile=/etc/fetchr-services.env
+WorkingDirectory=/opt/fetchr-services
+ExecStart=/usr/bin/env node scripts/vps-data-cleanup.mjs
+Nice=10
+IOSchedulingClass=idle

@@ -1,0 +1,280 @@
+/* Fetchr design tokens — единый источник правды.
+   Все цвета, поверхности, радиусы и моушн-параметры объявляются здесь;
+   tailwind.config.ts читает отсюда же через --fetchr-rgb-* триплеты.
+
+   Система следует DESIGN.md (Raycast) в гибридном виде: нейтральная
+   near-black лестница и hairline-бордеры оттуда, синий акцент #3d7dff —
+   собственная идентичность продукта. Глубина строится только лестницей
+   поверхностей: drop-shadow в системе нет. */
+:root {
+  /* ── Нейтральная шкала ────────────────────────────────────────────
+     Якоря взяты из DESIGN.md буквально: 950 = canvas, 700 = hairline.
+     Промежуточные ступени идут с шагом ~1.04–1.06 по контрасту, а не
+     с 1.010 из спеки — при отсутствии теней более плотная лестница
+     не даёт панелям раствориться в фоне. */
+  --fetchr-color-graphite-950: #07080a;
+  --fetchr-color-graphite-925: #0b0b0c;
+  --fetchr-color-graphite-900: #0f0f10;
+  --fetchr-color-graphite-850: #141415;
+  --fetchr-color-graphite-800: #191919;
+  --fetchr-color-graphite-750: #1e1e1f;
+  --fetchr-color-graphite-700: #242728;
+  --fetchr-color-graphite-650: #2e3133;
+
+  /* ── RGB-каналы для составления альфы ─────────────────────────────
+     Через пробел: форма rgb(var(--x) / a) работает и в CSS-модулях,
+     и в Tailwind с подстановкой <alpha-value>. */
+  --fetchr-accent-rgb: 61 125 255;
+  --fetchr-accent-hover-rgb: 90 147 255;
+  --fetchr-accent-bright-rgb: 127 168 255;
+  --fetchr-accent-deep-rgb: 46 99 214;
+  --fetchr-success-rgb: 47 212 155;
+  --fetchr-warning-rgb: 242 169 59;
+  --fetchr-danger-rgb: 240 80 110;
+  --fetchr-danger-hover-rgb: 247 111 136;
+  --fetchr-zone-rgb: 167 139 250;
+
+  /* Триплеты, которые читает tailwind.config.ts */
+  --fetchr-rgb-canvas: 7 8 10;
+  --fetchr-rgb-surface: 20 20 21;
+  --fetchr-rgb-elevated: 25 25 25;
+  --fetchr-rgb-overlay: 36 39 40;
+  --fetchr-rgb-border-subtle: 28 30 31;
+  --fetchr-rgb-border: 36 39 40;
+  --fetchr-rgb-border-strong: 46 49 51;
+  --fetchr-rgb-text: 233 237 242;
+  --fetchr-rgb-text-secondary: 154 164 177;
+  --fetchr-rgb-text-tertiary: 124 135 148;
+  --fetchr-rgb-text-disabled: 68 76 87;
+  --fetchr-rgb-accent-muted: 39 79 158;
+  --fetchr-rgb-on-accent: 255 255 255;
+
+  /* ── Поверхности (непрозрачные: глубина = ступень лестницы) ──────────
+     Панель стоит на две ступени над canvas, а не на одну: без теней
+     разница в один шаг (~1.05) не читается на больших областях вроде
+     таблицы очереди — панель растворяется в фоне. */
+  --fetchr-color-app-bg: var(--fetchr-color-graphite-950);
+  --fetchr-color-panel: var(--fetchr-color-graphite-850);
+  --fetchr-color-panel-raised: var(--fetchr-color-graphite-800);
+  --fetchr-color-panel-elevated: var(--fetchr-color-graphite-750);
+  --fetchr-color-panel-inset: var(--fetchr-color-graphite-925);
+  --fetchr-color-panel-hover: var(--fetchr-color-graphite-700);
+  --fetchr-color-panel-selected: rgb(var(--fetchr-accent-rgb) / 0.16);
+
+  /* Хром приложения: топбар, нижняя панель */
+  --fetchr-color-chrome: var(--fetchr-color-graphite-950);
+  --fetchr-color-chrome-raised: var(--fetchr-color-graphite-925);
+  --fetchr-color-overlay-bg: rgb(0 0 0 / 0.66);
+  --fetchr-overlay-blur: none;
+
+  /* ── Бордеры: hairline несёт каждый край карточки ───────────────── */
+  --fetchr-color-border-subtle: #1c1e1f;
+  --fetchr-color-border: var(--fetchr-color-graphite-700);
+  --fetchr-color-border-strong: rgb(255 255 255 / 0.16);
+  /* Граница интерактивного контрола. Отдельно от border/border-strong:
+     тем достаточно быть волосяными, а кнопке WCAG 1.4.11 предписывает
+     3:1 к фону. 0.38 белого поверх панели даёт 3.58:1; hairline 0.16
+     давал 1.61, а --fetchr-color-border — 1.22, и кнопки сливались. */
+  --fetchr-color-border-control: rgb(255 255 255 / 0.38);
+  --fetchr-color-border-hairline: rgb(255 255 255 / 0.08);
+  --fetchr-color-focus: rgb(var(--fetchr-accent-rgb) / 0.45);
+  --fetchr-glass-blur: none;
+
+  /* ── Акцент ───────────────────────────────────────────────────────
+     Отклонение от DESIGN.md: спека требует белую CTA-пилюлю, здесь
+     primary остаётся синим — это идентичность продукта. */
+  --fetchr-color-accent: #3d7dff;
+  --fetchr-color-accent-hover: #5a93ff;
+  --fetchr-color-accent-soft: rgb(var(--fetchr-accent-rgb) / 0.14);
+  --fetchr-color-accent-muted: #274f9e;
+  --fetchr-color-accent-deep: #2e63d6;
+  --fetchr-color-accent-bright: #7fa8ff;
+  --fetchr-gradient-accent: #3d7dff;
+  --fetchr-gradient-accent-hover: #5a93ff;
+  /* Рейки прогресса идут по оси движения: от глубокого синего к яркому,
+     как полосы очереди в промо-ролике. Готовая задача — тот же приём в
+     зелёном. Градиент здесь несёт направление, а не декор. */
+  --fetchr-gradient-rail: linear-gradient(90deg, var(--fetchr-color-accent-deep), var(--fetchr-color-accent-hover));
+  --fetchr-gradient-rail-done: linear-gradient(90deg, #1fb57f, var(--fetchr-color-success));
+
+  /* ── Ховер/пресс тинты ──────────────────────────────────────────── */
+  --fetchr-color-hover: rgb(255 255 255 / 0.045);
+  --fetchr-color-hover-strong: rgb(255 255 255 / 0.07);
+  --fetchr-color-pressed: rgb(255 255 255 / 0.09);
+  /* Заливка контролов на стекле (поля, сегменты, чипы): серая, а не белая
+     альфа — на полупрозрачной карточке она читается ровнее. */
+  --fetchr-color-fill: rgb(118 118 128 / 0.2);
+  --fetchr-color-fill-strong: rgb(118 118 128 / 0.32);
+
+  /* ── Текст ────────────────────────────────────────────────────────
+     tertiary поднят с #626c79 до #7c8794 — старое значение давало
+     3.13–3.76 и не проходило AA на новой, более тёмной лестнице. */
+  --fetchr-color-text: #e9edf2;
+  --fetchr-color-text-secondary: #9aa4b1;
+  --fetchr-color-text-tertiary: #7c8794;
+  /* muted схлопнут в tertiary: на этой лестнице фонов любое значение,
+     проходящее AA 4.5, отличается от tertiary на пару единиц и уже
+     неразличимо. Старое #525b66 давало 2.55–2.91 — провал для мелкого
+     текста, которым он и набран. Токен оставлен как алиас: 58 мест
+     продолжают работать. */
+  --fetchr-color-text-muted: var(--fetchr-color-text-tertiary);
+  /* disabled оставлен ниже порога намеренно — WCAG исключает
+     неактивные элементы из требований по контрасту. */
+  --fetchr-color-text-disabled: #444c57;
+  --fetchr-color-text-inverse: var(--fetchr-color-graphite-950);
+  --fetchr-color-on-accent: #ffffff;
+
+  /* ── Статусы ──────────────────────────────────────────────────── */
+  --fetchr-color-success: #2fd49b;
+  --fetchr-color-success-soft: rgb(var(--fetchr-success-rgb) / 0.14);
+  --fetchr-color-warning: #f2a93b;
+  --fetchr-color-warning-soft: rgb(var(--fetchr-warning-rgb) / 0.14);
+  --fetchr-color-danger: #f0506e;
+  --fetchr-color-danger-soft: rgb(var(--fetchr-danger-rgb) / 0.14);
+  --fetchr-color-danger-hover: #f76f88;
+  --fetchr-color-danger-bright: #ff8ba0;
+
+  /* Зоны блюра. Осознанное отклонение: DESIGN.md запрещает saturated
+     accent на хроме, но здесь цвет функциональный — им рисуются зоны. */
+  --fetchr-color-zone: #a78bfa;
+  --fetchr-color-zone-soft: rgb(var(--fetchr-zone-rgb) / 0.14);
+  /* Иконка-тон в списках опций (субтитры, звук): отличима от акцента */
+  --fetchr-color-teal: #2c9fbd;
+
+  /* ── Подложки поверх видео ────────────────────────────────────────
+     Бейджи и затемнение на постерах: кадр может быть любым, поэтому
+     подложка всегда тёмная, независимо от лестницы поверхностей. */
+  --fetchr-color-media-badge: rgb(0 0 0 / 0.72);
+  --fetchr-color-media-badge-strong: rgb(0 0 0 / 0.85);
+  --fetchr-color-media-edge: rgb(255 255 255 / 0.14);
+  --fetchr-gradient-media-scrim: linear-gradient(180deg, transparent 55%, rgb(0 0 0 / 0.55));
+
+  /* ── Бренды платформ ──────────────────────────────────────────── */
+  --fetchr-color-brand-twitch: #a970ff;
+  --fetchr-color-brand-kick: #53fc18;
+  --fetchr-color-brand-youtube: #ff4d4d;
+  --fetchr-color-brand-stars: #e8a33d;
+
+  /* ── Отступы ──────────────────────────────────────────────────── */
+  --fetchr-space-0: 0;
+  --fetchr-space-1: 2px;
+  --fetchr-space-2: 4px;
+  --fetchr-space-3: 6px;
+  --fetchr-space-4: 8px;
+  --fetchr-space-5: 10px;
+  --fetchr-space-6: 12px;
+  --fetchr-space-7: 14px;
+  --fetchr-space-8: 16px;
+  --fetchr-space-10: 20px;
+  --fetchr-space-12: 24px;
+  --fetchr-space-14: 28px;
+  --fetchr-space-16: 32px;
+  --fetchr-space-20: 40px;
+  --fetchr-space-24: 48px;
+
+  /* ── Радиусы (шкала DESIGN.md: 4 · 6 · 8 · 10 · 16) ─────────────── */
+  --fetchr-radius-none: 0;
+  --fetchr-radius-xs: 4px;
+  --fetchr-radius-sm: 6px;
+  --fetchr-radius-md: 8px;
+  --fetchr-radius-lg: 10px;
+  --fetchr-radius-xl: 16px;
+  --fetchr-radius-pill: 999px;
+
+  /* ── Типографика ──────────────────────────────────────────────────
+     База 13px сохранена: это caption-md из DESIGN.md, а 16px body из
+     спеки рассчитан на маркетинговую страницу, не на плотный инструмент. */
+  --fetchr-font-sans: "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif;
+  --fetchr-font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --fetchr-font-size-xs: 10px;
+  --fetchr-font-size-sm: 11px;
+  --fetchr-font-size-md: 12px;
+  --fetchr-font-size-base: 13px;
+  --fetchr-font-size-lg: 14px;
+  --fetchr-font-size-xl: 16px;
+  --fetchr-font-size-title: 18px;
+  --fetchr-font-size-display: 22px;
+
+  --fetchr-line-height-tight: 1.15;
+  --fetchr-line-height-compact: 1.25;
+  --fetchr-line-height-normal: 1.5;
+  --fetchr-line-height-relaxed: 1.6;
+
+  /* Веса: DESIGN.md выше 600 не поднимается */
+  --fetchr-weight-normal: 400;
+  --fetchr-weight-medium: 500;
+  --fetchr-weight-strong: 600;
+
+  /* ── Глубина ──────────────────────────────────────────────────────
+     Drop-shadow из системы убран. Токены сохранены как валидный ноль:
+     часть правил комбинирует два токена в одном box-shadow, и `none,
+     none` уронил бы всю декларацию. Фокус-кольцо — outline, не глубина,
+     поэтому остаётся. */
+  --fetchr-shadow-panel: 0 0 0 0 transparent;
+  --fetchr-shadow-elevated: 0 0 0 0 transparent;
+  --fetchr-shadow-modal: 0 0 0 0 transparent;
+  --fetchr-shadow-inset: 0 0 0 0 transparent;
+  --fetchr-shadow-accent: 0 0 0 0 transparent;
+  --fetchr-shadow-focus:
+    0 0 0 1.5px rgb(var(--fetchr-accent-rgb) / 0.8),
+    0 0 0 5px rgb(var(--fetchr-accent-rgb) / 0.18);
+
+  /* Свечения индикаторов — не глубина, а состояние точки статуса */
+  --fetchr-glow-accent: 0 0 8px rgb(var(--fetchr-accent-rgb) / 0.55);
+  --fetchr-glow-success: 0 0 6px rgb(var(--fetchr-success-rgb) / 0.55);
+  --fetchr-glow-danger: 0 0 6px rgb(var(--fetchr-danger-rgb) / 0.55);
+
+  /* ── Моушн: одна кривая, 4 длительности ───────────────────────── */
+  --fetchr-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --fetchr-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --fetchr-ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+  --fetchr-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --fetchr-dur-fast: 120ms;
+  --fetchr-dur-base: 180ms;
+  --fetchr-dur-slow: 260ms;
+  --fetchr-dur-slower: 400ms;
+  /* Фоновый цикл индикатора состояния (радар ожидания эфира): медленный,
+     чтобы читаться как «идёт процесс», а не как тревога */
+  --fetchr-dur-loop: 2400ms;
+  /* Пульс точки записи и оборот спиннера: постоянные циклы, не переходы */
+  --fetchr-dur-pulse: 1800ms;
+  --fetchr-dur-spin: 1000ms;
+  --fetchr-ease-linear: linear;
+  --fetchr-ease: var(--fetchr-ease-out);
+  --fetchr-transition-fast: var(--fetchr-dur-fast) var(--fetchr-ease-out);
+  --fetchr-transition-base: var(--fetchr-dur-base) var(--fetchr-ease-out);
+  --fetchr-transition-slow: var(--fetchr-dur-slow) var(--fetchr-ease-out);
+
+  /* ── Слои модалок ─────────────────────────────────────────────────
+     Одна ступень на все модальные окна («Скачать», «Добавить задачу»):
+     выше панели активности и «Новой записи» (7000), ниже плеера
+     предпросмотра (9000), онбординга и сплэша. Полёт задачи и окно
+     обновления идут следом, чтобы оставаться поверх закрывающейся модалки. */
+  --fetchr-z-modal: 8000;
+  --fetchr-z-modal-flight: 8010;
+  --fetchr-z-modal-priority: 8020;
+
+  /* ── Legacy-алиасы (модули ссылаются на короткие имена) ────────── */
+  --fetchr-accent: var(--fetchr-color-accent);
+  --fetchr-danger: var(--fetchr-color-danger);
+  --fetchr-border: var(--fetchr-color-border);
+  --fetchr-color-border-hover: var(--fetchr-color-border-strong);
+  --fetchr-panel: var(--fetchr-color-panel);
+  --fetchr-panel-elevated: var(--fetchr-color-panel-elevated);
+  --fetchr-text-primary: var(--fetchr-color-text);
+  --fetchr-text-secondary: var(--fetchr-color-text-secondary);
+  --fetchr-text-tertiary: var(--fetchr-color-text-tertiary);
+  --fetchr-text-muted: var(--fetchr-color-text-muted);
+  --fetchr-radius-full: var(--fetchr-radius-pill);
+}
+
+:where(.fetchr-redesign-theme, [data-fetchr-theme="redesign"]) {
+  background: var(--fetchr-color-app-bg);
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+/* Отклик на нажатие переехал в hooks/usePressFeedback.ts: GSAP умеет
+   догнать отпускание за пределами кнопки, чего :active не может. */

@@ -1,0 +1,108 @@
+/* ---------- Недавние файлы ---------- */
+
+.recentList {
+  display: flex;
+  flex-direction: column;
+  margin: 0 calc(var(--fetchr-space-5) * -1);
+  padding: 0;
+  list-style: none;
+}
+
+.recentItem {
+  display: flex;
+  align-items: center;
+  border-radius: var(--fetchr-radius-lg);
+  transition: background-color var(--fetchr-transition-fast);
+}
+
+.recentItem:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.recentOpen {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-5);
+  border: 0;
+  border-radius: var(--fetchr-radius-lg);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.recentOpen:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.recentIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.recentIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.recentText {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.recentName {
+  overflow: hidden;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recentMeta {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Кнопка удаления — shared.historyDelete; здесь только показ по наведению. */
+.recentItem:hover .recentDelete,
+.recentItem:focus-within .recentDelete {
+  opacity: 1;
+}
+
+.pill {
+  flex: none;
+  padding: 2px var(--fetchr-space-5);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+  white-space: nowrap;
+}
+
+.pillDanger {
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+}
+
+.pillWarn {
+  background: var(--fetchr-color-warning-soft);
+  color: var(--fetchr-color-warning);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recentItem {
+    transition: none;
+  }
+}

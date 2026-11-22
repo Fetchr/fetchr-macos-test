@@ -1,0 +1,101 @@
+name: macos-test
+
+# Проверки macOS-ветки на каждый push: типы и сборка фронтенда, тесты Node,
+# Rust-тесты на настоящем Mac (на Windows их exe не стартует) и сборка .app.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: macos-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - name: Type check and build
+        run: pnpm build
+      - name: Node tests
+        run: node --test $(find scripts -name "*.test.mjs" -not -path "*/node_modules/*")
+
+  rust:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --no-frozen-lockfile
+      # generate_context! требует собранный фронтенд в frontendDist.
+      - run: pnpm build
+      - name: Rust tests
+        working-directory: src-tauri
+        run: cargo test --lib --locked
+
+  bundle:
+    needs: [frontend, rust]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --no-frozen-lockfile
+      # Те же закреплённые версии и SHA-256, что в build.yml.
+      - name: Fetch yt-dlp and N_m3u8DL-RE
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${{ github.workspace }}"
+          pinned() { curl -fL "$1" -o "$2"; echo "$3  $2" | shasum -a 256 -c -; }
+          pinned "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp_macos" "$root/yt-dlp" "0f922c15ccc0b83eefa1c8bc9104e434318c4bf16e408e1ee93b7745a6efe0aa"
+          chmod +x "$root/yt-dlp"
+          mkdir -p "$RUNNER_TEMP/nm"
+          pinned "https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.6.0-beta/N_m3u8DL-RE_v0.6.0-beta_osx-arm64_20260629.tar.gz" "$RUNNER_TEMP/nm.tar.gz" "ca181b7e8976564766c34e3cefe48fff409f58289ca970ade062668c01c53918"
+          tar -xf "$RUNNER_TEMP/nm.tar.gz" -C "$RUNNER_TEMP/nm"
+          cp "$(find "$RUNNER_TEMP/nm" -type f -name 'N_m3u8DL-RE' | head -n1)" "$root/N_m3u8DL-RE"
+          chmod +x "$root/N_m3u8DL-RE"
+      # Тестовая сборка: без секретов (VPS, резолвер, ключ обновлений) эти функции выключены.
+      - name: Build universal .app and .dmg
+        env:
+          FETCHR_UI_REDESIGN: "true"
+          VITE_FETCHR_UI_REDESIGN: "true"
+          FETCHR_VPS_API_URL: https://fetchr.fun/api
+          FETCHR_TG_BETA_BOT: fetchr_beta_bot
+        run: pnpm tauri build --target universal-apple-darwin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fetchr-macos-universal
+          path: |
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          if-no-files-found: error

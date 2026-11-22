@@ -1,0 +1,93 @@
+/* ---------- Вид «Текст» ----------
+   Транскрипция читается как документ. Состояния слова меняют только
+   цвет, фон, нижнюю линию и кольцо (box-shadow): геометрия слова одна
+   и та же, поэтому наведение и правки не двигают строки. */
+
+.scroller {
+  position: relative;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--fetchr-space-6) var(--fetchr-space-4) var(--fetchr-space-16);
+  overscroll-behavior: contain;
+}
+
+.paragraph {
+  max-width: 72ch;
+  margin: 0 auto;
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-xl);
+  line-height: 1.95;
+  text-wrap: pretty;
+}
+
+.word {
+  padding: 1px 2px;
+  border-bottom: 1px dotted transparent;
+  border-radius: var(--fetchr-radius-xs);
+  cursor: pointer;
+  transition:
+    background-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.word:hover {
+  background: var(--fetchr-color-hover-strong);
+}
+
+/* Фокус — контур (outline) снаружи, «текущий хит» — кольцо box-shadow:
+   разные свойства, поэтому одно не перебивает другое. */
+.word:focus-visible {
+  outline: 2px solid var(--fetchr-color-text);
+  outline-offset: 2px;
+}
+
+.playing {
+  background: var(--fetchr-color-accent-soft);
+}
+
+.match {
+  box-shadow: inset 0 -2px 0 var(--fetchr-color-accent-bright);
+}
+
+.cursor {
+  background: var(--fetchr-color-panel-selected);
+}
+
+.muted {
+  color: var(--fetchr-color-danger);
+  text-decoration: line-through;
+  text-decoration-color: var(--fetchr-color-danger);
+}
+
+.uncertain {
+  border-bottom-color: var(--fetchr-color-warning);
+  background: var(--fetchr-color-warning-soft);
+}
+
+.restored {
+  color: var(--fetchr-color-text-muted);
+}
+
+.currentHit,
+.currentHit:hover {
+  box-shadow: 0 0 0 2px var(--fetchr-color-accent);
+}
+
+.dimmed,
+.dimmed:hover {
+  border-bottom-color: transparent;
+  background: transparent;
+  color: var(--fetchr-color-text-muted);
+  text-decoration-color: var(--fetchr-color-text-muted);
+}
+
+.menu {
+  position: absolute;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    transition: none;
+  }
+}

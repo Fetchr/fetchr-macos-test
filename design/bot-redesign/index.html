@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fetchr бот — редизайн под fetchr.fun · Сейчас / Предлагаю</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow"><b>01</b> / Редизайн бота · мок</p>
+  <h1>Бот в стиле <em>fetchr.fun</em></h1>
+  <p class="lead">Слева — экраны бота как в коде сейчас (тексты из <span class="mono">screens.mjs</span>, <span class="mono">shop-screens.mjs</span>, обложки из <span class="mono">covers.mjs</span>/<span class="mono">cards.mjs</span>). Справа — предложение: плоская «лестница поверхностей» сайта, сетка 48 px, Inter 700 с одним синим словом, окна продукта вместо 3D-клипарта, кастомные эмодзи из иконок сайта, короче путь до ключа и оплаты. Сценарий играет сам; кнопки «▶ Повторить» и «Пауза» сверху, цитаты «⌄» раскрываются по клику.</p>
+
+  <nav class="seg tabs" id="seg-view" role="tablist" aria-label="Раздел мока">
+    <button type="button" data-v="flows" aria-pressed="true">Сценарии</button>
+    <button type="button" data-v="icons" aria-pressed="false">Иконки</button>
+  </nav>
+
+  <div id="view-flows">
+  <div class="bar">
+    <div class="seg" id="seg-flow" role="group" aria-label="Сценарий">
+      <button type="button" data-v="key" aria-pressed="true">Ключ с нуля</button>
+      <button type="button" data-v="buy" aria-pressed="false">Покупка Архива</button>
+      <button type="button" data-v="profile" aria-pressed="false">Профиль и старт</button>
+    </div>
+    <div class="seg" id="seg-theme" role="group" aria-label="Тема Telegram">
+      <button type="button" data-v="dark" aria-pressed="true">Тёмная</button>
+      <button type="button" data-v="light" aria-pressed="false">Светлая</button>
+    </div>
+    <div class="seg" id="seg-width" role="group" aria-label="Ширина">
+      <button type="button" data-v="360" aria-pressed="false">360</button>
+      <button type="button" data-v="390" aria-pressed="true">390</button>
+      <button type="button" data-v="430" aria-pressed="false">430</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="btn primary" type="button" id="replay">▶ Повторить</button>
+    <button class="btn" type="button" id="pause">Пауза</button>
+  </div>
+
+  <div class="stage">
+    <section class="col now"><h3><i></i>Сейчас</h3><div id="phone-now"></div><p class="count" id="count-now"></p></section>
+    <section class="col next"><h3><i></i>Предлагаю</h3><div id="phone-next"></div><p class="count" id="count-next"></p></section>
+  </div>
+
+  <h2>Метрики и моушн</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>Клики до цели</h4>
+      <p class="metric">Ключ: 4 → <em>3</em> · Оплата: 5 → <em>3</em></p>
+      <ul>
+        <li>Согласие встроено в шаг подписки: один экран вместо двух, юридический текст остаётся видимым одной строкой (проверка — eng-fetchr/юрист).</li>
+        <li>Срок выбирается на карточке тарифа (сегмент 1 / 3 / 6 / 12 мес, правка того же сообщения), промежуточный экран «Счёт на оплату» убран: «Оплатить» — сразу URL Robokassa.</li>
+        <li>Ключ копируется кнопкой <span class="mono">copy_text</span> (Bot API 7.11), без выделения текста в <span class="mono">&lt;pre&gt;</span>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Метрика и проверка</h4>
+      <ul>
+        <li><b>Старт → ключ</b>: сейчас теряем 29–45% на согласии (_analysis/smm/2026-11-16). Цель ≤ 20% за 14 дней, A/B по чётности user_id.</li>
+        <li><b>Открыт тариф → оплачено</b>: брошенных 35%. Цель ≤ 25% за 30 дней.</li>
+        <li><b>Доля 12 мес</b> в оплатах «Стример»: сейчас не меряется (paid_by_plan = other) — нужен фикс учёта.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Моушн в чате</h4>
+      <ul>
+        <li>Смена экрана — <span class="mono">editMessageMedia</span>: обложка crossfade 260 мс, подпись 120 мс out / 220 мс in, кривая <span class="mono">cubic-bezier(0.22, 1, 0.36, 1)</span> (--ease-cine сайта).</li>
+        <li>Новое сообщение — только событие (ключ выдан, оплата прошла): подъём 8 px + fade 220 мс.</li>
+        <li>Тост <span class="mono">answerCallbackQuery</span> на каждое нажатие, «печатает…» (<span class="mono">sendChatAction</span>) перед выдачей ключа и после возврата из Robokassa.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Видеообложки (MP4 ≤ 5 с, первый кадр = PNG)</h4>
+      <ul>
+        <li><b>home</b>: полоса Архива дорастает до значения 2,4 с; точка REC пульсирует 1,6 с.</li>
+        <li><b>shop</b>: карточки тарифов поднимаются по очереди 320 мс, шаг 80 мс; затем статично до конца цикла.</li>
+        <li><b>key</b>: чип «Активировано» появляется 320 мс; <b>paid</b>: LIVE пульсирует, полоса записи растёт. Цикл без рывка: последний кадр = первый.</li>
+        <li>Без MP4 (или в списке рассылки) уходит PNG — те же SVG, что ниже.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Новые обложки 1280×720</h2>
+  <p class="lead">Исходники: <span class="mono">design/bot-redesign/covers/*.svg</span>, генератор <span class="mono">covers.mjs</span> (PNG рендерит resvg со шрифтами бота). Все подписи ≥ 24 px на холсте 1280 (≈ 7,5 px в пузыре 400 px только у служебных подписей окна; главные факты 52–116 px).</p>
+  <div class="bar" style="position:static;border:0;padding:0 0 12px">
+    <div class="seg" id="seg-full" role="group" aria-label="Размер">
+      <button type="button" data-v="grid" aria-pressed="true">Сетка</button>
+      <button type="button" data-v="full" aria-pressed="false">1280×720</button>
+    </div>
+  </div>
+  <div class="covers" id="cover-grid">
+    <figure><img src="covers/home-new.png" alt="Главная без ключа"><figcaption>home-new · главная, нет ключа</figcaption></figure>
+    <figure><img src="covers/home-active.png" alt="Главная с ключом"><figcaption>home-active · главная, ключ активен</figcaption></figure>
+    <figure><img src="covers/register-1.png" alt="Шаг 1"><figcaption>register-1 · шаг 1 из 2</figcaption></figure>
+    <figure><img src="covers/register-2.png" alt="Шаг 2"><figcaption>register-2 · шаг 2 из 2</figcaption></figure>
+    <figure><img src="covers/key.png" alt="Ключ готов"><figcaption>key · профиль/ключ</figcaption></figure>
+    <figure><img src="covers/shop.png" alt="Тарифы"><figcaption>shop · магазин и тарифы</figcaption></figure>
+    <figure><img src="covers/plan-1.png" alt="Тариф 1 мес"><figcaption>plan-1 · карточка тарифа</figcaption></figure>
+    <figure><img src="covers/plan-12.png" alt="Тариф 12 мес"><figcaption>plan-12 · тот же экран после смены срока</figcaption></figure>
+    <figure><img src="covers/paid.png" alt="Оплачено"><figcaption>paid · оплата успешна</figcaption></figure>
+    <figure><img src="covers/botfather-description.png" alt="Description picture"><figcaption>botfather-description · экспорт 640×360</figcaption></figure>
+  </div>
+
+  <h2>Было</h2>
+  <div class="covers">
+    <figure><img src="current/home.png" alt=""><figcaption>cards.mjs homeCardSvg</figcaption></figure>
+    <figure><img src="current/shop-1.png" alt=""><figcaption>shop-1 · «5 ГБ – 1 ТБ», а в продаже максимум 150 ГБ</figcaption></figure>
+    <figure><img src="current/shop-3.png" alt=""><figcaption>shop-3 · «звёзды» в подписи</figcaption></figure>
+    <figure><img src="current/register-3.png" alt=""><figcaption>register-3 · 3D-иконка в монохромном фильтре</figcaption></figure>
+  </div>
+
+  <h2>Токены витрины → бот</h2>
+  <div class="tokens">
+    <div class="tok"><i style="background:#0b0d12"></i>canvas #0b0d12</div>
+    <div class="tok"><i style="background:#10131a"></i>chrome #10131a</div>
+    <div class="tok"><i style="background:#141821"></i>panel #141821</div>
+    <div class="tok"><i style="background:#1a1f2a"></i>raised #1a1f2a</div>
+    <div class="tok"><i style="background:#191e28"></i>line-subtle #191e28</div>
+    <div class="tok"><i style="background:#222835"></i>line #222835</div>
+    <div class="tok"><i style="background:#f3f6fb"></i>text #f3f6fb</div>
+    <div class="tok"><i style="background:#a4aebe"></i>text-2 #a4aebe</div>
+    <div class="tok"><i style="background:#7d8799"></i>text-3 #7d8799</div>
+    <div class="tok"><i style="background:#3d7dff"></i>accent #3d7dff</div>
+    <div class="tok"><i style="background:#2e63d6"></i>accent-cta #2e63d6</div>
+    <div class="tok"><i style="background:#86abff"></i>accent-bright #86abff</div>
+    <div class="tok"><i style="background:#2fd49b"></i>success #2fd49b</div>
+    <div class="tok"><i style="background:#f2a93b"></i>warning #f2a93b</div>
+    <div class="tok"><i style="background:#f0506e"></i>danger #f0506e</div>
+    <div class="tok"><i style="background:#a78bfa"></i>zone #a78bfa</div>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div class="card"><h4>Типографика и форма</h4><ul>
+      <li>Inter 700, h1 −0.045em, межстрочный 0.98; одно слово акцентом (<span class="mono">h1 em</span>).</li>
+      <li>Подписи «01 / РАЗДЕЛ»: Inter 600 caps, трекинг 0.06em, номер синим. JetBrains Mono — только для ID, ключей, сумм и номеров заказов.</li>
+      <li>Радиусы 4/6/8/12/18 px, pill 999; на холсте 1280 ×2: 28–36 px у окон.</li>
+      <li>Плоско: без теней и свечений (tokens.css: «глубина — лестница поверхностей»), фон — сетка 48 px с радиальной маской, как <span class="mono">.hero-grid</span>.</li>
+    </ul></div>
+    <div class="card"><h4>Иллюстрации и моушн</h4><ul>
+      <li>Иллюстрация = окно продукта (<span class="mono">.win</span>): шапка со знаком, строки очереди с точками статуса и рельсами прогресса, карточки тарифов с синей верхней кромкой у выбранного (<span class="mono">.plan.pick</span>).</li>
+      <li>Иконки — линейные 24 px, stroke 2 (спрайт сайта). Знак Split F #3D7DFF.</li>
+      <li>Длительности 120 / 180 / 260 мс, кривые --ease-out <span class="mono">(0.16, 1, 0.3, 1)</span>, --ease-cine <span class="mono">(0.22, 1, 0.36, 1)</span>; пульс live 1,8 с.</li>
+      <li>Тон: коротко, на «вы», глагол + польза («Монтируйте, а не готовьте исходники»), цифры конкретные (≈ 52 ч эфира).</li>
+    </ul></div>
+  </div>
+
+  <h2>Пакет эмодзи «Fetchr Line»</h2>
+  <p class="lead">Служебные эмодзи бота — те же линейные иконки, что на сайте, на синей плитке (20 / 32 / 100 px). Плоские, без глянца: так требует бренд-гайд сайта; глянцевый 3D-маскот можно оставить для стикеров. В кнопках — <span class="mono">icon_custom_emoji_id</span>, в тексте — <span class="mono">&lt;tg-emoji&gt;</span>, обычный эмодзи остаётся запасным (premium-emoji.mjs уже это умеет).</p>
+  <div class="card"><div class="emoji-row" id="emoji-sheet"></div></div>
+  <table style="margin-top:12px">
+    <tr><th>Эмодзи</th><th>Базовый</th><th>Где</th></tr>
+    <tr><td>key</td><td>🔑</td><td>Получить ключ, Мой ключ, строка ключа на главной</td></tr>
+    <tr><td>archive</td><td>🗄</td><td>Архив VPS (вместо 🛒 — продаём не «магазин», а запись)</td></tr>
+    <tr><td>restream</td><td>📡</td><td>Рестрим, апселл после оплаты</td></tr>
+    <tr><td>card</td><td>💳</td><td>Оплатить</td></tr>
+    <tr><td>copy</td><td>📋</td><td>Скопировать ключ (copy_text)</td></tr>
+    <tr><td>check / rec / spark</td><td>✅ / 🔴 / 🔥</td><td>статус ок, запись идёт, популярный тариф</td></tr>
+    <tr><td>chat / tg / home / doc / plus / play</td><td>💬 / 📢 / 🏠 / 📄 / ➕ / ▶️</td><td>поддержка, канал, меню, условия, допы, «как начать запись»</td></tr>
+  </table>
+
+  <h2>Профиль в BotFather</h2>
+  <table>
+    <tr><th>Поле</th><th>Сейчас</th><th>Предлагаю</th></tr>
+    <tr><td><b>Имя</b></td><td>Fetchr</td><td>Fetchr — ключ и запись стримов</td></tr>
+    <tr><td><b>Аватар</b></td><td>—</td><td>site-vitrina/assets/brand/app-icon.svg: синий Split F на #0B0D12, без текста</td></tr>
+    <tr><td><b>Description</b></td><td>Fetchr — премиальный стрим-конвейер. / 🔑 Бесплатный ключ… / 🛒 Архив VPS… / 💬 Поддержка…</td><td>Fetchr готовит исходники к монтажу: глушит мат, делит голос и музыку, блюрит рекламу, рендерит чат слоем.<br>🔑 Ключ приложения — бесплатно, за минуту<br>🗄 Архив VPS — сервер пишет стримы 24/7, от 100 ₽/мес<br>💬 Поддержка — отвечаем в этом чате</td></tr>
+    <tr><td><b>Description picture</b></td><td>нет</td><td>covers/botfather-description.png → 640×360</td></tr>
+    <tr><td><b>About</b></td><td>Ключ активации Fetchr, тарифы Архива VPS и поддержка.</td><td>Бесплатный ключ Fetchr за минуту · Архив VPS пишет стримы без ПК · поддержка. fetchr.fun</td></tr>
+    <tr><td><b>Команды</b></td><td>/start Главное меню · /register Регистрация и ключи · /shop Магазин · Архив VPS · /support · /paysupport · /terms Условия</td><td>/start Главное меню · /register Ключ за минуту · /shop Архив VPS — тарифы · /support Написать в поддержку · /paysupport Вопрос по оплате · /terms Оферта и возврат</td></tr>
+  </table>
+  </div>
+
+  <div id="view-icons" hidden>
+    <h2>Набор «Fetchr Line»</h2>
+    <p class="lead">Сетка 24, поле 2 px, обводка 2 (в эмодзи 2,25 — чтобы держать 20 px), круглые концы и стыки, радиус углов 2,5. В каждом знаке одна акцентная деталь и одна мягкая заливка тона, как в дуотоне приложения (src/ui/redesign/icons/motion/tone.ts). Плоско: плитка — ступень «elevated» #1f2531 с волосяной рамкой, без бликов и свечений. Два набора из одних исходников: <b>плитка</b> для текста (&lt;tg-emoji&gt;, читается на тёмной и светлой теме) и <b>adaptive</b> — одноцветный, с needs_repainting, для кнопок (Telegram перекрашивает его в цвет текста кнопки).</p>
+    <div class="bar" style="position:static;border:0;padding:0 0 12px">
+      <div class="seg" id="seg-ibg" role="group" aria-label="Фон">
+        <button type="button" data-v="both" aria-pressed="true">Тёмный + светлый</button>
+        <button type="button" data-v="grid" aria-pressed="false">Сетка 24</button>
+      </div>
+    </div>
+    <div class="ic-construct card" id="ic-construct"></div>
+    <h2>Все знаки на 20 / 32 / 100 px</h2>
+    <div class="ic-table" id="ic-service"></div>
+
+    <h2>Иконки тарифов</h2>
+    <p class="lead">Вместо 🌱 🔹 🔷 🔥 — знак, который растёт вместе с тарифом: Free → Мини → Старт → Стример. Три направления, переключатель ниже меняет и контекст (кнопки, карточка, обложка).</p>
+    <div class="bar" style="position:static;border:0;padding:0 0 12px">
+      <div class="seg" id="seg-dir" role="group" aria-label="Направление">
+        <button type="button" data-v="B" aria-pressed="true">B · Ячейка (рекомендую)</button>
+        <button type="button" data-v="A" aria-pressed="false">A · Стек</button>
+        <button type="button" data-v="C" aria-pressed="false">C · Сборка F</button>
+      </div>
+    </div>
+    <div class="ic-dirs" id="ic-dirs"></div>
+    <h3 class="sub3">Сроки (по желанию)</h3>
+    <div class="ic-terms" id="ic-terms"></div>
+
+    <h2>В контексте · Сейчас / Предлагаю</h2>
+    <div class="ic-context" id="ic-context"></div>
+  </div>
+</div>
+<script src="covers.js"></script>
+<script src="icons.js"></script>
+<script src="mock.js"></script>
+<script src="icons-view.js"></script>
+</body>
+</html>

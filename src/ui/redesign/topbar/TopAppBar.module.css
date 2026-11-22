@@ -1,0 +1,788 @@
+.topBar {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 76px;
+  min-height: 76px;
+  flex-direction: column;
+  overflow: visible;
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-chrome);
+  color: var(--fetchr-color-text);
+}
+
+.titleRow {
+  position: relative;
+  display: grid;
+  height: 34px;
+  min-height: 34px;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--fetchr-space-8);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  padding-left: var(--fetchr-space-8);
+}
+
+.brandGroup {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.brandGroup {
+  /* Высота общей рамки знака и слова; пропорции — из FetchrBrand */
+  --brand-h: 15px;
+}
+
+.brandMark {
+  display: block;
+  width: calc(var(--brand-h) * 77 / 75);
+  height: var(--brand-h);
+  flex: 0 0 auto;
+}
+
+.brandImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+.brandText {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+
+.version {
+  color: var(--fetchr-color-text-muted);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0;
+  line-height: 1;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.windowTitle {
+  display: flex;
+  min-width: 0;
+  max-width: 42vw;
+  align-items: center;
+  justify-content: center;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-medium);
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.windowTitle span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-5);
+  justify-self: end;
+}
+
+.iconButton:focus-visible,
+.homeButton:focus-visible,
+.navTab:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+/* Кнопки окна: внутреннее кольцо — внешнее «плавает» на безрамочных кнопках */
+.windowButton:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px rgb(var(--fetchr-accent-rgb) / 0.65);
+}
+
+.iconButton,
+.homeButton {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+}
+
+.iconButton {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--fetchr-radius-md);
+}
+
+.iconButton:hover,
+.iconButtonActive {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.updateIconButton {
+  background: rgb(var(--fetchr-accent-hover-rgb) / 0.12) !important;
+  border-color: rgb(var(--fetchr-accent-hover-rgb) / 0.35) !important;
+  color: var(--fetchr-color-accent-hover) !important;
+  border-radius: var(--fetchr-radius-full) !important;
+}
+
+.updateIconButton:hover {
+  background: rgb(var(--fetchr-accent-hover-rgb) / 0.22) !important;
+  border-color: rgb(var(--fetchr-accent-hover-rgb) / 0.55) !important;
+  color: #fff !important;
+}
+
+.windowDivider {
+  width: 1px;
+  height: 16px;
+  background: var(--fetchr-color-border-subtle);
+}
+
+.windowControls {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.windowButton {
+  display: inline-grid;
+  width: 38px;
+  height: 100%;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+}
+
+.windowButton:hover {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.closeWindowButton:hover {
+  background: var(--fetchr-color-danger);
+  color: #fff;
+}
+
+.workspaceRow {
+  display: grid;
+  height: 42px;
+  min-height: 42px;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  background: var(--fetchr-color-chrome-raised);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.workspaceNavigation {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  align-items: center;
+  overflow: visible;
+  scrollbar-width: none;
+}
+
+.workspaceNavigation::-webkit-scrollbar {
+  display: none;
+}
+
+.homeButton {
+  width: 46px;
+  height: 100%;
+  border-radius: 0;
+}
+
+.homeButton:hover {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.workspaceDivider {
+  width: 1px;
+  height: 22px;
+  flex: 0 0 auto;
+  background: var(--fetchr-color-border-subtle);
+}
+
+.navTabs {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-1);
+}
+
+.navItemWithMenu {
+  position: relative;
+  display: inline-flex;
+  height: 100%;
+  flex: none;
+  align-items: center;
+}
+
+/* Не хватает ширины на подписи: неактивные вкладки остаются иконками с
+   подсказкой, подпись только у текущей. Решает useCompactNav по реальной
+   ширине ряда, а не брейкпоинт. */
+.workspaceNavigationCompact .navTab:not(.navTabActive) .navTabLabel {
+  display: none;
+}
+
+.workspaceNavigationCompact .navTab:not(.navTabActive) {
+  padding-inline: var(--fetchr-space-4);
+}
+
+.workspaceNavigationCompact .navTab:not(.navTabActive) .navTabIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* pill-tab по DESIGN.md: прозрачный фон, активная вкладка «поднимается»
+   на одну ступень лестницы вместо подчёркивания. */
+.navTab {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-3);
+  border: 0;
+  border-radius: var(--fetchr-radius-pill);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  letter-spacing: 0.2px;
+  padding: var(--fetchr-space-2) var(--fetchr-space-5);
+  transition: color var(--fetchr-transition-fast);
+  white-space: nowrap;
+}
+
+.navTab:hover {
+  color: var(--fetchr-color-text);
+}
+
+.navTabActive {
+  color: var(--fetchr-color-text);
+}
+
+/* Заливка активной пилюли. Держится под содержимым и переезжает между
+   вкладками через Framer layoutId. */
+.activeUnderline {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-elevated);
+  pointer-events: none;
+}
+
+/* Содержимое поверх заливки пилюли */
+.navTab > :not(.activeUnderline) {
+  position: relative;
+  z-index: 1;
+}
+
+.navTabIcon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.navTabBadge {
+  display: inline-flex;
+  min-width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-accent);
+  color: #ffffff;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: 8px;
+  font-weight: var(--fetchr-weight-strong);
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.navTabBadgeError {
+  background: var(--fetchr-color-danger);
+}
+
+.presetMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 80;
+  width: 286px;
+  max-width: min(286px, calc(100vw - 24px));
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-elevated);
+  opacity: 0;
+  padding: var(--fetchr-space-4);
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--fetchr-transition-fast),
+    transform var(--fetchr-transition-fast);
+}
+
+.navItemWithMenu:hover .presetMenu,
+.navItemWithMenu:focus-within .presetMenu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.presetMenuHeader {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-5);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 10px;
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0;
+  padding: var(--fetchr-space-2) var(--fetchr-space-3) var(--fetchr-space-4);
+  text-transform: uppercase;
+}
+
+.presetAddButton {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+}
+
+.presetAddButton:hover {
+  border-color: rgb(var(--fetchr-accent-bright-rgb) / 0.42);
+  color: var(--fetchr-color-text);
+}
+
+.presetAddButton:focus-visible,
+.presetMenuButton:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.presetMenuList {
+  display: grid;
+  max-height: 292px;
+  min-width: 0;
+  gap: var(--fetchr-space-2);
+  overflow: auto;
+  padding-top: var(--fetchr-space-3);
+}
+
+.presetMenuButton {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  border: 1px solid transparent;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0;
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  text-align: left;
+}
+
+.presetMenuButton:hover {
+  border-color: var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text);
+}
+
+.presetMenuButtonActive {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.24);
+  background: rgb(var(--fetchr-accent-rgb) / 0.1);
+  color: var(--fetchr-color-text);
+}
+
+.presetMenuMain,
+.presetMenuSub {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presetMenuMain {
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.presetMenuSub {
+  color: var(--fetchr-color-text-muted);
+  font-size: 11px;
+}
+
+.presetMenuEmpty {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 12px;
+  padding: var(--fetchr-space-5);
+}
+
+.workspaceTitle {
+  display: flex;
+  min-width: 0;
+  max-width: 30vw;
+  align-items: center;
+  justify-content: center;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-medium);
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.workspaceTitle span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspaceTools {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-6);
+  padding-right: var(--fetchr-space-8);
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.workspaceToolLine {
+  width: 16px;
+  height: 2px;
+  border-radius: var(--fetchr-radius-pill);
+  background: currentColor;
+  opacity: 0.72;
+}
+
+.workspaceToolDot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--fetchr-radius-pill);
+  background: currentColor;
+  opacity: 0.72;
+}
+
+@media (max-width: 1120px) {
+  .titleRow {
+    padding-left: var(--fetchr-space-6);
+  }
+
+  .navTab {
+    padding: 0 var(--fetchr-space-5);
+  }
+
+  .workspaceRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .topBar {
+    height: 74px;
+    min-height: 74px;
+  }
+
+  .titleRow {
+    height: 32px;
+    min-height: 32px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--fetchr-space-5);
+  }
+
+  .brandGroup {
+    --brand-h: 13px;
+  }
+
+  .version {
+    display: none;
+  }
+
+  .workspaceRow {
+    height: 42px;
+    min-height: 42px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .workspaceTools {
+    display: none;
+  }
+
+  .homeButton {
+    width: 42px;
+  }
+
+  .navTab {
+    gap: var(--fetchr-space-2);
+    padding: 0 var(--fetchr-space-4);
+  }
+}
+
+.statusWidget {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  background: var(--fetchr-color-hover);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-pill);
+  height: 26px;
+  padding: 0 var(--fetchr-space-4);
+  font-size: 11px;
+  font-weight: var(--fetchr-weight-medium);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast),
+    opacity var(--fetchr-transition-fast),
+    transform var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+}
+
+.statusWidgetDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--fetchr-radius-pill);
+  flex-shrink: 0;
+}
+
+.statusWidgetActive {
+  color: var(--fetchr-color-success);
+  background: rgb(var(--fetchr-success-rgb) / 0.08);
+  border-color: rgb(var(--fetchr-success-rgb) / 0.25);
+}
+
+.statusWidgetActive .statusWidgetDot {
+  background: var(--fetchr-color-success);
+  box-shadow: var(--fetchr-glow-success);
+  animation: statusWidgetPulse 1.5s infinite ease-in-out;
+}
+
+.statusWidgetError {
+  color: var(--fetchr-color-danger-hover);
+  background: rgb(var(--fetchr-danger-hover-rgb) / 0.08);
+  border-color: rgb(var(--fetchr-danger-hover-rgb) / 0.25);
+}
+
+.statusWidgetError .statusWidgetDot {
+  background: var(--fetchr-color-danger-hover);
+  box-shadow: var(--fetchr-glow-danger);
+}
+
+.statusWidgetItems {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+}
+
+.statusWidgetItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-1);
+}
+
+.statusWidgetCount {
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-weight: var(--fetchr-weight-strong);
+}
+
+@keyframes statusWidgetPulse {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+}
+
+.navTabHighlighted {
+  box-shadow: 0 0 0 2px var(--fetchr-color-accent), 0 0 14px rgb(var(--fetchr-accent-rgb) / 0.4) !important;
+  border-radius: var(--fetchr-radius-sm);
+  background: rgb(var(--fetchr-accent-rgb) / 0.08) !important;
+  animation: onboardingPulse 1.8s var(--fetchr-ease-out) infinite;
+}
+
+@keyframes onboardingPulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--fetchr-color-accent), 0 0 14px rgb(var(--fetchr-accent-rgb) / 0.4); }
+  50% { box-shadow: 0 0 0 2px var(--fetchr-color-accent), 0 0 24px rgb(var(--fetchr-accent-rgb) / 0.65); }
+}
+
+/* Панель разделов вынесена к другому краю окна: остаётся одна строка с брендом. */
+.topBarSlim {
+  height: 35px;
+  min-height: 35px;
+}
+
+/* Вертикальная колонка вкладок (панель слева или справа). */
+.workspaceNavigation[data-orientation="vertical"] {
+  height: auto;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--fetchr-space-2);
+  padding: var(--fetchr-space-4);
+}
+
+.workspaceNavigation[data-orientation="vertical"] .homeButton {
+  width: 100%;
+  height: 36px;
+  border-radius: var(--fetchr-radius-md);
+}
+
+.workspaceNavigation[data-orientation="vertical"] .workspaceDivider {
+  width: 100%;
+  height: 1px;
+  margin-block: var(--fetchr-space-2);
+}
+
+.workspaceNavigation[data-orientation="vertical"] .navTabs {
+  height: auto;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--fetchr-space-2);
+}
+
+.workspaceNavigation[data-orientation="vertical"] .navItemWithMenu {
+  display: flex;
+  height: auto;
+}
+
+.workspaceNavigation[data-orientation="vertical"] .navTab {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: var(--fetchr-radius-md);
+  padding: var(--fetchr-space-5) var(--fetchr-space-6);
+}
+
+.workspaceNavigation[data-orientation="vertical"] .navTabLabel {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.workspaceNavigation[data-orientation="vertical"] .activeUnderline {
+  border-radius: var(--fetchr-radius-md);
+}
+
+/* Меню пресетов открывается вбок от колонки, а не вниз. */
+.workspaceNavigation[data-orientation="vertical"] .presetMenu {
+  top: 0;
+  left: calc(100% + var(--fetchr-space-4));
+  transform: translateX(-4px);
+}
+
+.workspaceNavigation[data-orientation="vertical"] .navItemWithMenu:hover .presetMenu,
+.workspaceNavigation[data-orientation="vertical"] .navItemWithMenu:focus-within .presetMenu {
+  transform: translateX(0);
+}
+
+/* Горизонтальная панель снизу: меню пресетов растёт вверх. */
+.workspaceNavigation[data-dock="bottom"] .presetMenu {
+  top: auto;
+  bottom: 100%;
+  transform: translateY(4px);
+}
+
+.workspaceNavigation[data-dock="bottom"] .navItemWithMenu:hover .presetMenu,
+.workspaceNavigation[data-dock="bottom"] .navItemWithMenu:focus-within .presetMenu {
+  transform: translateY(0);
+}
+
+/* Панель справа: меню пресетов уходит влево. */
+.workspaceNavigation[data-dock="right"] .presetMenu {
+  left: auto;
+  right: calc(100% + var(--fetchr-space-4));
+}
+
+/* Тесное окно: боковая колонка схлопывается до иконок. */
+@media (max-width: 1100px) {
+  .workspaceNavigation[data-orientation="vertical"] .navTabLabel {
+    display: none;
+  }
+
+  .workspaceNavigation[data-orientation="vertical"] .navTab {
+    justify-content: center;
+  }
+}
+
+/* ── macOS: кнопки действий в тулбаре MacAppShell ─────────────────────
+   Liquid Glass: кнопки собраны в одну стеклянную капсулу, как группы
+   элементов тулбара в macOS 26. Индикатор активности — отдельная капсула. */
+.macActions {
+  height: auto;
+  gap: var(--fetchr-space-4);
+}
+
+.macActions .iconButton {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--fetchr-radius-pill);
+  color: var(--fetchr-color-text);
+  background: var(--mac-glass-bg);
+  border: 0.5px solid var(--mac-glass-border);
+  box-shadow: inset 0 1px 0 var(--mac-glass-highlight), 0 1px 2px var(--mac-glass-shade);
+  -webkit-backdrop-filter: var(--mac-glass-filter);
+  backdrop-filter: var(--mac-glass-filter);
+}
+
+.macActions .iconButton:hover,
+.macActions .iconButtonActive {
+  background: var(--mac-glass-bg-strong);
+}
+
+.macActions .statusWidget {
+  height: 30px;
+  padding: 0 var(--fetchr-space-6);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}

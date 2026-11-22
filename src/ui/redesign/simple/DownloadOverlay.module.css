@@ -1,0 +1,2019 @@
+/* «Скачать» поверх окна, вариант «Инспектор». Палитра как у «Дорожек»:
+   нейтральное стекло, цвет только со смыслом, тонкие линии, системный шрифт.
+   Сверху поиск, после ссылки окно раскрывается: список слева, параметры справа. */
+.overlay {
+  --label: var(--fetchr-color-text);
+  --label2: var(--fetchr-color-text-secondary);
+  --label3: var(--fetchr-color-text-tertiary);
+  --fill: var(--fetchr-color-fill);
+  --fill-strong: var(--fetchr-color-fill-strong);
+  --hairline: var(--fetchr-color-border-hairline);
+  --surface: rgb(var(--fetchr-rgb-elevated) / 0.8);
+  --surface-solid: var(--fetchr-color-panel-raised);
+  --surface2: color-mix(in srgb, var(--fetchr-color-graphite-650) 62%, transparent);
+  --blue: var(--fetchr-color-accent);
+  --blue-solid: var(--fetchr-color-accent-deep);
+  --blue-solid-hover: var(--fetchr-color-accent);
+  --blue-text: var(--fetchr-color-accent-bright);
+  --on-blue: var(--fetchr-color-on-accent);
+  --green: var(--fetchr-color-success);
+  --orange: var(--fetchr-color-warning);
+  --red: var(--fetchr-color-danger);
+  --red-text: var(--fetchr-color-danger-bright);
+  --purple: var(--fetchr-color-zone);
+  --teal: var(--fetchr-color-teal);
+  --gray: var(--fetchr-color-text-tertiary);
+  --spring: var(--fetchr-ease-out);
+
+  position: fixed;
+  inset: 0;
+  z-index: var(--fetchr-z-modal);
+  display: grid;
+  justify-items: center;
+  align-items: start;
+  padding: 18vh 24px 24px;
+  background: var(--fetchr-color-overlay-bg);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  color: var(--label);
+  font-family: var(--fetchr-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.overlay:has(.card[data-expanded]) {
+  padding-top: 5vh;
+}
+
+.card {
+  display: flex;
+  width: min(640px, 100%);
+  height: auto;
+  max-height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  backdrop-filter: blur(40px) saturate(1.8);
+  box-shadow: var(--fetchr-shadow-modal), inset 0 0.5px 0 var(--fetchr-color-border-hairline);
+  /* Раскрытие играет FLIP-твином в DownloadOverlay.tsx (transform), а не
+     переход width/height: тот пересчитывал раскладку на каждом кадре. */
+  container-type: inline-size;
+}
+
+.card[data-expanded] {
+  width: min(clamp(1040px, 70vw, 1440px), 100%);
+  height: min(clamp(660px, 78vh, 980px), 100%);
+}
+
+/* ── Поиск ─────────────────────────────────────────────────────── */
+.searchBar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 0.5px solid var(--hairline);
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fill);
+  padding: 6px 6px 6px 12px;
+  transition: box-shadow 0.2s ease;
+}
+
+.field:focus-within {
+  box-shadow: 0 0 0 3px rgb(var(--fetchr-accent-rgb) / 0.35);
+}
+
+.fieldIcon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  color: var(--label3);
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fieldInput {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  background: none;
+  color: var(--label);
+  font: inherit;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+  outline: none;
+  padding-block: 4px;
+}
+
+.fieldInput::placeholder {
+  color: var(--label3);
+}
+
+.platformChip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fill);
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: 600;
+  padding: 4px 10px 4px 7px;
+  white-space: nowrap;
+  animation: fadeIn 0.3s ease both;
+}
+
+.kbd {
+  display: inline-flex;
+  min-height: 32px;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-md);
+  background: none;
+  color: var(--label2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0 10px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.kbd kbd {
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-xs);
+  color: var(--label2);
+  font: var(--fetchr-weight-medium) 0.6875rem var(--fetchr-font-mono);
+  padding: 1px 4px;
+}
+
+.kbd:hover {
+  background: var(--fill-strong);
+  color: var(--label);
+}
+
+.kbd:focus-visible,
+.clearButton:focus-visible,
+.close:focus-visible,
+.findButton:focus-visible,
+.clipChip:focus-visible,
+.recentItem:focus-visible,
+.toastAction:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.clearButton {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--label3);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.clearButton:hover {
+  background: var(--fill-strong);
+  color: var(--label);
+}
+
+.findButton {
+  flex: none;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--blue-solid);
+  color: var(--on-blue);
+  cursor: pointer;
+  min-height: 32px;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0 14px;
+}
+
+.findButton:disabled {
+  opacity: 0.5;
+}
+
+.close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--label2);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.close:hover {
+  background: var(--fill-strong);
+  color: var(--label);
+}
+
+/* ── Пустое состояние ──────────────────────────────────────────── */
+.intro {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 26px 24px 24px;
+  text-align: center;
+}
+
+.introTitle {
+  margin: 0;
+  color: var(--label);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.introText {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-base);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.platforms {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.platforms span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-pill);
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: 500;
+  padding: 4px 10px;
+}
+
+.error {
+  margin: 10px 12px 0;
+  border-radius: var(--fetchr-radius-lg);
+  background: rgb(var(--fetchr-danger-rgb) / 0.12);
+  color: var(--red-text);
+  font-size: var(--fetchr-font-size-base);
+  padding: 8px 12px;
+}
+
+.errorMessage {
+  white-space: pre-line;
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.errorAction {
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: rgb(var(--fetchr-danger-rgb) / 0.16);
+  color: var(--red-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  padding: 4px 10px;
+  transition: background var(--fetchr-transition-fast);
+}
+
+.errorAction:hover {
+  background: rgb(var(--fetchr-danger-rgb) / 0.26);
+}
+
+.errorDetails {
+  margin-top: 6px;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.errorDetails summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.errorDetails pre {
+  margin: 4px 0 0;
+  font-family: var(--fetchr-font-mono);
+  font-size: var(--fetchr-font-size-sm);
+  opacity: 0.85;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.listSearch {
+  min-width: 140px;
+  flex: 1;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fill);
+  color: var(--label);
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  outline: none;
+  padding: 5px 10px;
+  transition: box-shadow 0.2s ease;
+}
+
+.listSearch::placeholder {
+  color: var(--label3);
+}
+
+.listSearch:focus {
+  box-shadow: 0 0 0 2px rgb(var(--fetchr-accent-rgb) / 0.35);
+}
+
+/* ── Список и инспектор ────────────────────────────────────────── */
+.split {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 24vw, 400px);
+  animation: fadeIn 0.35s ease both;
+}
+
+.listPane {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.listHead {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px 8px;
+}
+
+.segment {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fill);
+  padding: 2px;
+}
+
+.segmentItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: none;
+  color: var(--label2);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: 500;
+  padding: 5px 10px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.segmentItem b {
+  color: var(--label3);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.segmentItem:hover {
+  color: var(--label);
+}
+
+.segmentItem[aria-pressed="true"],
+.segmentItem[aria-checked="true"] {
+  background: var(--fill-strong);
+  box-shadow: 0 1px 2px rgb(var(--fetchr-rgb-canvas) / 0.3);
+  color: var(--label);
+}
+
+.ghost {
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: none;
+  color: var(--blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.ghost:hover {
+  background: var(--fill);
+}
+
+.ghost:disabled {
+  opacity: 0.4;
+}
+
+.list {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 2px;
+  overflow: auto;
+  padding: 0 8px 10px;
+  scrollbar-width: thin;
+}
+
+.empty {
+  margin: 0;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-base);
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.item {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 22px 96px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-radius: var(--fetchr-radius-lg);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 7px 8px;
+  text-align: left;
+  transition: background 0.15s ease;
+  animation: rise var(--fetchr-dur-slow) var(--fetchr-ease-out) both;
+}
+
+.item:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.itemSelected {
+  background: rgb(var(--fetchr-accent-rgb) / 0.08);
+}
+
+.itemFocused,
+.itemFocused:hover {
+  background: rgb(var(--fetchr-accent-rgb) / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(var(--fetchr-accent-rgb) / 0.55);
+}
+
+.item:focus-visible {
+  outline-offset: -2px;
+}
+
+.check {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1.5px solid var(--label3);
+  border-radius: 50%;
+  background: none;
+  color: var(--on-blue);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.check svg {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.2s ease, transform 0.25s var(--spring);
+}
+
+.itemSelected .check {
+  border-color: var(--blue);
+  background: var(--blue-solid);
+}
+
+.itemSelected .check svg {
+  opacity: 1;
+  transform: none;
+}
+
+.thumbBox {
+  position: relative;
+  display: block;
+  width: 96px;
+  height: 54px;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fill);
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.duration {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  border-radius: var(--fetchr-radius-xs);
+  background: var(--fetchr-color-media-badge);
+  color: var(--fetchr-color-on-accent);
+  font: var(--fetchr-weight-strong) var(--fetchr-font-size-xs) var(--fetchr-font-mono);
+  padding: 1px 5px;
+}
+
+.recDot {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.itemText {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.itemTitle {
+  overflow: hidden;
+  color: var(--label);
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemMeta {
+  margin: 0;
+  overflow: hidden;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag {
+  justify-self: start;
+  border-radius: var(--fetchr-radius-xs);
+  background: var(--fill);
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+.tag_live {
+  background: rgb(var(--fetchr-danger-rgb) / 0.16);
+  color: var(--red-text);
+}
+
+.tag_vod {
+  background: rgb(var(--fetchr-accent-rgb) / 0.14);
+  color: var(--blue-text);
+}
+
+.tag_clip {
+  background: rgb(var(--fetchr-zone-rgb) / 0.14);
+  color: var(--purple);
+}
+
+.tag_recovered {
+  background: rgb(var(--fetchr-warning-rgb) / 0.14);
+  color: var(--orange);
+}
+
+.inspector {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 14px;
+  overflow: auto;
+  border-left: 0.5px solid var(--hairline);
+  background: rgb(var(--fetchr-rgb-canvas) / 0.14);
+  padding: 14px;
+  scrollbar-width: thin;
+}
+
+.inspector > * {
+  flex-shrink: 0;
+}
+
+.total {
+  display: grid;
+  gap: 2px;
+}
+
+.total b {
+  font-size: var(--fetchr-font-size-display);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.total small {
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.section {
+  display: grid;
+  gap: 8px;
+}
+
+.sectionLabel {
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Сгруппированный список как в настройках */
+.groupList {
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--surface2);
+}
+
+.groupRow {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 8px 12px;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.groupRow:hover:not(:disabled) {
+  background: var(--fetchr-color-hover);
+}
+
+.groupRow + .groupRow::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 46px;
+  height: 0.5px;
+  background: var(--hairline);
+  content: "";
+}
+
+.groupRow:disabled {
+  cursor: default;
+}
+
+.groupRow:disabled .rowText,
+.groupRow:disabled .switch {
+  opacity: 0.4;
+}
+
+.rowIcon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  place-items: center;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--tone);
+  color: var(--on-blue);
+}
+
+.tone_purple {
+  --tone: var(--purple);
+}
+
+.tone_blue {
+  --tone: var(--blue);
+}
+
+.tone_teal {
+  --tone: var(--teal);
+}
+
+.tone_orange {
+  --tone: var(--orange);
+}
+
+.tone_gray {
+  --tone: var(--gray);
+}
+
+.rowText {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+}
+
+.rowText span {
+  font-size: var(--fetchr-font-size-lg);
+}
+
+.rowText small {
+  overflow: hidden;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presetRow {
+  min-height: 40px;
+  padding-left: 46px;
+  cursor: default;
+}
+
+.presetSelect {
+  max-width: 60%;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fill);
+  color: var(--label);
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  outline: none;
+  padding: 5px 8px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.presetSelect:focus-visible {
+  box-shadow: 0 0 0 3px rgb(var(--fetchr-accent-rgb) / 0.35);
+}
+
+.presetSelect option {
+  background: var(--surface-solid);
+  color: var(--label);
+}
+
+.rowActionBtn {
+  flex: none;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fill);
+  color: var(--label2);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: 500;
+  padding: 4px 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.rowActionBtn:hover {
+  background: var(--fill-strong);
+  color: var(--label);
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--label3);
+  transform: rotate(-90deg);
+}
+
+.switch {
+  position: relative;
+  width: 38px;
+  height: 23px;
+  flex: none;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fill-strong);
+  transition: background 0.25s ease;
+}
+
+.switch::after {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--fetchr-color-on-accent);
+  box-shadow: 0 2px 4px rgb(var(--fetchr-rgb-canvas) / 0.3);
+  content: "";
+  transition: transform 0.3s var(--spring);
+}
+
+.groupRow[aria-checked="true"] .switch {
+  background: var(--green);
+}
+
+.groupRow[aria-checked="true"] .switch::after {
+  transform: translateX(15px);
+}
+
+.note,
+.warning {
+  margin: 0;
+  font-size: var(--fetchr-font-size-md);
+  line-height: 1.45;
+}
+
+.note {
+  color: var(--label2);
+}
+
+.warning {
+  color: var(--orange);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: var(--fetchr-radius-lg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 11px 16px;
+  transition: background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.primary {
+  background: var(--blue-solid);
+  color: var(--on-blue);
+}
+
+/* Кнопка «Скачать» прибита к низу инспектора: при высоте окна 640
+   параметры прокручиваются под ней, а не уносят её за край. */
+.footer {
+  position: sticky;
+  bottom: -14px;
+  z-index: 2;
+  display: grid;
+  gap: 8px;
+  margin: auto -14px -14px;
+  border-top: 0.5px solid var(--hairline);
+  background: var(--surface-solid);
+  padding: 12px 14px 14px;
+}
+
+.footerSum {
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--blue-solid-hover);
+}
+
+.secondary {
+  background: var(--fill);
+  color: var(--label);
+}
+
+.secondary:hover {
+  background: var(--fill-strong);
+}
+
+.primary:active:not(:disabled),
+.secondary:active {
+  transform: scale(0.98);
+}
+
+.primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.segmentWide {
+  display: flex;
+}
+
+.segmentWide .segmentItem {
+  flex: 1;
+  justify-content: center;
+  font-size: var(--fetchr-font-size-base);
+  padding: 6px 8px;
+}
+
+.segmentItem:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.itemSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.own {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.own::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue-solid);
+  content: "";
+}
+
+.gear {
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fill);
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+  opacity: 0;
+  padding: 2px 7px;
+  transition: opacity 0.15s ease;
+}
+
+.item:hover .gear,
+.item:focus-visible .gear,
+.item:focus-within .gear,
+.gear:focus-visible {
+  opacity: 1;
+}
+
+.custom {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom > span:last-child {
+  overflow: hidden;
+  color: var(--blue-text);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customStrip {
+  position: relative;
+  width: 72px;
+  height: 4px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--fill-strong);
+}
+
+.customStrip i,
+.thumbWindow {
+  position: absolute;
+  background: var(--blue-solid);
+}
+
+.customStrip i {
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+}
+
+.thumbWindow {
+  bottom: 0;
+  height: 3px;
+}
+
+.focusHead {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  animation: fadeIn 0.3s ease both;
+}
+
+.focusThumb {
+  display: block;
+  width: 80px;
+  height: 45px;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fill);
+}
+
+.focusText {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.focusText b {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.ghostDanger {
+  justify-self: start;
+  align-self: flex-start;
+  color: var(--red-text);
+}
+
+/* Ползунок фрагмента */
+.rangeInfo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.rangeInfoRight {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.rangeResetBtn {
+  border: 0;
+  border-radius: var(--fetchr-radius-xs);
+  background: none;
+  color: var(--blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: 500;
+  padding: 1px 5px;
+  transition: background 0.15s ease;
+}
+
+.rangeResetBtn:hover {
+  background: var(--fill);
+}
+
+.urlTimecodeNotice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0.5px solid rgb(var(--fetchr-accent-rgb) / 0.35);
+  border-radius: var(--fetchr-radius-md);
+  background: rgb(var(--fetchr-accent-rgb) / 0.12);
+  color: var(--label);
+  font-size: var(--fetchr-font-size-md);
+  padding: 6px 10px;
+}
+
+.urlTimecodeNotice > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.urlTimecodeReset {
+  flex: none;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--blue-solid);
+  color: var(--on-blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: 600;
+  padding: 4px 9px;
+  transition: background 0.15s ease;
+}
+
+.urlTimecodeReset:hover {
+  background: var(--blue-solid-hover);
+}
+
+.range {
+  position: relative;
+  height: 34px;
+  border-radius: var(--fetchr-radius-md);
+  background:
+    repeating-linear-gradient(90deg, var(--fetchr-color-hover-strong) 0 1px, transparent 1px 12.5%),
+    var(--fill);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.rangeSel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-block: 2px solid var(--blue);
+  background: rgb(var(--fetchr-accent-rgb) / 0.22);
+  pointer-events: none;
+}
+
+.rangeSelExtra {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-inline: 1.5px solid var(--purple);
+  border-radius: var(--fetchr-radius-xs);
+  background: rgb(var(--fetchr-zone-rgb) / 0.24);
+  pointer-events: none;
+}
+
+.rangeHandle {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  display: grid;
+  width: 12px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--fetchr-radius-xs);
+  margin-left: -6px;
+  background: var(--blue-solid);
+  cursor: ew-resize;
+  padding: 0;
+}
+
+.rangeHandle::after {
+  width: 2px;
+  height: 14px;
+  border-radius: 1px;
+  background: var(--fetchr-color-on-accent);
+  opacity: 0.85;
+  content: "";
+}
+
+/* ── Одна запись ───────────────────────────────────────────────── */
+.detail {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  scrollbar-width: thin;
+}
+
+.detail > * {
+  flex-shrink: 0;
+}
+
+.detailMedia {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fill);
+}
+
+.detailThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detailHead {
+  display: grid;
+  min-width: 0;
+  max-width: 460px;
+  gap: 6px;
+}
+
+.detailTitle {
+  margin: 0;
+  font-size: var(--fetchr-font-size-title);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.clipFields {
+  display: grid;
+  width: 100%;
+  max-width: 460px;
+  gap: 14px;
+}
+
+.rangeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rangeRow .textInput {
+  min-width: 0;
+  flex: 1;
+}
+
+.rangeDash {
+  color: var(--label3);
+}
+
+.rangeRemove {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--label3);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.rangeRemove:hover {
+  background: var(--fill);
+  color: var(--red);
+}
+
+.rangeAdd {
+  justify-self: start;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: none;
+  color: var(--blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: 500;
+  padding: 3px 6px;
+  transition: background 0.15s ease;
+}
+
+.rangeAdd:hover {
+  background: var(--fill);
+}
+
+.textInput {
+  width: 100%;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fill);
+  color: var(--label);
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  outline: none;
+  padding: 8px 11px;
+  transition: box-shadow 0.2s ease;
+}
+
+.textInput::placeholder {
+  color: var(--label3);
+}
+
+.textInput:focus {
+  box-shadow: 0 0 0 3px rgb(var(--fetchr-accent-rgb) / 0.35);
+}
+
+.mono {
+  font-family: var(--fetchr-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.mono::placeholder {
+  font-family: var(--fetchr-font-sans);
+}
+
+/* ── Загрузка и готово ─────────────────────────────────────────── */
+.skeleton {
+  height: 68px;
+  border-radius: var(--fetchr-radius-lg);
+  background: linear-gradient(90deg, var(--fill) 0%, var(--fetchr-color-fill-strong) 50%, var(--fill) 100%) 0 0 / 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.skeletonTall {
+  height: 240px;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.done {
+  display: grid;
+  flex: 1;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 32px 24px;
+  text-align: center;
+  animation: fadeIn 0.35s ease both;
+}
+
+.doneMark {
+  display: grid;
+  width: 60px;
+  height: 60px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(var(--fetchr-success-rgb) / 0.16);
+  color: var(--green);
+  animation: pop 0.5s var(--spring) both;
+}
+
+.doneActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Мета строки: тип записи виден только в узком окне, где колонка тегов скрыта */
+.metaKind {
+  display: none;
+}
+
+/* Легенда клавиш под списком */
+.keyLegend {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  border-top: 0.5px solid var(--hairline);
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-md);
+  padding: 8px 14px;
+}
+
+.keyLegend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.keyLegend kbd {
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-xs);
+  color: var(--label2);
+  font: var(--fetchr-weight-medium) var(--fetchr-font-size-sm) var(--fetchr-font-mono);
+  padding: 0 4px;
+}
+
+/* ── Узкие окна: инспектор под списком ─────────────────────────── */
+@container (max-width: 760px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .inspector {
+    max-height: 46%;
+    border-top: 0.5px solid var(--hairline);
+    border-left: 0;
+  }
+
+  .item {
+    grid-template-columns: 22px 72px minmax(0, 1fr) auto;
+  }
+
+  .thumbBox {
+    width: 72px;
+    height: 40px;
+  }
+
+  /* Тип записи уезжает в мету строки, «Настроить» остаётся справа. */
+  .itemSide .tag {
+    display: none;
+  }
+
+  .metaKind {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .card,
+  .focusHead,
+  .platformChip,
+  .clipChip,
+  .item,
+  .split,
+  .done,
+  .doneMark,
+  .skeleton,
+  .recDot,
+  .spin {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ── Кнопка просмотра на миниатюре ─────────────────────────────── */
+.play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: rgb(var(--fetchr-rgb-canvas) / 0);
+  color: var(--fetchr-color-on-accent);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.18s, background 0.18s;
+}
+
+.play svg {
+  width: 26px;
+  height: 26px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--fetchr-color-media-badge);
+  backdrop-filter: blur(8px);
+  transform: scale(0.85);
+  transition: transform 0.22s var(--fetchr-ease-pop);
+}
+
+.playLarge svg {
+  width: 52px;
+  height: 52px;
+  padding: 14px;
+}
+
+.thumbBox:hover .play,
+.detailMedia:hover .play,
+.play:focus-visible {
+  background: rgb(var(--fetchr-rgb-canvas) / 0.28);
+  opacity: 1;
+}
+
+.thumbBox:hover .play svg,
+.detailMedia:hover .play svg,
+.play:focus-visible svg {
+  transform: scale(1);
+}
+
+.detailMedia .play {
+  opacity: 1;
+}
+
+/* ── m3u8 по TwitchTracker ─────────────────────────────────────── */
+.trackerTool {
+  display: grid;
+  /* Без minmax(0) колонка растягивалась по длине ссылки и выдавливала кнопки за карточку. */
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: end;
+  gap: 8px;
+  padding: 0 14px 12px;
+}
+
+.trackerToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--label2);
+  cursor: pointer;
+  font-size: var(--fetchr-font-size-sm);
+  padding: 4px 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.trackerToggle:hover,
+.trackerToggle[aria-expanded="true"] {
+  background: var(--fill);
+  color: var(--label2);
+}
+
+.trackerPanel {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  gap: 8px;
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--surface2);
+  padding: 10px;
+  animation: trackerIn 0.22s var(--fetchr-ease-out);
+}
+
+.trackerForm {
+  display: flex;
+  gap: 6px;
+}
+
+.trackerInput {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  flex: 1;
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fill);
+  color: var(--label);
+  font-size: var(--fetchr-font-size-base);
+  outline: none;
+  padding: 7px 10px;
+}
+
+.trackerInput:focus,
+.trackerInput:focus-visible {
+  border-color: var(--blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(var(--fetchr-accent-rgb) / 0.25);
+}
+
+.trackerGo {
+  display: grid;
+  flex: none;
+  min-width: 96px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--blue-solid);
+  color: var(--on-blue);
+  cursor: pointer;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: 600;
+  padding: 0 12px;
+}
+
+.trackerGo:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.trackerNote,
+.trackerError {
+  margin: 0;
+  font-size: var(--fetchr-font-size-md);
+}
+
+.trackerNote {
+  color: var(--label2);
+}
+
+.trackerError {
+  color: var(--red);
+}
+
+.trackerList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trackerList li {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fill);
+  padding: 4px 4px 4px 10px;
+}
+
+.trackerList code {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--label2);
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trackerList button {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--label2);
+  cursor: pointer;
+}
+
+.trackerList button:hover {
+  background: var(--fill-strong);
+  color: var(--label);
+}
+
+@keyframes trackerIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Подсказки поиска и отметка свежести результатов */
+.pasteNote {
+  margin: 8px 12px 0;
+  color: var(--orange);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.resultsStamp {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  color: var(--label3);
+  font-size: var(--fetchr-font-size-md);
+  padding: 4px 12px 0;
+}
+
+.resultsStamp .ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fetchr-font-size-md);
+}
+
+.trailIcon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--label3);
+}
+
+button.gear,
+button.own {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+}
+
+button.own {
+  border-radius: var(--fetchr-radius-sm);
+  background: none;
+  padding: 2px 7px;
+}
+
+button.gear:hover,
+button.own:hover {
+  background: var(--fill-strong);
+  color: var(--label);
+}
+
+button.gear:focus-visible {
+  opacity: 1;
+}
+
+.textInput[aria-invalid="true"] {
+  box-shadow: 0 0 0 2px rgb(var(--fetchr-danger-rgb) / 0.6);
+}
+
+.rangeError {
+  margin: 0;
+  color: var(--red-text);
+  font-size: var(--fetchr-font-size-md);
+}
+
+/* ── Буфер, недавние, пакет, загрузка ─────────────────────────── */
+.introHint {
+  max-width: 48ch;
+  margin: 4px 0 0;
+  color: var(--label3);
+  font-size: 0.75rem;
+  text-wrap: pretty;
+}
+
+.loadingNote {
+  flex: none;
+  margin: 0;
+  color: var(--label2);
+  font-size: 0.75rem;
+  padding: 8px 14px 0;
+}
+
+.clipRow {
+  display: flex;
+  justify-content: center;
+  padding: 14px 16px 0;
+}
+
+.clipChip {
+  display: inline-flex;
+  min-height: 32px;
+  max-width: 100%;
+  align-items: center;
+  gap: 8px;
+  border: 0.5px solid rgb(var(--fetchr-accent-rgb) / 0.4);
+  border-radius: var(--fetchr-radius-pill);
+  background: rgb(var(--fetchr-accent-rgb) / 0.12);
+  color: var(--blue-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0 14px;
+  animation: fadeIn 0.3s ease both;
+  transition: background 0.15s ease;
+}
+
+.clipChip:hover {
+  background: rgb(var(--fetchr-accent-rgb) / 0.2);
+}
+
+.clipChipText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent {
+  display: grid;
+  gap: 6px;
+  padding: 0 16px 12px;
+}
+
+.recentHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recentList {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recentRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recentRow .clearButton {
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.recentRow:hover .clearButton,
+.recentRow:focus-within .clearButton {
+  opacity: 1;
+}
+
+.recentItem {
+  display: flex;
+  min-width: 0;
+  min-height: 36px;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: none;
+  color: var(--label);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.recentItem:hover,
+.recentItem:focus-visible {
+  background: var(--fill);
+}
+
+.recentLabel {
+  overflow: hidden;
+  flex: none;
+  max-width: 50%;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recentMeta {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--label3);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.batch {
+  display: grid;
+  min-height: 0;
+  gap: 12px;
+  padding: 18px 16px 16px;
+  animation: fadeIn 0.3s ease both;
+}
+
+.batchHead {
+  display: grid;
+  gap: 4px;
+}
+
+.batchList {
+  display: grid;
+  max-height: min(46vh, 420px);
+  gap: 2px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+.batchItem {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--fetchr-radius-md);
+  padding: 4px 6px 4px 10px;
+}
+
+.batchItem:nth-child(odd) {
+  background: var(--fetchr-color-hover);
+}
+
+.batchIcon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--label2);
+}
+
+.batchItem[data-status="ok"] .batchIcon {
+  background: rgb(var(--fetchr-success-rgb) / 0.16);
+  color: var(--green);
+}
+
+.batchItem[data-status="error"] .batchIcon {
+  background: rgb(var(--fetchr-danger-rgb) / 0.16);
+  color: var(--red-text);
+}
+
+.batchItem[data-status="channel"] .batchIcon {
+  background: rgb(var(--fetchr-warning-rgb) / 0.14);
+  color: var(--orange);
+}
+
+.batchText {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+}
+
+.batchUrl,
+.batchNote {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.batchUrl {
+  font-size: 0.8125rem;
+}
+
+.batchNote {
+  color: var(--label2);
+  font-size: 0.75rem;
+}
+
+.batchItem[data-status="error"] .batchNote {
+  color: var(--red-text);
+  white-space: normal;
+}
+
+.batchActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clipChip,
+  .batch {
+    animation: none;
+  }
+}
+

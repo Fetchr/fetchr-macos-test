@@ -1,0 +1,696 @@
+/* NLE-style timeline under the sponsor-blur preview. */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ---------- header ---------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel-inset, transparent);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-medium);
+  color: var(--fetchr-color-text-secondary);
+  white-space: nowrap;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.readout {
+  font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--fetchr-color-text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.readoutDim {
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.zoomGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-sm);
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 24×24 — минимальная цель по WCAG 2.2 SC 2.5.8 (AA) */
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--fetchr-radius-xs);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  background: var(--fetchr-color-graphite-800);
+  color: var(--fetchr-color-text);
+}
+
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-graphite-800);
+  color: var(--fetchr-color-text);
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.textButton:hover:not(:disabled) {
+  border-color: var(--fetchr-color-accent);
+}
+
+.textButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* ---------- body ---------- */
+
+.body {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.gutter {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--fetchr-color-border);
+  background: var(--fetchr-color-graphite-900);
+}
+
+.gutterCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  font-size: 10px;
+  color: var(--fetchr-color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+}
+
+.gutterRuler {
+  height: 26px;
+}
+
+.gutterFilm {
+  height: 46px;
+}
+
+.gutterZone {
+  height: 24px;
+  border: none;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.gutterZone:hover {
+  background: var(--fetchr-color-graphite-800);
+}
+
+.gutterZoneActive {
+  background: var(--fetchr-color-graphite-800);
+  color: var(--fetchr-color-text);
+  box-shadow: inset 2px 0 0 var(--fetchr-color-accent);
+}
+
+.gutterMuted {
+  cursor: default;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.zoneDot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fetchr-color-accent);
+}
+
+.zoneName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gutterRange {
+  height: 22px;
+  border-bottom: none;
+}
+
+/* ---------- drawing area ---------- */
+
+.canvas {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  cursor: crosshair;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.row {
+  position: relative;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  overflow: hidden;
+}
+
+.ruler {
+  height: 26px;
+  background: var(--fetchr-color-graphite-900);
+}
+
+.tickMajor,
+.tickMinor {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  background: var(--fetchr-color-border);
+  pointer-events: none;
+}
+
+.tickMajor {
+  height: 100%;
+  background: var(--fetchr-color-text-tertiary);
+  opacity: 0.5;
+}
+
+.tickMinor {
+  height: 7px;
+  opacity: 0.7;
+}
+
+.tickLabel {
+  position: absolute;
+  left: 4px;
+  top: 5px;
+  font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--fetchr-color-text-tertiary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.filmRow {
+  height: 46px;
+  background: var(--fetchr-color-graphite-900);
+}
+
+.filmTile {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.filmPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--fetchr-color-text-tertiary);
+  pointer-events: none;
+}
+
+.zoneRow {
+  height: 24px;
+  background: var(--fetchr-color-graphite-900);
+}
+
+.zoneRowActive {
+  background: color-mix(in srgb, var(--fetchr-color-accent) 8%, var(--fetchr-color-graphite-900));
+}
+
+/* The full tracked span, drawn behind the found/lost segments. */
+.trackSpan {
+  position: absolute;
+  top: 6px;
+  height: 12px;
+  border-radius: var(--fetchr-radius-xs);
+  background: var(--fetchr-color-graphite-800);
+  pointer-events: none;
+}
+
+.segment {
+  position: absolute;
+  top: 5px;
+  height: 14px;
+  border-radius: var(--fetchr-radius-xs);
+  background: var(--fetchr-color-accent);
+  cursor: pointer;
+}
+
+.segment:hover {
+  filter: brightness(1.25);
+}
+
+/* Hatched so a lost stretch reads differently from a weak match even for
+   users who cannot separate the two hues. */
+.gap {
+  position: absolute;
+  top: 7px;
+  height: 10px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--fetchr-color-danger) 0 4px,
+    transparent 4px 8px
+  );
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.rangeRow {
+  height: 22px;
+  background: var(--fetchr-color-graphite-900);
+  border-bottom: none;
+}
+
+.rangeFill {
+  position: absolute;
+  top: 7px;
+  height: 8px;
+  border-radius: var(--fetchr-radius-xs);
+  background: color-mix(in srgb, var(--fetchr-color-accent) 35%, transparent);
+  border: 1px solid var(--fetchr-color-accent);
+  pointer-events: none;
+}
+
+.rangeHandle {
+  position: absolute;
+  top: 3px;
+  width: 9px;
+  height: 16px;
+  margin-left: -4px;
+  border-radius: var(--fetchr-radius-xs);
+  background: var(--fetchr-color-accent);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.rangeHandle:hover {
+  filter: brightness(1.2);
+}
+
+.rangeHandleStart::after,
+.rangeHandleEnd::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  width: 3px;
+  height: 8px;
+  border-left: 1px solid rgba(0, 0, 0, 0.45);
+  border-right: 1px solid rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- playhead ---------- */
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--fetchr-color-danger);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.playheadBusy {
+  opacity: 0.5;
+}
+
+.playheadGrip {
+  position: absolute;
+  top: 0;
+  left: -6px;
+  width: 13px;
+  height: 11px;
+  background: var(--fetchr-color-danger);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%);
+  pointer-events: auto;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+/* ---------- footer ---------- */
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 10px;
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  font-size: 10px;
+  color: var(--fetchr-color-text-tertiary);
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.legendVisible,
+.legendGap {
+  width: 14px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legendVisible {
+  background: var(--fetchr-color-accent);
+}
+
+.legendGap {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--fetchr-color-danger) 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.hint {
+  margin-left: auto;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 12px;
+  font-size: 11px;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+/* ---------- compact: простой режим ----------
+   Те же строки, но ниже и легче: стеклянная панель, тонкие дорожки,
+   подсказка про колесо убрана, остаётся только легенда. */
+
+.compact {
+  border-color: rgb(255 255 255 / 0.09);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.025));
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 10px 28px rgb(0 0 0 / 0.3);
+}
+
+.compact .header {
+  padding: 5px 10px 3px;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.compact .title {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.compact .zoomGroup {
+  border-color: rgb(255 255 255 / 0.09);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.04);
+}
+
+.compact .iconButton {
+  border-radius: 8px;
+}
+
+.compact .textButton {
+  height: 24px;
+  border-color: rgb(255 255 255 / 0.1);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.06);
+}
+
+.compact .gutter {
+  border-right-color: rgb(255 255 255 / 0.07);
+  background: transparent;
+}
+
+.compact .gutterCell,
+.compact .gutterZone,
+.compact .row {
+  border-bottom-color: rgb(255 255 255 / 0.05);
+}
+
+.compact .gutterCell {
+  padding: 0 8px;
+  font-size: 9.5px;
+}
+
+.compact .gutterRuler,
+.compact .ruler {
+  height: 20px;
+}
+
+.compact .gutterFilm,
+.compact .filmRow {
+  height: 30px;
+}
+
+.compact .gutterZone,
+.compact .zoneRow {
+  height: 20px;
+}
+
+.compact .gutterRange,
+.compact .rangeRow {
+  height: 18px;
+}
+
+.compact .ruler,
+.compact .filmRow,
+.compact .zoneRow,
+.compact .rangeRow {
+  background: transparent;
+}
+
+.compact .zoneRowActive {
+  background: rgb(var(--fetchr-accent-rgb) / 0.1);
+}
+
+.compact .gutterZone:hover,
+.compact .gutterZoneActive {
+  background: rgb(255 255 255 / 0.05);
+}
+
+.compact .tickLabel {
+  top: 3px;
+  font-size: 9.5px;
+}
+
+.compact .tickMinor {
+  height: 5px;
+}
+
+.compact .filmRow {
+  margin: 2px 0;
+  border-radius: 8px;
+}
+
+.compact .trackSpan {
+  top: 5px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.07);
+}
+
+.compact .segment {
+  top: 4px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--fetchr-color-accent-deep), var(--fetchr-color-accent-hover));
+  box-shadow: 0 0 10px rgb(var(--fetchr-accent-rgb) / 0.35);
+}
+
+.compact .gap {
+  top: 6px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.compact .rangeFill {
+  top: 5px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(var(--fetchr-accent-rgb) / 0.28);
+}
+
+.compact .rangeHandle {
+  top: 2px;
+  width: 8px;
+  height: 14px;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgb(var(--fetchr-accent-rgb) / 0.5);
+}
+
+.compact .rangeHandleStart::after,
+.compact .rangeHandleEnd::after {
+  top: 3px;
+  left: 2px;
+  height: 8px;
+}
+
+.compact .playhead {
+  width: 2px;
+  margin-left: -0.5px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 0 10px rgb(255 255 255 / 0.7);
+}
+
+.compact .playheadGrip {
+  top: -1px;
+  left: -5px;
+  background: #fff;
+}
+
+.compact .footer {
+  gap: 10px;
+  padding: 3px 10px 5px;
+  border-top: 0;
+}
+
+.compact .hint {
+  display: none;
+}
+
+/* Свёрнутый таймлайн: остаётся шапка с управлением, предпросмотр забирает высоту. */
+.folded .body,
+.folded .footer {
+  display: none;
+}
+
+.folded .header {
+  padding-bottom: 5px;
+}
+
+/* ---------- иконка и окошко ИИ-трекера ---------- */
+
+.compact {
+  position: relative;
+  overflow: visible;
+}
+
+.trackerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.06);
+  color: var(--fetchr-color-accent-bright);
+  cursor: pointer;
+  transition: background var(--fetchr-transition-fast), box-shadow var(--fetchr-transition-fast);
+}
+
+.trackerButton:hover,
+.trackerButtonActive {
+  background: var(--fetchr-color-accent-soft);
+  box-shadow: 0 0 12px rgb(var(--fetchr-accent-rgb) / 0.35);
+}
+
+.trackerButton:focus-visible {
+  outline: 2px solid var(--fetchr-color-accent-bright);
+  outline-offset: 2px;
+}
+
+.trackerPop {
+  position: absolute;
+  right: 8px;
+  bottom: calc(100% + 8px);
+  z-index: 30;
+  width: min(380px, calc(100% - 16px));
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.04)), rgb(14 15 17 / 0.88);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  backdrop-filter: blur(28px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 20px 50px rgb(0 0 0 / 0.55);
+  user-select: text;
+  animation: trackerIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes trackerIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trackerPop {
+    animation: none;
+  }
+}

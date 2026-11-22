@@ -1,0 +1,286 @@
+/* Просмотр клипа над полкой: кадр ограничен высотой окна, чтобы панель
+   плеера всегда оставалась на экране; справа — всё, что можно сделать
+   с клипом. */
+
+.viewer {
+  /* Хром окна сверху, поля вокруг кадра и панель плеера под ним. */
+  --viewer-video-max: max(200px, calc(100vh - 200px));
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel);
+  overflow: hidden;
+  scroll-margin-top: var(--fetchr-space-6);
+}
+
+.stage {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fetchr-space-8);
+  background: var(--fetchr-color-panel-inset);
+}
+
+/* 16:9, но кадр вместе с панелью плеера помещается в окно: ширину
+   считаем от доступной высоты. */
+.frame {
+  width: min(100%, calc(var(--viewer-video-max) * 16 / 9));
+  /* Панель плеера (кнопки, громкость) не помещается уже ~560px. */
+  min-width: min(100%, 560px);
+}
+
+.loading {
+  display: flex;
+  aspect-ratio: 16 / 9;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-media-badge);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+}
+
+.info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-8) var(--fetchr-space-10) var(--fetchr-space-10);
+  border-left: 1px solid var(--fetchr-color-border);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-4);
+}
+
+.counter {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.nav {
+  display: flex;
+  gap: var(--fetchr-space-2);
+}
+
+.navButton {
+  display: grid;
+  padding: var(--fetchr-space-3);
+  place-items: center;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.navButton:hover:not(:disabled) {
+  background: var(--fetchr-color-panel-hover);
+  color: var(--fetchr-color-text);
+}
+
+.navButton:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.navButton:disabled {
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.navButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+.left,
+.right {
+  transform: rotate(-90deg);
+}
+
+.title {
+  margin: var(--fetchr-space-2) 0 0;
+  font-size: var(--fetchr-font-size-title);
+  font-weight: var(--fetchr-weight-strong);
+  line-height: var(--fetchr-line-height-compact);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.channel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  color: var(--fetchr-color-text-secondary);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--fetchr-space-6) var(--fetchr-space-8);
+  margin: var(--fetchr-space-2) 0 0;
+  padding: var(--fetchr-space-7) 0;
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.facts div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.facts dt {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.facts dd {
+  margin: 0;
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: var(--fetchr-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin: 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-relaxed);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-2);
+}
+
+.tag {
+  padding: 1px var(--fetchr-space-4);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-4);
+  margin-top: auto;
+}
+
+.download {
+  composes: buttonHero from "../theme/primitives.module.css";
+}
+
+.secondaryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--fetchr-space-4);
+}
+
+.secondary {
+  composes: button from "../theme/primitives.module.css";
+}
+
+.download svg,
+.secondary svg {
+  width: 14px;
+  height: 14px;
+}
+
+.secondaryOn {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.55);
+  color: var(--fetchr-color-accent-bright);
+}
+
+.secondaryDanger,
+.secondaryDanger:hover:not(:disabled) {
+  border-color: rgb(var(--fetchr-danger-rgb) / 0.6);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+}
+
+.spinning {
+  animation: spin var(--fetchr-dur-spin) var(--fetchr-ease-linear) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Пороги — по области архива (окно минус сайдбар 244px): 1280→1036, 980→736, 560→316. */
+@container archive (max-width: 1280px) {
+  .viewer {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .info {
+    padding: var(--fetchr-space-8);
+  }
+}
+
+/* Узко: сведения уходят под кадр и раскладываются в строку. */
+@container archive (max-width: 980px) {
+  .viewer {
+    --viewer-video-max: max(240px, calc(100vh - 320px));
+
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage {
+    padding: var(--fetchr-space-4);
+  }
+
+  .info {
+    border-top: 1px solid var(--fetchr-color-border);
+    border-left: 0;
+  }
+
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .download {
+    width: auto;
+    flex: 1 1 220px;
+  }
+
+  .secondaryRow {
+    flex: 1 1 220px;
+  }
+}
+
+@container archive (max-width: 560px) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinning {
+    animation: none;
+  }
+
+  .navButton {
+    transition: none;
+  }
+}

@@ -1,0 +1,95 @@
+/* Всплывающее меню: «⋯» карточки файла и действия над словом.
+   Поверхность — ступень panel-elevated с волосяной рамкой, как меню
+   пресетов в топбаре; теней в системе нет. */
+
+.menu {
+  display: flex;
+  min-width: 220px;
+  max-width: min(320px, calc(100vw - 32px));
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+  padding: var(--fetchr-space-2);
+  border: 1px solid var(--fetchr-color-border-strong);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: var(--fetchr-shadow-elevated);
+  z-index: 20;
+}
+
+.item {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  padding: 0 var(--fetchr-space-5);
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.item:hover:not(:disabled),
+.item:focus-visible {
+  outline: none;
+  background: var(--fetchr-color-hover-strong);
+}
+
+.item:disabled,
+.item[aria-disabled="true"] {
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.item svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.itemLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemDanger,
+.itemDanger svg {
+  color: var(--fetchr-color-danger);
+}
+
+.separator {
+  height: 1px;
+  margin: var(--fetchr-space-1) var(--fetchr-space-2);
+  background: var(--fetchr-color-border-subtle);
+}
+
+/* Пункт с пояснением второй строкой (меню «Экспорт»). */
+.itemWithHint {
+  align-items: flex-start;
+  padding-top: var(--fetchr-space-3);
+  padding-bottom: var(--fetchr-space-3);
+  white-space: normal;
+}
+
+.itemWithHint svg {
+  margin-top: 2px;
+}
+
+.itemText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.itemHint {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  line-height: var(--fetchr-line-height-compact);
+}

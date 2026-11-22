@@ -1,0 +1,707 @@
+/* Рендер чата, вариант «Редактор»: сверху источник, по центру кадр с
+   рамкой чата, снизу отрезок; справа инспектор «Стиль · Место · Вывод».
+   Палитра остальных страниц: нейтральное стекло, цвет со смыслом. */
+.host {
+  --c-label: #f5f5f7;
+  --c-label2: rgb(235 235 245 / 0.62);
+  --c-label3: rgb(235 235 245 / 0.32);
+  --c-fill: rgb(118 118 128 / 0.2);
+  --c-fill-strong: rgb(118 118 128 / 0.32);
+  --c-hairline: rgb(255 255 255 / 0.08);
+  --c-surface2: rgb(44 44 46 / 0.6);
+  --c-blue: #0a84ff;
+  --c-green: #30d158;
+  --c-orange: #ff9f0a;
+  --c-red: #ff453a;
+
+  height: 100%;
+  min-height: 0;
+  container-name: chatstudio;
+  container-type: inline-size;
+  color: var(--c-label);
+}
+
+.editor {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+.main {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+/* ── Источник ──────────────────────────────────────────────────── */
+.source {
+  display: grid;
+  flex: none;
+  gap: 8px;
+}
+
+.sourceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.field {
+  display: flex;
+  min-width: 220px;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background: var(--c-fill);
+  padding: 5px 6px 5px 12px;
+  transition: box-shadow 0.2s ease;
+}
+
+.field:focus-within {
+  box-shadow: 0 0 0 3px rgb(10 132 255 / 0.35);
+}
+
+.fieldIcon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--c-label3);
+}
+
+.fieldInput {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  background: none;
+  color: var(--c-label);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  padding-block: 4px;
+}
+
+.fieldInput::placeholder {
+  color: var(--c-label3);
+}
+
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: var(--c-fill);
+  color: var(--c-label2);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.chipOk {
+  background: rgb(48 209 88 / 0.14);
+  color: var(--c-green);
+}
+
+.chipOk::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-green);
+  content: "";
+}
+
+.segment {
+  display: inline-flex;
+  gap: 2px;
+  border-radius: 9px;
+  background: var(--c-fill);
+  padding: 2px;
+}
+
+.segmentWide {
+  display: flex;
+}
+
+.segmentItem {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--c-label2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 11px;
+  white-space: nowrap;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.segmentItem:hover {
+  color: var(--c-label);
+}
+
+.segmentItem[aria-checked="true"] {
+  background: var(--c-fill-strong);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  color: var(--c-label);
+}
+
+.iconButton {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: var(--c-fill);
+  color: var(--c-label2);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: var(--c-fill-strong);
+  color: var(--c-label);
+}
+
+.iconButton:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.notice {
+  margin: 0;
+  border-radius: 9px;
+  background: var(--c-fill);
+  color: var(--c-label2);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 7px 11px;
+}
+
+.noticeError {
+  background: rgb(255 69 58 / 0.12);
+  color: #ff6961;
+}
+
+.noticeOk {
+  background: rgb(48 209 88 / 0.12);
+  color: var(--c-green);
+}
+
+/* ── Кадр ──────────────────────────────────────────────────────── */
+.canvas {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.canvas > * {
+  min-height: 0;
+  flex: 1;
+}
+
+/* ── Отрезок ───────────────────────────────────────────────────── */
+.range {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  background: var(--c-surface2);
+  padding: 8px 10px;
+}
+
+.label {
+  color: var(--c-label3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.range .label {
+  margin-right: 4px;
+}
+
+.timeInput {
+  width: 112px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--c-fill);
+  color: var(--c-label);
+  font: 500 13px "JetBrains Mono", ui-monospace, Consolas, monospace;
+  outline: none;
+  padding: 6px 10px;
+  text-align: center;
+  transition: box-shadow 0.2s ease;
+}
+
+.timeInput::placeholder {
+  color: var(--c-label3);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+.timeInput:focus {
+  box-shadow: 0 0 0 3px rgb(10 132 255 / 0.35);
+}
+
+.timeInvalid {
+  box-shadow: 0 0 0 1.5px var(--c-red);
+}
+
+.rangeDash {
+  color: var(--c-label3);
+}
+
+.rangeError {
+  color: #ff6961;
+  font-size: 12px;
+}
+
+.ghost {
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--c-blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--c-fill);
+}
+
+.ghost:disabled {
+  color: var(--c-label3);
+  cursor: default;
+}
+
+/* ── Инспектор ─────────────────────────────────────────────────── */
+.inspector {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  border-left: 0.5px solid var(--c-hairline);
+  background: rgb(0 0 0 / 0.14);
+  container-type: inline-size;
+}
+
+.inspectorHead {
+  flex: none;
+  border-bottom: 0.5px solid var(--c-hairline);
+  padding: 12px;
+}
+
+.inspectorBody {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  align-content: start;
+  gap: 16px;
+  overflow: auto;
+  padding: 14px 12px;
+  scrollbar-width: thin;
+  animation: fadeIn 0.25s ease both;
+}
+
+.section {
+  display: grid;
+  gap: 8px;
+}
+
+.hint {
+  color: var(--c-label2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Пресеты */
+.presets {
+  display: grid;
+  gap: 2px;
+  border-radius: 12px;
+  background: var(--c-surface2);
+  padding: 4px;
+}
+
+.preset {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.preset:hover {
+  background: rgb(255 255 255 / 0.04);
+}
+
+.presetActive,
+.presetActive:hover {
+  background: rgb(10 132 255 / 0.16);
+}
+
+.presetMain {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  color: var(--c-label);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.presetDot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border: 1.5px solid var(--c-label3);
+  border-radius: 50%;
+}
+
+.presetActive .presetDot {
+  border-color: var(--c-blue);
+  background: var(--c-blue);
+}
+
+.presetName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presetInput {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  border-radius: 7px;
+  background: var(--c-fill);
+  color: var(--c-label);
+  font: inherit;
+  font-size: 13px;
+  margin: 3px;
+  outline: none;
+  padding: 5px 8px;
+}
+
+.presetDelete {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--c-label3);
+  cursor: pointer;
+  margin-right: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.preset:hover .presetDelete,
+.presetDelete:focus-visible,
+.presetDeleteArmed {
+  opacity: 1;
+}
+
+.presetDelete:hover,
+.presetDeleteArmed {
+  background: var(--c-red);
+  color: #fff;
+}
+
+.presetAdd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--c-blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.presetAdd:hover {
+  background: rgb(255 255 255 / 0.04);
+}
+
+/* Настройки стиля из прежней нижней панели: здесь одной колонкой. */
+.dockSettings > section {
+  border: 0;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.dockSettings :global(*) {
+  max-width: 100%;
+}
+
+
+/* Поля шрифта и кнопки «Обводка» / «Фон»: спокойные, без подсветки. */
+.dockSettings select,
+.dockSettings input:not([type="range"]):not([type="checkbox"]) {
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: var(--c-fill) !important;
+  box-shadow: none !important;
+}
+
+.dockSettings [class*="pill"]:is(button, div):not([class*="pillLabel"]):not([class*="pillStep"]):not([class*="pillValue"]):not([class*="pillDivider"]):not([class*="pillPopover"]) {
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: var(--c-fill) !important;
+  box-shadow: none !important;
+  color: var(--c-label) !important;
+}
+
+.dockSettings [class*="pillActive"] {
+  background: var(--c-fill-strong) !important;
+}
+
+/* Списки переключателей */
+.toggleList {
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--c-surface2);
+}
+
+.toggleRow {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  color: var(--c-label);
+  cursor: pointer;
+  font: inherit;
+  padding: 8px 12px;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.toggleRow:hover {
+  background: rgb(255 255 255 / 0.04);
+}
+
+.toggleRow + .toggleRow::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 12px;
+  height: 0.5px;
+  background: var(--c-hairline);
+  content: "";
+}
+
+.toggleText {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 1px;
+}
+
+.toggleText span {
+  font-size: 13px;
+}
+
+.toggleText small {
+  color: var(--c-label3);
+  font-size: 11px;
+}
+
+.switch {
+  position: relative;
+  width: 38px;
+  height: 23px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--c-fill-strong);
+  transition: background 0.25s ease;
+}
+
+.switch::after {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.3);
+  content: "";
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.toggleRow[aria-checked="true"] .switch {
+  background: var(--c-green);
+}
+
+.toggleRow[aria-checked="true"] .switch::after {
+  transform: translateX(15px);
+}
+
+/* Позиция */
+.posRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.posGrid {
+  display: grid;
+  width: 120px;
+  flex: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.posCell {
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-radius: 5px;
+  background: var(--c-fill);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.posCell:hover {
+  background: var(--c-fill-strong);
+}
+
+.posCell[aria-pressed="true"] {
+  background: var(--c-blue);
+}
+
+.outputPanel > section {
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* Низ инспектора: сводка и действия */
+.inspectorFoot {
+  display: grid;
+  flex: none;
+  gap: 8px;
+  border-top: 0.5px solid var(--c-hairline);
+  padding: 12px;
+}
+
+.summary {
+  color: var(--c-label2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.footActions {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 6px;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 12px;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.primary {
+  background: var(--c-blue);
+  color: #fff;
+  font-size: 14px;
+}
+
+.primary:hover:not(:disabled) {
+  background: #2b95ff;
+}
+
+.secondary {
+  background: var(--c-fill);
+  color: var(--c-label);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--c-fill-strong);
+}
+
+.primary:active:not(:disabled),
+.secondary:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@container chatstudio (max-width: 900px) {
+  .editor {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(320px, 1fr) minmax(0, 45%);
+  }
+
+  .inspector {
+    border-top: 0.5px solid var(--c-hairline);
+    border-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inspectorBody {
+    animation: none;
+  }
+}

@@ -1,0 +1,550 @@
+/* Первоначальная настройка. Раскладка экрана приветствия Windows: крупная
+   рамка по центру, слева иконка шага и заголовок, справа содержимое, внизу
+   точки шагов и кнопки. Поверхности и акцент — из токенов приложения. */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: grid;
+  place-items: center;
+  padding: 48px 24px 32px;
+  background: var(--fetchr-color-app-bg);
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+/* Спокойный ASCII-фон в стиле заставки */
+.ascii {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dragBar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 36px;
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  width: min(940px, 100%);
+  height: min(580px, 100%);
+  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.2fr);
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: rgb(var(--fetchr-rgb-surface) / 0.74);
+  box-shadow: inset 0 1px 0 var(--fetchr-color-border-hairline);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+
+/* ── Левая колонка: иконка и заголовок шага ─────────────────────── */
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--fetchr-space-6);
+  border-right: 1px solid var(--fetchr-color-border-subtle);
+  background: rgb(var(--fetchr-rgb-canvas) / 0.35);
+  padding: var(--fetchr-space-20) var(--fetchr-space-16);
+}
+
+/* Иконка шага в квадратных скобках — рамка выделения из заставки */
+.asideIcon {
+  position: relative;
+  display: inline-grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  color: var(--fetchr-color-accent-bright);
+}
+
+.asideIcon::before,
+.asideIcon::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  border: 2px solid var(--fetchr-color-text);
+  content: "";
+}
+
+.asideIcon::before {
+  left: 0;
+  border-right: 0;
+}
+
+.asideIcon::after {
+  right: 0;
+  border-left: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: -0.01em;
+  line-height: var(--fetchr-line-height-tight);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-lg);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+/* ── Правая колонка ─────────────────────────────────────────────── */
+
+.main {
+  display: grid;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+
+.stage {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--fetchr-space-20) var(--fetchr-space-16) var(--fetchr-space-8);
+}
+
+.welcome {
+  display: grid;
+  align-content: start;
+  gap: var(--fetchr-space-8);
+}
+
+.lead {
+  margin: 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-lg);
+  line-height: var(--fetchr-line-height-relaxed);
+}
+
+.fieldLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Список выбора как в OOBE: строка на всю ширину, отмеченная подсвечена */
+.choiceList {
+  display: grid;
+  gap: var(--fetchr-space-3);
+}
+
+.choice {
+  display: flex;
+  height: 44px;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-lg);
+  padding: 0 var(--fetchr-space-8);
+  text-align: left;
+  transition: border-color var(--fetchr-transition-fast), background-color var(--fetchr-transition-fast);
+}
+
+.choice:hover {
+  background: var(--fetchr-color-panel-hover);
+}
+
+.choice {
+  position: relative;
+}
+
+.choice[data-active] {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.6);
+  background: var(--fetchr-color-panel-selected);
+}
+
+/* Уголки-скобки, как выделение в заставке: у выбранного варианта списка и у
+   инструмента под курсором (инструменты обычно выбраны все — скобки на
+   каждом превратились бы в шум) */
+.choice[data-active]::after,
+.tool:hover::after,
+.tool:focus-visible::after {
+  --bracket: var(--fetchr-color-accent-bright);
+
+  position: absolute;
+  inset: -5px;
+  background:
+    linear-gradient(var(--bracket), var(--bracket)) left top / 2px 10px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) left top / 10px 2px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) right top / 2px 10px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) right top / 10px 2px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) left bottom / 2px 10px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) left bottom / 10px 2px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) right bottom / 2px 10px no-repeat,
+    linear-gradient(var(--bracket), var(--bracket)) right bottom / 10px 2px no-repeat;
+  content: "";
+  pointer-events: none;
+}
+
+.choiceMark {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border: 1.5px solid var(--fetchr-color-border-control);
+  border-radius: var(--fetchr-radius-pill);
+}
+
+.choice[data-active] .choiceMark {
+  border: 5px solid var(--fetchr-color-accent);
+}
+
+/* ── Инструменты ────────────────────────────────────────────────── */
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--fetchr-space-5);
+}
+
+.tool {
+  position: relative;
+  display: grid;
+  min-height: 96px;
+  align-content: space-between;
+  justify-items: start;
+  gap: var(--fetchr-space-6);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  padding: var(--fetchr-space-7);
+  text-align: left;
+  transition:
+    border-color var(--fetchr-transition-fast),
+    background-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast),
+    transform var(--fetchr-transition-fast);
+}
+
+.tool:hover {
+  border-color: var(--fetchr-color-border-strong);
+  background: var(--fetchr-color-panel-hover);
+  color: var(--fetchr-color-text);
+  transform: translateY(-1px);
+}
+
+.tool:focus-visible,
+.choice:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.tool[data-active] {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.55);
+  background: var(--fetchr-color-panel-selected);
+  color: var(--fetchr-color-text);
+}
+
+.tool[aria-disabled] {
+  cursor: default;
+}
+
+.toolIcon {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text-secondary);
+  transition: background-color var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.tool[data-active] .toolIcon {
+  background: rgb(var(--fetchr-accent-rgb) / 0.2);
+  color: var(--fetchr-color-accent-bright);
+}
+
+.toolName {
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.toolCheck {
+  position: absolute;
+  top: var(--fetchr-space-6);
+  right: var(--fetchr-space-6);
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1.5px solid var(--fetchr-color-border-control);
+  border-radius: var(--fetchr-radius-sm);
+  color: var(--fetchr-color-on-accent);
+}
+
+.tool[data-active] .toolCheck {
+  border-color: var(--fetchr-color-accent);
+  background: var(--fetchr-color-accent);
+}
+
+.toolLock {
+  margin-top: calc(-1 * var(--fetchr-space-5));
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs);
+}
+
+/* Подпись снизу: что делает инструмент под курсором */
+.hint {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  margin: 0 var(--fetchr-space-16);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  line-height: var(--fetchr-line-height-compact);
+  padding-top: var(--fetchr-space-5);
+  transition: color var(--fetchr-transition-base);
+}
+
+.hint[data-active] {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.hintText {
+  animation: setup-hint-in var(--fetchr-dur-slow) var(--fetchr-ease-out);
+}
+
+@keyframes setup-hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* ── Папка ──────────────────────────────────────────────────────── */
+
+.folderRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+  padding: var(--fetchr-space-5) var(--fetchr-space-5) var(--fetchr-space-5) var(--fetchr-space-7);
+}
+
+.folderPath {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Установка ──────────────────────────────────────────────────── */
+
+.installList {
+  display: grid;
+  gap: var(--fetchr-space-7);
+}
+
+.installItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--fetchr-space-6);
+}
+
+.installIcon {
+  display: inline-grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.installItem[data-state="running"] .installIcon {
+  background: rgb(var(--fetchr-accent-rgb) / 0.16);
+  color: var(--fetchr-color-accent-bright);
+}
+
+.installItem[data-state="done"] .installIcon {
+  background: var(--fetchr-color-success-soft);
+  color: var(--fetchr-color-success);
+}
+
+.installItem[data-state="failed"] .installIcon {
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger);
+}
+
+.installBody {
+  display: grid;
+  min-width: 0;
+  gap: var(--fetchr-space-3);
+}
+
+.installHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--fetchr-space-5);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.installPercent {
+  color: var(--fetchr-color-text-secondary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.installBar {
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-hover-strong);
+}
+
+.installFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--fetchr-gradient-rail);
+  transition: width var(--fetchr-dur-slower) var(--fetchr-ease-out);
+}
+
+.installItem[data-state="done"] .installFill {
+  background: var(--fetchr-gradient-rail-done);
+}
+
+.installMessage {
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.installItem[data-state="failed"] .installMessage {
+  color: var(--fetchr-color-danger-bright);
+  white-space: normal;
+}
+
+.installActions {
+  display: flex;
+  gap: var(--fetchr-space-4);
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.summary li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  padding: var(--fetchr-space-2) var(--fetchr-space-6);
+}
+
+/* ── Подвал ─────────────────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-8);
+  padding: var(--fetchr-space-8) var(--fetchr-space-16) var(--fetchr-space-12);
+}
+
+.dots {
+  display: flex;
+  gap: var(--fetchr-space-3);
+}
+
+/* Шаги — «отрезки» ленты: текущий длиннее и синий */
+.dots span {
+  width: 12px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--fetchr-color-border-strong);
+  transition: width var(--fetchr-transition-slow), background-color var(--fetchr-transition-slow);
+}
+
+.dots span[data-state="done"] {
+  background: rgb(var(--fetchr-accent-rgb) / 0.5);
+}
+
+.dots span[data-state="current"] {
+  width: 28px;
+  background: var(--fetchr-color-accent);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--fetchr-space-4);
+}
+
+.primary {
+  composes: buttonPrimary from "../theme/primitives.module.css";
+  height: 36px;
+  min-width: 120px;
+  padding: 0 var(--fetchr-space-10);
+}
+
+.secondary {
+  composes: button from "../theme/primitives.module.css";
+}
+
+.ghost {
+  composes: button from "../theme/primitives.module.css";
+  height: 36px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.ghost:hover:not(:disabled) {
+  border-color: transparent;
+  background: var(--fetchr-color-hover-strong);
+}
+
+@media (max-width: 760px) {
+  .frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .aside {
+    border-right: 0;
+    border-bottom: 1px solid var(--fetchr-color-border-subtle);
+    padding: var(--fetchr-space-12) var(--fetchr-space-12);
+  }
+}

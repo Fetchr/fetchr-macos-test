@@ -1,0 +1,188 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-4);
+  width: 268px;
+  padding: var(--fetchr-space-5);
+  background: var(--fetchr-color-panel-raised);
+  border: 1px solid var(--fetchr-color-border-hairline);
+  border-radius: var(--fetchr-radius-lg);
+  color: var(--fetchr-color-text);
+  user-select: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  min-height: 24px;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: -4px;
+  flex: none;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  transition: background var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.back:hover {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.title {
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+  white-space: nowrap;
+}
+
+.value {
+  text-align: center;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-display);
+  font-weight: var(--fetchr-weight-strong);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  background: var(--fetchr-color-hover);
+  border: 1px solid var(--fetchr-color-border-hairline);
+  border-radius: 50%;
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  transition: background var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.step:hover:not(:disabled) {
+  background: var(--fetchr-color-hover-strong);
+}
+
+.step:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Track is painted by hand so the filled part reads as progress the way the
+   native `accent-color` slider never does at this thickness. */
+.slider {
+  flex: 1;
+  height: 18px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--fetchr-radius-pill);
+  background: linear-gradient(
+    to right,
+    var(--fetchr-color-accent) 0%,
+    var(--fetchr-color-accent) var(--fill, 0%),
+    var(--fetchr-color-border-strong) var(--fill, 0%),
+    var(--fetchr-color-border-strong) 100%
+  );
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border: none;
+  border-radius: 50%;
+  background: var(--fetchr-color-text);
+  transition: transform var(--fetchr-transition-fast);
+}
+
+.slider:hover::-webkit-slider-thumb,
+.slider:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+.slider::-moz-range-track {
+  height: 4px;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-border-strong);
+}
+
+.slider::-moz-range-progress {
+  height: 4px;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-accent);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--fetchr-color-text);
+}
+
+.slider:focus-visible {
+  outline: 2px solid var(--fetchr-color-focus);
+  outline-offset: 4px;
+  border-radius: var(--fetchr-radius-pill);
+}
+
+.presets {
+  display: flex;
+  gap: var(--fetchr-space-2);
+}
+
+.preset {
+  flex: 1;
+  padding: var(--fetchr-space-3) 0;
+  background: var(--fetchr-color-hover);
+  border: 1px solid var(--fetchr-color-border-hairline);
+  border-radius: var(--fetchr-radius-sm);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--fetchr-transition-fast), color var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast);
+}
+
+.preset:hover {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.presetActive {
+  background: var(--fetchr-color-accent-soft);
+  border-color: var(--fetchr-color-accent);
+  color: var(--fetchr-color-text);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.caption {
+  font-size: var(--fetchr-font-size-sm);
+  color: var(--fetchr-color-text-tertiary);
+}

@@ -1,0 +1,211 @@
+name: build
+
+# Cross-platform bundles for Fetchr (Windows / macOS universal / Linux).
+# The CLI tools (yt-dlp, ffmpeg, ffprobe, N_m3u8DL-RE) are git-ignored
+# (`*.exe` etc.), so every job downloads them fresh into the repo root before
+# `tauri build` picks them up via the per-platform `resources` config.
+#
+# macOS deliberately does NOT bundle ffmpeg/ffprobe: there is no reliable static
+# universal build. The app resolves a Homebrew ffmpeg at runtime instead
+# (`brew install ffmpeg`); see binaries.rs `extra_bin_dirs`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Which platform(s) to build"
+        type: choice
+        default: all
+        options:
+          - all
+          - macos
+          - windows
+          - linux
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: windows
+            os: windows-latest
+            rust_targets: ""
+            # The Windows installer is our own setup.exe (setup/), packed below
+            tauri_args: "--no-bundle"
+            artifact: fetchr-windows
+            bundle_glob: |
+              dist/installer/*.exe
+          - id: macos
+            os: macos-latest
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            tauri_args: "--target universal-apple-darwin"
+            artifact: fetchr-macos-universal
+            bundle_glob: |
+              src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          - id: linux
+            os: ubuntu-22.04
+            rust_targets: ""
+            tauri_args: ""
+            artifact: fetchr-linux
+            bundle_glob: |
+              src-tauri/target/release/bundle/deb/*.deb
+              src-tauri/target/release/bundle/appimage/*.AppImage
+
+    runs-on: ${{ matrix.os }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux' && (github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == 'linux')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev \
+            build-essential \
+            file wget curl
+
+      - uses: pnpm/action-setup@v4
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        with:
+          version: 12
+
+      - uses: actions/setup-node@v4
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - uses: Swatinem/rust-cache@v2
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        with:
+          workspaces: src-tauri
+
+      # ---- Fetch bundled CLI tools into the repo root -----------------------
+      # Every tool is pinned to one release and checked against its SHA-256:
+      # these binaries ship inside the installer, so a swapped "latest" asset
+      # would ship too. To bump a tool, change its URL and hash together (the
+      # GitHub release page shows each asset's sha256).
+
+      - name: Fetch tools (Windows)
+        if: runner.os == 'Windows' && (github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == 'windows')
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $root = "${{ github.workspace }}"
+          function Get-Pinned($url, $out, $sha) {
+            Invoke-WebRequest $url -OutFile $out
+            $actual = (Get-FileHash -Algorithm SHA256 $out).Hash
+            if ($actual -ne $sha) { throw "SHA-256 mismatch for $url : $actual" }
+          }
+
+          Get-Pinned "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp.exe" "$root/yt-dlp.exe" "f5389d3698ecde4ef06f4e6b1ce0294fe9ac1396228c8990b8d3416d6d177a7d"
+
+          Get-Pinned "https://github.com/GyanD/codexffmpeg/releases/download/9.1/ffmpeg-9.1-full_build.zip" "$env:RUNNER_TEMP/ffmpeg.zip" "f9a83be8f97b8989a223a15e4af234accd0842bacf7c126af5a3aae759785e48"
+          Expand-Archive "$env:RUNNER_TEMP/ffmpeg.zip" -DestinationPath "$env:RUNNER_TEMP/ffmpeg" -Force
+          Copy-Item (Get-ChildItem "$env:RUNNER_TEMP/ffmpeg" -Recurse -Filter ffmpeg.exe)[0].FullName "$root/ffmpeg.exe"
+          Copy-Item (Get-ChildItem "$env:RUNNER_TEMP/ffmpeg" -Recurse -Filter ffprobe.exe)[0].FullName "$root/ffprobe.exe"
+
+          Get-Pinned "https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.6.0-beta/N_m3u8DL-RE_v0.6.0-beta_win-x64_20260629.zip" "$env:RUNNER_TEMP/nm.zip" "3825fd42ee502f98a9378f6fdddb2f7822709f521806214f466db6935c950f1a"
+          Expand-Archive "$env:RUNNER_TEMP/nm.zip" -DestinationPath "$env:RUNNER_TEMP/nm" -Force
+          Copy-Item (Get-ChildItem "$env:RUNNER_TEMP/nm" -Recurse -Filter N_m3u8DL-RE.exe)[0].FullName "$root/N_m3u8DL-RE.exe"
+
+      - name: Fetch tools (macOS)
+        if: runner.os == 'macOS' && (github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == 'macos')
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${{ github.workspace }}"
+          pinned() { curl -fL "$1" -o "$2"; echo "$3  $2" | shasum -a 256 -c -; }
+
+          pinned "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp_macos" "$root/yt-dlp" "0f922c15ccc0b83eefa1c8bc9104e434318c4bf16e408e1ee93b7745a6efe0aa"
+          chmod +x "$root/yt-dlp"
+
+          mkdir -p "$RUNNER_TEMP/nm"
+          pinned "https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.6.0-beta/N_m3u8DL-RE_v0.6.0-beta_osx-arm64_20260629.tar.gz" "$RUNNER_TEMP/nm.tar.gz" "ca181b7e8976564766c34e3cefe48fff409f58289ca970ade062668c01c53918"
+          tar -xf "$RUNNER_TEMP/nm.tar.gz" -C "$RUNNER_TEMP/nm"
+          cp "$(find "$RUNNER_TEMP/nm" -type f -name 'N_m3u8DL-RE' | head -n1)" "$root/N_m3u8DL-RE"
+          chmod +x "$root/N_m3u8DL-RE"
+
+      - name: Fetch tools (Linux)
+        if: runner.os == 'Linux' && (github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == 'linux')
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${{ github.workspace }}"
+          pinned() { curl -fL "$1" -o "$2"; echo "$3  $2" | shasum -a 256 -c -; }
+
+          pinned "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp" "$root/yt-dlp" "e51e69e89489f199530f13d32a4342da3ddb2cf34842f364603a066db05afbf3"
+          chmod +x "$root/yt-dlp"
+
+          # BtbN keeps dated autobuilds for a limited time: when this one is
+          # gone the step fails loudly, then pick a newer tag and its hash.
+          pinned "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-11-09-12-42/ffmpeg-n9.0.2-48-gd4070a14ce-linux64-gpl-9.0.tar.xz" "$RUNNER_TEMP/ffmpeg.tar.xz" "5df8a8fd95464cd5ff7b7abff4afe59dede6fa7af13e0914a0abc70178d87046"
+          mkdir -p "$RUNNER_TEMP/ffmpeg" && tar -xf "$RUNNER_TEMP/ffmpeg.tar.xz" -C "$RUNNER_TEMP/ffmpeg"
+          cp "$(find "$RUNNER_TEMP/ffmpeg" -type f -name ffmpeg | head -n1)" "$root/ffmpeg"
+          cp "$(find "$RUNNER_TEMP/ffmpeg" -type f -name ffprobe | head -n1)" "$root/ffprobe"
+          chmod +x "$root/ffmpeg" "$root/ffprobe"
+
+          mkdir -p "$RUNNER_TEMP/nm"
+          pinned "https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.6.0-beta/N_m3u8DL-RE_v0.6.0-beta_linux-x64_20260629.tar.gz" "$RUNNER_TEMP/nm.tar.gz" "2ebcd450594a08c0de0bcd502a80c5d3f89a702a0fa6604199527bb8d6eee4db"
+          tar -xf "$RUNNER_TEMP/nm.tar.gz" -C "$RUNNER_TEMP/nm"
+          cp "$(find "$RUNNER_TEMP/nm" -type f -name 'N_m3u8DL-RE' | head -n1)" "$root/N_m3u8DL-RE"
+          chmod +x "$root/N_m3u8DL-RE"
+
+      # ----------------------------------------------------------------------
+
+      - name: Install frontend dependencies
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build Tauri bundle
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        # Bake the same build-time config as BuildInstaller.bat so macOS/Linux
+        # bundles are release-grade (updater configured, correct UI). Public
+        # values are inline; credentials come from repo secrets (left empty →
+        # those features simply stay off).
+        env:
+          FETCHR_UI_REDESIGN: "true"
+          VITE_FETCHR_UI_REDESIGN: "true"
+          FETCHR_VPS_API_URL: https://fetchr.fun/api
+          FETCHR_TG_BETA_BOT: fetchr_beta_bot
+          FETCHR_TWITCH_RESOLVER: ${{ secrets.FETCHR_TWITCH_RESOLVER }}
+          FETCHR_VPS_BASE_URL: ${{ secrets.FETCHR_VPS_BASE_URL }}
+          FETCHR_VPS_TOKEN: ${{ secrets.FETCHR_VPS_TOKEN }}
+          # Public key, not a secret — but a build without it can never install
+          # an update, so it must be set for every release build.
+          FETCHR_UPDATE_PUBKEY: ${{ secrets.FETCHR_UPDATE_PUBKEY }}
+        run: pnpm tauri build ${{ matrix.tauri_args }}
+
+      - name: Pack Windows installer
+        if: runner.os == 'Windows' && (github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == 'windows')
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          cargo build --release --manifest-path setup/Cargo.toml
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          setup/target/release/fetchr-pack.exe --stub setup/target/release/fetchr-setup.exe `
+            --out "dist/installer/Fetchr-Setup-v$version.exe" --version $version --list setup/payload.txt
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.only == 'all' || github.event.inputs.only == matrix.id
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.bundle_glob }}
+          if-no-files-found: error

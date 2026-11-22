@@ -1,0 +1,166 @@
+/* Командная палитра — command-palette-card из DESIGN.md в том виде, в
+   каком её показывает промо-ролик: строка поиска с лупой и клавишей Esc,
+   выбранная строка в синей рамке, внизу подсказки по клавишам. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh var(--fetchr-space-8) 0;
+  background: var(--fetchr-color-overlay-bg);
+  animation: paletteFade var(--fetchr-dur-base) var(--fetchr-ease-out);
+}
+
+.card {
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel-raised);
+  animation: paletteRise var(--fetchr-dur-slow) var(--fetchr-ease-out);
+}
+
+.search {
+  display: flex;
+  height: 52px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  padding: 0 var(--fetchr-space-8);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.searchIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.input {
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: var(--fetchr-font-size-xl);
+  font-weight: var(--fetchr-weight-medium);
+  outline: none;
+}
+
+/* Поле ввода в палитре — единственное и всегда в фокусе: кольцо вокруг
+   него дублировало бы каретку и резало строку поиска пополам */
+.input:focus-visible {
+  box-shadow: none;
+}
+
+.input::placeholder {
+  color: var(--fetchr-color-text-tertiary);
+  font-weight: var(--fetchr-weight-normal);
+}
+
+.list {
+  max-height: min(420px, 56vh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: var(--fetchr-space-3) var(--fetchr-space-4) var(--fetchr-space-4);
+  scroll-padding-block: var(--fetchr-space-4);
+}
+
+.empty {
+  padding: var(--fetchr-space-16) var(--fetchr-space-8);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-base);
+  text-align: center;
+}
+
+.group :global([cmdk-group-heading]) {
+  padding: var(--fetchr-space-6) var(--fetchr-space-4) var(--fetchr-space-3);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.item {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  padding: 0 var(--fetchr-space-6);
+  border-radius: var(--fetchr-radius-md);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font-size: var(--fetchr-font-size-lg);
+  transition:
+    background-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.item[data-selected="true"] {
+  background: rgb(var(--fetchr-accent-rgb) / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(var(--fetchr-accent-rgb) / 0.4);
+  color: var(--fetchr-color-text);
+}
+
+.itemIcon {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  color: var(--fetchr-color-text-tertiary);
+  transition: color var(--fetchr-transition-fast);
+}
+
+.item[data-selected="true"] .itemIcon {
+  color: var(--fetchr-color-accent-bright);
+}
+
+.itemLabel {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.keys {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: var(--fetchr-space-2);
+}
+
+.footer {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fetchr-space-4) var(--fetchr-space-10);
+  padding: var(--fetchr-space-5) var(--fetchr-space-8);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+}
+
+@keyframes paletteFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes paletteRise {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

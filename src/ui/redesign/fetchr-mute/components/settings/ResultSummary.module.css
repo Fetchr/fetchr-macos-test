@@ -1,0 +1,115 @@
+/* Сводка и слова в правой колонке */
+.summaryTiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--fetchr-space-3);
+}
+
+.summaryTiles > div {
+  display: grid;
+  gap: var(--fetchr-space-1);
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.summaryTiles span {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.summaryTiles b {
+  font-size: var(--fetchr-font-size-title);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.summaryDanger {
+  color: var(--fetchr-color-danger-bright);
+}
+
+.summaryWarning {
+  color: var(--fetchr-color-warning);
+}
+
+.wordList {
+  display: grid;
+  gap: var(--fetchr-space-1);
+  overflow: hidden;
+  padding: var(--fetchr-space-2);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.wordListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-3) var(--fetchr-space-5);
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: none;
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  text-align: left;
+  transition: background-color var(--fetchr-transition-fast);
+}
+
+.wordListItem:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.wordListItem:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.wordListMore {
+  padding: var(--fetchr-space-2) var(--fetchr-space-5);
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: none;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  text-align: left;
+}
+
+.wordListMore:hover {
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text);
+}
+
+.wordListMore:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.wordListLabel {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-weight: var(--fetchr-weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wordListCount {
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wordListItem {
+    transition: none;
+  }
+}

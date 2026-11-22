@@ -1,0 +1,122 @@
+[package]
+name = "fetchr"
+version = "0.8.9"
+description = "Fetchr - modern HLS / VOD / live downloader"
+authors = ["h3r0n"]
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "fetchr_lib"
+# Desktop-only: skip mobile staticlib/cdylib to avoid multi-GB .lib/.dll/.pdb
+# artifacts and extra linker RAM on every build.
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+simd-json = { version = "0.14.0", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "fs", "io-util", "net", "process", "sync", "time"] }
+parking_lot = "0.12"
+regex = "1"
+once_cell = "1"
+url = "2"
+dirs = "5"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+sha1 = "0.10"
+sha2 = "0.10"
+hex = "0.4"
+flate2 = "1"
+base64 = "0.22"
+ed25519-dalek = "2"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls-webpki-roots", "json", "socks", "stream"] }
+futures = "0.3"
+tokio-tungstenite = { version = "0.24", default-features = false, features = ["connect", "rustls-tls-webpki-roots"] }
+urlencoding = "2"
+async-trait = "0.1"
+# VPS recorder provisioning + the SSH tunnel the app talks to the agent over.
+# `ring` instead of the default aws-lc-rs backend: aws-lc-rs needs cmake and a C
+# toolchain, which the Windows release build does not have.
+russh = { version = "0.54", default-features = false, features = ["ring", "flate2"] }
+ab_glyph = "0.2"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp"] }
+# libwebp-backed animated WebP decoder: the pure-Rust image-webp decoder mis-composites
+# blended/disposed frames of 7TV emotes (visible artifacts), libwebp composites them correctly.
+webp = { version = "0.3", default-features = false }
+imageproc = "0.25"
+fontdb = "0.16"
+rayon = "1"
+mimalloc = "0.1"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+fs2 = "0.4"
+hound = "3.5"
+# `ort` (ONNX Runtime) is pulled per-OS below with the right execution provider.
+ndarray = "0.17.2"
+realfft = "3.5.0"
+# Shazam-based track recognition (GPL-3.0). Replaces AcoustID: Chromaprint only
+# matches full-track fingerprints, Shazam matches 12-sec mid-track snippets.
+songrec-lib = "0.5"
+
+
+# ONNX Runtime execution providers differ per OS. The Rust API for each EP is
+# feature-gated, so the code in jobs/vocal_remover.rs is `cfg`-gated to match.
+#   Windows → DirectML (any GPU) + OpenVINO (Intel), CPU fallback.
+#   macOS   → CoreML (Apple Neural Engine / GPU) — bundled in the default binaries.
+#   Linux   → CPU only (portable default; no system ORT needed).
+[target.'cfg(target_os = "windows")'.dependencies]
+ort = { version = "2.0.0-rc.12", features = ["openvino", "directml", "half"] }
+# The VPS root password lives in the OS credential store, never in our config
+# files. Each platform needs its own backend feature or every call no-ops.
+keyring = { version = "3", features = ["windows-native"] }
+# System proxy lookup ("Internet Settings"): ffmpeg does not find it by itself.
+winreg = "0.55"
+
+[target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
+ort = { version = "2.0.0-rc.12", features = ["coreml", "half"] }
+
+[target.'cfg(all(target_os = "macos", target_arch = "x86_64"))'.dependencies]
+# ort 2.0.0-rc.12 stopped publishing prebuilt binaries for x86_64-apple-darwin;
+# use load-dynamic so universal macOS builds still compile cleanly for Intel Macs.
+ort = { version = "2.0.0-rc.12", default-features = false, features = ["std", "ndarray", "tracing", "tls-native", "api-24", "load-dynamic", "coreml", "half"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+keyring = { version = "3", features = ["apple-native"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+ort = { version = "2.0.0-rc.12", features = ["half"] }
+keyring = { version = "3", features = ["linux-native"] }
+
+[dependencies.half]
+version = "2"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+# Release is tuned for build time and lower peak RAM/disk: 8 codegen units keep
+# builds fast without spiking 16-thread LLVM memory, cross-crate LTO is off, and
+# debuginfo is stripped from the final binary.
+# No panic = "abort": a panic inside one job task must not take the whole app down.
+[profile.release]
+lto = false
+codegen-units = 8
+strip = "debuginfo"
+
+# Keep file:line backtraces in dev while avoiding multi-GB full debug symbols in
+# libfetchr_lib.rlib, .pdb, and incremental/ caches.
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+opt-level = 3
+debug = 0

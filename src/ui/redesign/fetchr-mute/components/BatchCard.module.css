@@ -1,0 +1,81 @@
+/* ---------- Пакет файлов ----------
+   Строки списка — RecentFiles.module.css; .dirButton висит рядом с
+   shared.secondaryButton, .enqueue — рядом с shared.primaryButton: только переопределения. */
+
+[data-fetchr-mute-page] .dragActive {
+  border-color: var(--fetchr-color-accent);
+  box-shadow: 0 0 0 1px var(--fetchr-color-accent);
+}
+
+.file {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-5);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--fetchr-space-8);
+}
+
+.option {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.optionLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.dirRow {
+  display: flex;
+  min-width: 0;
+  gap: var(--fetchr-space-3);
+}
+
+[data-fetchr-mute-page] .dirButton {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-start;
+}
+
+.dirButton svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.dirText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-4);
+}
+
+[data-fetchr-mute-page] .enqueue {
+  width: auto;
+  padding: 0 var(--fetchr-space-12);
+}
+
+@media (max-width: 760px) {
+  .options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-fetchr-mute-page] .enqueue {
+    flex: 1 1 auto;
+  }
+}

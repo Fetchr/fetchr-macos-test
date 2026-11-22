@@ -1,0 +1,1355 @@
+.mainColumn,
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-8);
+  min-width: 0;
+}
+
+.panel {
+  composes: card from "../theme/primitives.module.css";
+}
+
+.presetPanel {
+  min-width: 0;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel);
+  padding: var(--fetchr-space-7);
+}
+
+.presetPanelMain {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  align-items: end;
+  gap: var(--fetchr-space-6);
+  min-width: 0;
+}
+
+.presetActions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-4);
+}
+
+.panelHeader {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-7) var(--fetchr-space-8);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.panelTitle {
+  composes: cardTitle from "../theme/primitives.module.css";
+}
+
+.panelBody {
+  padding: var(--fetchr-space-8);
+}
+
+.videoSelector {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 116px auto;
+  gap: var(--fetchr-space-6);
+  align-items: end;
+}
+
+.field {
+  composes: field from "../theme/primitives.module.css";
+}
+
+.label {
+  composes: label from "../theme/primitives.module.css";
+}
+
+.input {
+  composes: input from "../theme/primitives.module.css";
+}
+
+.select {
+  composes: input from "../theme/primitives.module.css";
+}
+
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.hint {
+  color: var(--fetchr-color-text-muted);
+  font-size: var(--fetchr-font-size-xs, 11px);
+  line-height: 1.35;
+}
+
+.button {
+  composes: button from "../theme/primitives.module.css";
+}
+
+.primaryButton {
+  composes: buttonPrimary from "../theme/primitives.module.css";
+}
+
+.dangerButton {
+  composes: buttonDanger from "../theme/primitives.module.css";
+}
+
+.iconButton {
+  composes: buttonIcon from "../theme/primitives.module.css";
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-7);
+}
+
+.toolbarGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+}
+
+.referenceInline {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  margin-top: var(--fetchr-space-6);
+  padding-top: var(--fetchr-space-6);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.referenceLabel {
+  flex: 0 0 auto;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.referencePath {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.previewPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.previewPanel .panelHeader {
+  display: none !important;
+}
+
+.previewPanel .panelBody {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 !important;
+  overflow: auto;
+}
+
+/* Correct collapsed preview frame sizing */
+.previewFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-graphite-900);
+  user-select: none;
+  touch-action: none;
+}
+
+.previewFrameDrawing {
+  cursor: crosshair;
+}
+
+/* Overlay variant: the player surface already defines the 16:9 box, so the
+   zone layer only has to cover it. */
+.previewFrameOverlay {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  border-radius: 0;
+  background: transparent;
+}
+
+.previewStack {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+/* The preview panel header is hidden in this layout, so the switch floats over
+   the top-left of the frame where it is always reachable. */
+.previewModeSwitch {
+  position: absolute;
+  top: var(--fetchr-space-5);
+  left: var(--fetchr-space-5);
+  z-index: 6;
+  display: flex;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--fetchr-radius-md);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  padding: 2px;
+}
+
+.previewModeButton {
+  min-height: 24px;
+  border: 0;
+  border-radius: calc(var(--fetchr-radius-md) - 2px);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  padding: 3px 10px;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background var(--fetchr-transition-base),
+    border-color var(--fetchr-transition-base),
+    color var(--fetchr-transition-base),
+    opacity var(--fetchr-transition-base),
+    transform var(--fetchr-transition-base),
+    box-shadow var(--fetchr-transition-base);
+}
+
+.previewModeButton:hover:not(:disabled) {
+  color: #ffffff;
+}
+
+.previewModeButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.previewModeButtonActive {
+  background: var(--fetchr-gradient-accent);
+  color: #ffffff;
+}
+
+.previewPlayer {
+  width: 100%;
+}
+
+.previewVideoStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-5);
+  width: 100%;
+  min-width: 0;
+}
+
+.previewImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.emptyPreview {
+  container-type: size;
+  position: absolute;
+  flex-direction: column;
+  gap: var(--fetchr-space-6);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fetchr-color-text-tertiary);
+  background:
+    radial-gradient(circle at 50% 45%, rgb(var(--fetchr-accent-rgb) / 0.14), transparent 34%),
+    var(--fetchr-color-graphite-900);
+  font-size: var(--fetchr-font-size-base);
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 5% 8.888%;
+}
+
+.frameMeta {
+  position: absolute;
+  left: var(--fetchr-space-7);
+  right: var(--fetchr-space-7);
+  top: var(--fetchr-space-7);
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: var(--fetchr-font-size-md);
+  pointer-events: none;
+}
+
+.zone {
+  position: absolute;
+  z-index: 3;
+  border: 1px solid var(--zone-color);
+  background: color-mix(in srgb, var(--zone-color) 22%, transparent);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.72);
+  cursor: move;
+}
+
+.zoneSelected {
+  outline: 1px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.zoneHidden {
+  opacity: 0.38;
+}
+
+.zoneDrawingDisabled {
+  pointer-events: none;
+}
+
+.zoneLabel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  max-width: 100%;
+  padding: 3px var(--fetchr-space-5);
+  background: var(--zone-color);
+  color: white;
+  font-size: var(--fetchr-font-size-sm);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.zoneResize {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 10px;
+  height: 10px;
+  border: 1px solid white;
+  background: var(--zone-color);
+  cursor: nwse-resize;
+}
+
+.zoneImage {
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+
+.drawSelection {
+  position: absolute;
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgb(var(--fetchr-accent-rgb) / 0.18);
+  box-shadow: 0 0 0 1px rgb(var(--fetchr-accent-rgb) / 0.9), 0 0 0 9999px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+.fitContain {
+  object-fit: contain;
+}
+
+.fitCover {
+  object-fit: cover;
+}
+
+.fitStretch {
+  object-fit: fill;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-4);
+}
+
+.zoneRow {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  width: 100%;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-secondary);
+  padding: var(--fetchr-space-5);
+  text-align: left;
+  cursor: pointer;
+}
+
+.zoneRowActive {
+  border-color: var(--fetchr-color-accent);
+  background: var(--fetchr-color-panel-selected);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--fetchr-radius-xs);
+  background: var(--zone-color);
+}
+
+.zoneRowText {
+  min-width: 0;
+}
+
+.zoneRowName {
+  font-size: var(--fetchr-font-size-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zoneRowMeta {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.zoneRowIconButton {
+  display: inline-flex;
+  /* 24×24 — минимальная цель WCAG 2.2 SC 2.5.8; иконка внутри прежняя */
+  min-width: 24px;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: var(--fetchr-radius-xs);
+}
+
+.zoneRowIconButton:hover {
+  color: var(--fetchr-color-text);
+  background: var(--fetchr-color-panel-selected);
+}
+
+.propertiesGrid {
+  display: grid;
+  gap: var(--fetchr-space-6);
+}
+
+.twoColumn {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--fetchr-space-6);
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--fetchr-space-4);
+}
+
+.segment {
+  height: 30px;
+  border: 1px solid var(--fetchr-color-border);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-tertiary);
+  border-radius: var(--fetchr-radius-md);
+  font: inherit;
+  cursor: pointer;
+}
+
+.segmentActive {
+  border-color: var(--fetchr-color-accent);
+  color: var(--fetchr-color-text);
+  background: var(--fetchr-color-accent-soft);
+}
+
+.rangeRow {
+  display: grid;
+  grid-template-columns: 1fr 56px;
+  gap: var(--fetchr-space-5);
+  align-items: center;
+}
+
+.range {
+  width: 100%;
+  accent-color: var(--fetchr-color-accent);
+}
+
+.rangeValue {
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-secondary);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: var(--fetchr-font-size-sm);
+  text-align: center;
+  min-width: 0;
+  padding: 0;
+}
+
+.toggleRow {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.toggleRow input {
+  accent-color: var(--fetchr-color-accent);
+}
+
+.referenceImage {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.referenceImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pathBox,
+/* В маленьком кадре демо не помещается: остаётся только подсказка */
+.emptyPreviewDemo {
+  width: min(560px, 76cqw);
+}
+
+@container (max-height: 340px) {
+  .emptyPreviewDemo {
+    display: none;
+  }
+}
+
+.statusBox {
+  overflow-wrap: anywhere;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-tertiary);
+  padding: var(--fetchr-space-5);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.error {
+  border: 1px solid rgb(var(--fetchr-danger-hover-rgb) / 0.35);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger);
+  padding: var(--fetchr-space-5);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-8);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel);
+  padding: var(--fetchr-space-7);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.footerActions {
+  display: flex;
+  gap: var(--fetchr-space-5);
+}
+
+@media (max-width: 1180px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: var(--fetchr-space-8);
+  }
+
+  .videoSelector,
+  .twoColumn,
+  .referenceInline {
+    grid-template-columns: 1fr;
+  }
+
+  .referenceInline {
+    display: grid;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--fetchr-space-4);
+    text-align: center;
+  }
+
+  .footerActions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Studio Layout Redesign Styles */
+.studioPage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  gap: 0;
+  background: var(--fetchr-color-app-bg);
+}
+
+.mainLayout {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .mainLayout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+/* Stacks the frame preview above the editor timeline. */
+.previewContainer {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--fetchr-space-4);
+  min-height: 0;
+  min-width: 0;
+  padding: var(--fetchr-space-6);
+  background: rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* The preview absorbs leftover height; the timeline keeps its natural size. */
+.previewContainer > *:first-child {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.previewContainer > *:not(:first-child) {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 860px) {
+  .previewContainer {
+    flex: 0 0 auto;
+    width: 100%;
+    /* No fixed aspect ratio any more: the timeline needs its own room below
+       the frame, so the column sizes itself from its contents. */
+    min-height: 520px;
+  }
+}
+
+.sidebar {
+  composes: rail from "../theme/primitives.module.css";
+}
+
+
+
+.sidebarSection {
+  composes: railSection from "../theme/primitives.module.css";
+}
+
+.sectionHeader {
+  composes: sectionHeading from "../theme/primitives.module.css";
+}
+
+.sectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-5);
+}
+
+.boundary {
+  height: 1px;
+  background: var(--fetchr-color-border-subtle);
+  flex: 0 0 auto;
+}
+
+.dockTabBar {
+  display: flex;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.dockTab {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  border: 0;
+  border-right: 1px solid var(--fetchr-color-border-subtle);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  cursor: pointer;
+  padding: 0 var(--fetchr-space-8);
+  position: relative;
+  transition: background var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.dockTab:hover {
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.dockTabActive {
+  background: rgb(var(--fetchr-accent-rgb) / 0.18);
+  color: #ffffff !important;
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.dockTabActive::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--fetchr-gradient-rail);
+  box-shadow: var(--fetchr-glow-accent);
+}
+
+.dockPanel {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--fetchr-color-panel);
+}
+
+.dockScrollable {
+  height: 100%;
+  overflow: auto;
+  padding: var(--fetchr-space-6);
+}
+
+.dockScrollable > * {
+  width: 100%;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.panelNoBorder {
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+@media (max-width: 860px) {
+  .mainLayout {
+    flex-direction: column !important;
+  }
+  .sidebar {
+    width: 100% !important;
+    border-left: 0 !important;
+    border-top: 1px solid var(--fetchr-color-border-subtle) !important;
+    flex: 1 1 auto !important;
+  }
+  .previewContainer {
+    /* 360px of frame plus room for the timeline stacked under it. */
+    height: 620px !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+.studioFooter {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--fetchr-space-6);
+  background: rgba(17, 20, 26, 0.95);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  flex: 0 0 auto;
+}
+
+.bookmarksBar {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  height: 32px;
+  background: var(--fetchr-color-panel);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  padding: 0 var(--fetchr-space-6);
+  flex: 0 0 auto;
+}
+
+.bookmarksIcon {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  font-weight: var(--fetchr-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.bookmarksList {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bookmarksList::-webkit-scrollbar {
+  display: none;
+}
+
+.bookmarkItem {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  border-radius: var(--fetchr-radius-sm);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  transition:
+    background var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast),
+    opacity var(--fetchr-transition-fast),
+    transform var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+  overflow: hidden;
+}
+
+.bookmarkItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgb(var(--fetchr-accent-bright-rgb) / 0.3);
+}
+
+.bookmarkItemActive {
+  background: rgb(var(--fetchr-accent-rgb) / 0.12);
+  border-color: rgb(var(--fetchr-accent-bright-rgb) / 0.5);
+}
+
+.bookmarkButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: var(--fetchr-weight-medium);
+  cursor: pointer;
+  padding: 0 var(--fetchr-space-3);
+  white-space: nowrap;
+}
+
+.bookmarkItemActive .bookmarkButton {
+  color: var(--fetchr-color-text);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.renameInput {
+  height: 22px;
+  width: 120px;
+  font-size: 11px;
+  padding: 0 6px;
+}
+
+.bookmarkDeleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  border-left: 1px solid transparent;
+  transition:
+    background var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast),
+    opacity var(--fetchr-transition-fast),
+    transform var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+  padding: 0;
+}
+
+.bookmarkItem:hover .bookmarkDeleteButton {
+  border-left-color: var(--fetchr-color-border-subtle);
+  color: var(--fetchr-color-text-muted);
+}
+
+.bookmarkDeleteButton:hover {
+  background: rgb(var(--fetchr-danger-rgb) / 0.15);
+  color: var(--fetchr-color-danger) !important;
+}
+
+.addBookmarkButton {
+  composes: buttonDashed from "../theme/primitives.module.css";
+}
+
+.inputOverlayButton {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: rgb(var(--fetchr-accent-rgb) / 0.15);
+  color: var(--fetchr-color-accent);
+  cursor: pointer;
+  transition:
+    background var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast),
+    opacity var(--fetchr-transition-fast),
+    transform var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+  z-index: 10;
+}
+
+.inputOverlayButton:hover {
+  background: rgb(var(--fetchr-accent-rgb) / 0.3);
+  color: var(--fetchr-color-text);
+}
+
+.inputOverlayButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Дорожка выглядит на 6px, но целью служит вся высота: прозрачные поля
+   сверху и снизу добавляют её до 24px по WCAG 2.2, а background-clip
+   оставляет закрашенной только саму дорожку. */
+.timelineSlider {
+  box-sizing: border-box;
+  width: 100%;
+  height: 24px;
+  accent-color: var(--fetchr-color-accent);
+  background: rgba(255, 255, 255, 0.1);
+  background-clip: content-box;
+  border-radius: var(--fetchr-radius-xs);
+  outline: none;
+  padding: 9px 0;
+  cursor: pointer;
+}
+
+.fieldCompact {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Простой режим: кадр вписывается в оставшуюся высоту, а не прокручивается.
+   44px под подпись кадра под ним; ширина считается от высоты по 16:9. */
+.fitPreview .previewPanel .panelBody {
+  container-type: size;
+  align-items: center;
+  overflow: hidden;
+}
+
+.fitPreview .previewStack,
+.fitPreview .previewVideoStack {
+  width: min(100%, calc((100cqh - 44px) * 16 / 9));
+  margin-inline: auto;
+}
+
+/* ── Простой режим: панель настроек блюра ───────────────────────────
+   Стеклянные секции без иконок в заголовках, подписанные кнопки
+   инструментов, поля и списки в тон панели. */
+.simpleSheet {
+  background: transparent;
+}
+
+.simpleSheet .boundary {
+  display: none;
+}
+
+.simpleSheet .sidebarSection {
+  gap: var(--fetchr-space-6);
+  border-bottom: 1px solid rgb(255 255 255 / 0.07);
+  padding: 16px 18px;
+}
+
+.simpleSheet .sectionHeader {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.simpleSheet .sectionHeader svg {
+  display: none;
+}
+
+.simpleSheet .input,
+.simpleSheet .select {
+  height: 38px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.05);
+}
+
+.simpleSheet .input:focus,
+.simpleSheet .select:focus {
+  border-color: var(--fetchr-color-accent);
+  box-shadow: 0 0 0 3px rgb(var(--fetchr-accent-rgb) / 0.16);
+  outline: none;
+}
+
+.simpleSheet .label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.simpleSheet .button {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.06);
+  transition: background var(--fetchr-transition-fast), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.simpleSheet .button:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.11);
+  transform: translateY(-1px);
+}
+
+/* Инструменты: три кнопки с подписями вместо голых иконок */
+.simpleSheet .sectionContent > div:first-child .button {
+  gap: 7px;
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.simpleSheet .timelineSlider {
+  accent-color: var(--fetchr-color-accent);
+}
+
+.simpleSheet .dockPanel {
+  border: 0;
+  background: transparent;
+}
+
+/* Строка с кадром вместо блока «Видео настройки» */
+.frameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  border-bottom: 1px solid rgb(255 255 255 / 0.07);
+  padding: 14px 18px;
+}
+
+.frameInfo {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.frameLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.frameRow .button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  font-size: 12px;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+/* ── Зоны на кадре: живой эффект, 8 ручек, панели над зоной ─────── */
+.zoneEffect {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Мозаика без кадра (видео): тот же блюр, но с сеткой, чтобы отличалась от обычного */
+.zoneEffectGrid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.12) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.zoneMosaic {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* --zoom задаёт ZoomViewport: ручки остаются одного размера при любом масштабе */
+.zoneHandle {
+  position: absolute;
+  z-index: 4;
+  width: calc(12px / var(--zoom, 1));
+  height: calc(12px / var(--zoom, 1));
+  margin: calc(-6px / var(--zoom, 1)) 0 0 calc(-6px / var(--zoom, 1));
+  border-width: calc(2px / var(--zoom, 1));
+  padding: 0;
+  border: 2px solid var(--zone-color, #fff);
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+  touch-action: none;
+}
+
+.zoneHandle:hover {
+  background: var(--zone-color, #fff);
+}
+
+.handle_nw { top: 0; left: 0; cursor: nwse-resize; }
+.handle_n { top: 0; left: 50%; cursor: ns-resize; }
+.handle_ne { top: 0; left: 100%; cursor: nesw-resize; }
+.handle_e { top: 50%; left: 100%; cursor: ew-resize; }
+.handle_se { top: 100%; left: 100%; cursor: nwse-resize; }
+.handle_s { top: 100%; left: 50%; cursor: ns-resize; }
+.handle_sw { top: 100%; left: 0; cursor: nesw-resize; }
+.handle_w { top: 50%; left: 0; cursor: ew-resize; }
+
+.zoneToolbar,
+.addBar {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 12px;
+  background: rgb(14 15 17 / 0.78);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 8px 24px rgb(0 0 0 / 0.45);
+  padding: 3px;
+  white-space: nowrap;
+}
+
+.zoneToolbar {
+  transform-origin: left top;
+  scale: min(2.5, calc(1 / var(--zoom, 1)));
+}
+
+/* Меню добавления зоны: одна кнопка вверху по центру, список раскрывается по нажатию */
+.addMenu {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: 9;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+
+.addToggle {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 12px;
+  background: rgb(14 15 17 / 0.78);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 8px 24px rgb(0 0 0 / 0.45);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-medium);
+  padding: 7px 14px;
+  white-space: nowrap;
+}
+
+.addToggle:hover {
+  background: rgb(30 30 31 / 0.85);
+}
+
+.addToggle:focus-visible {
+  outline: 2px solid var(--fetchr-color-accent-bright);
+  outline-offset: 2px;
+}
+
+.addList {
+  display: grid;
+  gap: 2px;
+  min-width: 168px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 12px;
+  background: rgb(14 15 17 / 0.88);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.5);
+  padding: 4px;
+}
+
+.addList .toolbarButton {
+  justify-content: flex-start;
+}
+
+.toolbarButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 10px;
+  transition: background var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.toolbarButton:hover {
+  background: rgb(255 255 255 / 0.1);
+  color: var(--fetchr-color-text);
+}
+
+.toolbarButton:focus-visible {
+  outline: 2px solid var(--fetchr-color-accent-bright);
+  outline-offset: 1px;
+}
+
+.toolbarOn {
+  background: var(--fetchr-color-accent-soft);
+  color: var(--fetchr-color-accent-bright);
+}
+
+.toolbarDivider {
+  width: 1px;
+  height: 16px;
+  margin-inline: 3px;
+  background: rgb(255 255 255 / 0.12);
+}
+
+/* Ползунки позиции и размера */
+.sliderStack {
+  display: grid;
+  gap: var(--fetchr-space-4);
+}
+
+.sliderRow {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.sliderLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+}
+
+.sliderNumber {
+  height: 28px;
+  padding: 0 6px;
+  font-size: 12px;
+}
+
+/* В режиме видео под кадром ещё панель плеера и кнопка, им нужно больше места, чем подписи кадра */
+.fitPreview .previewVideoStack {
+  width: min(100%, calc((100cqh - 120px) * 16 / 9));
+}
+
+/* ── Вариант «Редактор» ─────────────────────────────────────────
+   Кадр в общей разметке редактора (как у рендера чата): без своей
+   подложки и отступов, инспектор справа со старыми панелями зон. */
+.studioPage .previewContainer {
+  padding: 0;
+  border-radius: 14px;
+}
+
+.inspectorLegacy :global(*) {
+  max-width: 100%;
+}
+
+.inspectorLegacy > section,
+.inspectorLegacy > div:not([class]) {
+  border: 0;
+  background: none;
+}
+
+.inspectorActions {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 6px;
+}

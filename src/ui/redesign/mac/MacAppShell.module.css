@@ -1,0 +1,150 @@
+/*
+ * Окно Fetchr на macOS. Слои:
+ *   1. .shell — «обоина» окна (--mac-backdrop), её видно сквозь стекло панели;
+ *   2. .sidebar — плавающая панель Liquid Glass с отступом от краёв окна;
+ *   3. .column — непрозрачный контент с единым тулбаром сверху.
+ */
+.shell {
+  --mac-column-left: calc(var(--mac-sidebar-width) + var(--mac-sidebar-inset) * 2);
+  position: relative;
+  height: 100dvh;
+  min-height: 560px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--mac-backdrop);
+  color: var(--fetchr-color-text);
+}
+
+.shell[data-sidebar="hidden"] {
+  --mac-column-left: 0px;
+}
+
+.sidebar {
+  position: absolute;
+  z-index: 30;
+  top: var(--mac-sidebar-inset);
+  bottom: var(--mac-sidebar-inset);
+  left: var(--mac-sidebar-inset);
+  width: var(--mac-sidebar-width);
+  border-radius: var(--mac-radius-window-inner);
+  background: var(--mac-glass-bg);
+  border: 0.5px solid var(--mac-glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--mac-glass-highlight),
+    inset 0 -0.5px 0 var(--mac-glass-shade),
+    var(--mac-glass-shadow);
+  -webkit-backdrop-filter: var(--mac-glass-filter);
+  backdrop-filter: var(--mac-glass-filter);
+  overflow: hidden;
+  transition:
+    transform var(--fetchr-dur-slow) var(--fetchr-ease-standard),
+    opacity var(--fetchr-dur-slow) var(--fetchr-ease-standard);
+}
+
+/* Блик по краю стекла: свет падает сверху слева, как у системных панелей. */
+.sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--mac-glass-sheen);
+  pointer-events: none;
+}
+
+.shell[data-sidebar="hidden"] .sidebar {
+  transform: translateX(calc(-100% - var(--mac-sidebar-inset) * 2));
+  opacity: 0;
+}
+
+.column {
+  position: absolute;
+  inset: 0 0 0 var(--mac-column-left);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--fetchr-color-app-bg);
+  transition: left var(--fetchr-dur-slow) var(--fetchr-ease-standard);
+}
+
+/* Единый тулбар: без собственного фона и разделителя, сливается с контентом. */
+.toolbar {
+  position: relative;
+  z-index: 20;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  height: var(--mac-toolbar-height);
+  padding: 0 var(--fetchr-space-6) 0 var(--fetchr-space-7);
+  transition: padding-left var(--fetchr-dur-slow) var(--fetchr-ease-standard);
+}
+
+/* Панель скрыта — кнопки окна ложатся на тулбар, освобождаем им место. */
+.shell[data-sidebar="hidden"] .toolbar {
+  padding-left: 84px;
+}
+
+.title {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--fetchr-font-sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fetchr-color-text);
+}
+
+.spacer {
+  flex: 1;
+  align-self: stretch;
+}
+
+.glassButton {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: var(--fetchr-radius-pill);
+  border: 0.5px solid var(--mac-glass-border);
+  background: var(--mac-glass-bg);
+  box-shadow: inset 0 1px 0 var(--mac-glass-highlight), 0 1px 2px var(--mac-glass-shade);
+  -webkit-backdrop-filter: var(--mac-glass-filter);
+  backdrop-filter: var(--mac-glass-filter);
+  color: var(--fetchr-color-text);
+  transition: background var(--fetchr-transition-fast);
+}
+
+.glassButton:hover {
+  background: var(--mac-glass-bg-strong);
+}
+
+.glassButton:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.glassIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.main {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .column,
+  .toolbar {
+    transition: none;
+  }
+}

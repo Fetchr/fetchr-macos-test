@@ -1,0 +1,134 @@
+/* Внешний вид кнопки задаёт className вызывающего (как раньше у <select>),
+   здесь только раскладка: подпись слева, шеврон справа. */
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-3);
+  min-width: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trigger:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.triggerLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.trigger[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.popup {
+  position: fixed;
+  z-index: 10050;
+  display: flex;
+  max-width: min(420px, calc(100vw - 16px));
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border-strong);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+  color: var(--fetchr-color-text);
+  font-family: "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: var(--fetchr-font-size-base);
+  color-scheme: dark;
+}
+
+.search {
+  flex: 0 0 auto;
+  height: 32px;
+  margin: var(--fetchr-space-3);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text);
+  font: inherit;
+  outline: none;
+  padding: 0 var(--fetchr-space-5);
+}
+
+.search::placeholder {
+  color: var(--fetchr-color-text-muted);
+}
+
+.search:focus {
+  border-color: var(--fetchr-color-accent);
+}
+
+.list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  outline: none;
+  padding: var(--fetchr-space-2);
+}
+
+.group {
+  padding: var(--fetchr-space-4) var(--fetchr-space-5) var(--fetchr-space-2);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  min-height: 30px;
+  border-radius: var(--fetchr-radius-sm);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  padding: 0 var(--fetchr-space-5);
+}
+
+.option[data-active] {
+  background: var(--fetchr-color-hover-strong);
+}
+
+.option[aria-selected="true"] {
+  color: var(--fetchr-color-accent-bright);
+}
+
+.option[aria-disabled="true"] {
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.optionLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.check {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+}
+
+.empty {
+  padding: var(--fetchr-space-6) var(--fetchr-space-5);
+  color: var(--fetchr-color-text-tertiary);
+  text-align: center;
+}

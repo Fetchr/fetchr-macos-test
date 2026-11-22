@@ -1,0 +1,113 @@
+@import "@/ui/redesign/theme/fetchrTokens.css";
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Кадры снимаются перемоткой таймлайна. Любой CSS-переход или keyframes
+   между двумя снимками шёл бы по настоящему времени и делал кадры
+   случайными, поэтому всё движение — только через GSAP. */
+*,
+*::before,
+*::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+button,
+input {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+svg {
+  display: block;
+}
+
+.stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--fetchr-color-app-bg);
+  color: var(--fetchr-color-text);
+  font-family: "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif;
+  font-feature-settings: "calt", "kern", "liga", "ss03";
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  perspective: 2600px;
+  perspective-origin: 50% 46%;
+}
+
+/* Предпросмотр в обычном окне: сцена вписывается в любой размер */
+.stage[data-fit] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Затемнение в самом конце: последний кадр равен первому, с той же
+   виньеткой, что и фон, — ролик зацикливается без скачка */
+.fade {
+  z-index: 100;
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 48%, rgb(0 0 0 / 0) 55%, rgb(0 0 0 / 0.55) 100%),
+    var(--fetchr-color-app-bg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mono {
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+  font-feature-settings: "tnum", "zero";
+}
+
+/* Строка под маской: текст въезжает снизу из-за края */
+.lineMask {
+  display: block;
+  overflow: hidden;
+  padding: 0.08em 0.06em 0.14em;
+  margin: -0.08em -0.06em -0.14em;
+}
+
+.lineMask > span {
+  display: block;
+  will-change: transform;
+}
+
+.gradText {
+  background: linear-gradient(180deg, #ffffff 0%, #e9edf2 52%, #aab5c3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.accentText {
+  background: linear-gradient(180deg, #a9c4ff 0%, #5a93ff 55%, #3d7dff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

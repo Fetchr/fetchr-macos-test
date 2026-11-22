@@ -1,0 +1,6 @@
+{
+  "version": "0.8.5",
+  "ru": "Fetchr v0.8.5 — улучшение стабильности\n- Первая настройка больше не зависает на 18% при скачивании модели распознавания речи: виден реальный прогресс\n- Исправлена ошибка «No module named pip»: прерванная установка Python теперь доустанавливается сама\n- Модели скачиваются, даже если Hugging Face недоступен: подключается зеркало, а файлы проверяются по контрольной сумме\n- Оборванная загрузка моделей продолжается с места обрыва, а не начинается заново\n- Установщик сам ставит WebView2 и Microsoft Visual C++ Redistributable и заранее предупреждает, если процессор не поддерживает AVX/AVX2",
+  "en": "Fetchr v0.8.5 — stability improvements\n- First-run setup no longer freezes at 18% while downloading the speech recognition model, and now shows real progress\n- Fixed the \"No module named pip\" error: an interrupted Python install now repairs itself\n- Models download even when Hugging Face is unreachable: a mirror takes over, and files are verified by checksum\n- Interrupted model downloads resume where they stopped instead of starting over\n- The installer now sets up WebView2 and the Microsoft Visual C++ Redistributable, and warns up front if the CPU lacks AVX/AVX2",
+  "created_at": "2026-11-04T11:50:20.050155+00:00"
+}

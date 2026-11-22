@@ -1,0 +1,203 @@
+/* Заставка запуска.
+
+   Локап — точная копия бренд-блока топбара: знак Split F и слово «etchr»
+   в общей рамке высотой --mark, пропорции из FetchrBrand. Поэтому перелёт в
+   топбар — один равномерный масштаб, и слово садится ровно на слово.
+   Все стартовые состояния прозрачные: пока грузится шрифт, виден только фон. */
+.root {
+  --mark: clamp(56px, 9vmin, 96px);
+
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  overflow: hidden;
+  color: var(--fetchr-color-text);
+  cursor: default;
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+/* При активации локап поднимается и мельчает — место табличке под ним */
+.root[data-scene="activation"] {
+  --mark: clamp(36px, 5.5vmin, 48px);
+}
+
+/* На уходе приложение уже проступает — клики должны доходить до него */
+.root[data-state="leaving"] {
+  pointer-events: none;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--fetchr-color-app-bg);
+}
+
+/* ASCII-фон заставки: рисуется в canvas и гаснет вместе с подложкой */
+.ascii {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Окно без декораций: полоса сверху таскает окно, справа свернуть и закрыть */
+.titleBar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  height: 36px;
+  justify-content: flex-end;
+  opacity: 0;
+}
+
+.windowControls {
+  display: flex;
+  height: 100%;
+}
+
+.windowButton {
+  display: inline-grid;
+  width: 42px;
+  height: 100%;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  transition: background-color var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.windowButton:hover {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.windowButton:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px rgb(var(--fetchr-accent-rgb) / 0.65);
+}
+
+.closeButton:hover {
+  background: var(--fetchr-color-danger);
+  color: var(--fetchr-color-on-accent);
+}
+
+/* Колонка «локап + табличка» по центру. Пока таблички нет, локап стоит в
+   оптическом центре — чуть выше геометрического. */
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 4.5vh, 40px);
+  padding: 48px 16px 3vh;
+}
+
+.root[data-scene="activation"] .stage {
+  padding-bottom: 32px;
+}
+
+.lockup {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(var(--mark) * 19 / 75);
+}
+
+.markWrap {
+  position: relative;
+  flex: none;
+  width: calc(var(--mark) * 77 / 75);
+  height: var(--mark);
+}
+
+.glow {
+  position: absolute;
+  inset: calc(var(--mark) * -2);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--fetchr-accent-rgb) / 0.18),
+    rgb(var(--fetchr-accent-rgb) / 0.06) 42%,
+    rgb(var(--fetchr-accent-rgb) / 0) 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Зерно только внутри свечения: снимает бандинг с градиента и не
+   поднимает чёрный по всему экрану */
+.glow::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+    0 0 / 160px 160px;
+  content: "";
+  -webkit-mask: radial-gradient(closest-side, #000 15%, transparent 80%);
+  mask: radial-gradient(closest-side, #000 15%, transparent 80%);
+  opacity: 0.12;
+}
+
+.mark {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--fetchr-color-text);
+  opacity: 0;
+}
+
+/* Место под слово в раскладке локапа: сами буквы рисует сцена знака */
+.wordWrap {
+  line-height: 0;
+}
+
+.word {
+  display: block;
+  visibility: hidden;
+}
+
+.wordmark {
+  display: block;
+  width: calc(var(--mark) * 271 / 75);
+  height: var(--mark);
+}
+
+/* При активации рейка лишь погашена, а лежит она поверх низа таблички:
+   без этого она съедала бы клики по «Проверить ещё раз» и «Обновить». */
+.root[data-scene="activation"] [data-intro-part="status"] {
+  pointer-events: none;
+}
+
+.root[data-fallback][data-scene="activation"] [data-intro-part="status"] {
+  display: none;
+}
+
+/* Таймлайн не собрался: показываем конечный кадр без анимации */
+.root[data-fallback] :is(.mark, .titleBar, [data-intro-part="status"]) {
+  opacity: 1;
+}
+
+.root[data-fallback] .glow {
+  opacity: 0.8;
+}
+
+/* Настоящие знак, имя и версия в топбаре ждут, пока на их место сядет
+   локап. Знак и имя включаются мгновенно — поверх них гаснет копия. */
+:global(html[data-fetchr-intro]) :global([data-intro-anchor]) {
+  opacity: 0;
+}
+
+/* Версию локап не накрывает, поэтому её проявляем, а не включаем */
+:global([data-intro-anchor="version"]) {
+  transition: opacity 320ms var(--fetchr-ease-out) 80ms;
+}

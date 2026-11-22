@@ -1,0 +1,2839 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fetchr — премиальный стрим-конвейер</title>
+  <meta name="description" content="Fetchr — премиальный dark SaaS лендинг для захвата, нарезки и подготовки стримов.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Лестница поверхностей: глубина строится цветом, не тенью */
+      --canvas: #07080a;
+      --surface: #0d0d0d;
+      --surface-elevated: #101111;
+      --surface-card: #121212;
+
+      /* Границы */
+      --hairline: #242728;
+      --hairline-soft: rgba(255, 255, 255, 0.08);
+      --hairline-strong: rgba(255, 255, 255, 0.16);
+
+      /* Текст */
+      --ink: #f4f4f6;
+      --body: #cdcdcd;
+      --mute: #9c9c9d;
+      --ash: #6a6b6c;
+      --stone: #434345;
+
+      /* CTA-пилюля */
+      --cta-bg: #ffffff;
+      --cta-bg-pressed: #e8e8e8;
+      --cta-fg: #000000;
+
+      /* Бренд Fetchr */
+      --accent: #3d7dff;
+      --accent-soft: rgba(61, 125, 255, 0.15);
+      --stripe-start: #5a93ff;
+      --stripe-end: #1b3f8f;
+
+      /* Акценты категорий — только внутри иллюстраций */
+      --accent-red: #ff6161;
+      --accent-green: #59d499;
+      --accent-yellow: #ffc533;
+
+      /* Радиусы */
+      --r-xs: 4px;
+      --r-sm: 6px;
+      --r-md: 8px;
+      --r-lg: 10px;
+      --r-xl: 16px;
+      --r-full: 9999px;
+
+      /* Отступы */
+      --s-xs: 4px;
+      --s-sm: 8px;
+      --s-md: 12px;
+      --s-lg: 16px;
+      --s-xl: 24px;
+      --s-xxl: 32px;
+      --s-section: 96px;
+
+      --max: 1240px;
+      --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Core Reset */
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0;
+    }
+    
+    html {
+      max-width: 100%;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      background: var(--canvas);
+    }
+
+    body {
+      font-family: Inter, "Inter Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-feature-settings: "calt", "kern", "liga", "ss03";
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--body);
+      background-color: var(--canvas);
+      overflow-x: hidden;
+      max-width: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      pointer-events: none;
+      opacity: 0.02;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+    }
+
+    /* Scrollbar Design */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--canvas);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--hairline-soft);
+      border-radius: var(--r-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--hairline-strong);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s var(--ease-premium);
+    }
+    img {
+      display: block;
+      max-width: 100%;
+    }
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: none;
+    }
+    main, section {
+      max-width: 100%;
+    }
+
+    /* Единое кольцо фокуса: клавиатурная навигация должна быть видимой */
+    :focus-visible {
+      outline: none;
+      box-shadow:
+        0 0 0 1.5px var(--accent),
+        0 0 0 5px var(--accent-soft);
+      border-radius: var(--r-md);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    body.cursor-ready,
+    body.cursor-ready a,
+    body.cursor-ready button,
+    body.cursor-ready .btn,
+    body.cursor-ready .tile {
+      cursor: none;
+    }
+
+    /* Cinematic Custom Cursor */
+    .custom-cursor {
+      width: 6px;
+      height: 6px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      border-radius: 50%;
+      background: #ffffff;
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0;
+      transition: transform 0.22s var(--ease-premium), opacity 0.3s var(--ease-premium);
+      will-change: transform;
+    }
+
+    .custom-cursor.is-visible {
+      opacity: 1;
+    }
+
+    .custom-cursor.is-hovering {
+      transform: translate(-50%, -50%) scale(4.5);
+    }
+
+    @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+      body.cursor-ready,
+      body.cursor-ready a,
+      body.cursor-ready button,
+      body.cursor-ready .btn,
+      body.cursor-ready .tile {
+        cursor: auto;
+      }
+      .custom-cursor {
+        display: none;
+      }
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    /* Site Header — Sophisticated Translucent Rail */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      padding: 16px 24px;
+      pointer-events: none;
+    }
+
+    .nav-shell {
+      pointer-events: auto;
+      width: min(var(--max), 100%);
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: minmax(140px, 1fr) auto minmax(200px, 1fr);
+      align-items: center;
+      gap: 16px;
+      padding: 6px 10px 6px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(8, 8, 9, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.61), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      justify-self: start;
+    }
+
+    .brand-logo {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+    }
+
+    .brand-mark {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .desktop-nav {
+      display: flex;
+      justify-content: center;
+      justify-self: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .desktop-nav a {
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      transition: color 0.2s var(--ease-premium), background 0.2s var(--ease-premium);
+    }
+
+    .desktop-nav a:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      grid-column: 3;
+      justify-self: end;
+      gap: 8px;
+    }
+
+    .menu-btn {
+      display: none;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      color: var(--soft);
+      transition: all 0.2s;
+    }
+
+    .menu-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Buttons — Pure Monochrome Vercel Style */
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 18px;
+      font-family: 'Geist', sans-serif;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--soft);
+      font-weight: 500;
+      font-size: 13.5px;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.25s var(--ease-premium);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-primary:hover {
+      background: #e4e4e7;
+      border-color: #e4e4e7;
+      color: #000000;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-icon {
+      width: 38px;
+      min-width: 38px;
+      padding: 0;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .btn-telegram {
+      color: var(--muted);
+      border-color: var(--line);
+    }
+
+    .btn-telegram:hover {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.22);
+      background: rgba(56, 189, 248, 0.04);
+    }
+
+    /* Mobile Drawer */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      place-items: center;
+      padding: 32px;
+      background: rgba(0, 0, 0, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .mobile-menu.open { 
+      display: grid; 
+    }
+
+    .mobile-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      color: var(--soft);
+      display: grid;
+      place-items: center;
+    }
+
+    .mobile-links {
+      display: grid;
+      gap: 16px;
+      text-align: center;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .mobile-links a {
+      font-size: 20px;
+      font-weight: 500;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--soft);
+      transition: all 0.2s;
+    }
+
+    .mobile-links a:hover { 
+      color: #ffffff; 
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      display: grid;
+      align-items: start;
+      padding: 130px 0 64px;
+      isolation: isolate;
+    }
+
+    .video-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: -6;
+      background: #000000;
+    }
+
+    /* Background Ambient Streams Wall */
+    .stream-wall {
+      position: absolute;
+      inset: 80px -10vw 0;
+      z-index: -5;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.58;
+      mask-image: linear-gradient(90deg, transparent 0%, #000000 15%, #000000 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000000 15%, #000000 85%, transparent 100%);
+    }
+
+    .stream-track {
+      position: absolute;
+      left: 50%;
+      display: flex;
+      width: max-content;
+      gap: 16px;
+      transform: translateX(-50%) rotateX(10deg);
+      animation: streamFlow 120s linear infinite;
+    }
+
+    .stream-track:nth-child(1) { top: 0px; animation-duration: 160s; opacity: 1.0; }
+    .stream-track:nth-child(2) { top: 160px; animation-duration: 190s; animation-direction: reverse; opacity: 0.95; }
+    .stream-track:nth-child(3) { top: 320px; animation-duration: 220s; opacity: 0.85; }
+    .stream-track:nth-child(4) { top: 480px; animation-duration: 250s; animation-direction: reverse; opacity: 0.75; }
+    .stream-track:nth-child(5) { top: 640px; animation-duration: 280s; opacity: 0.65; }
+
+    @keyframes streamFlow {
+      from { transform: translateX(-15%) rotateX(10deg); }
+      to { transform: translateX(-55%) rotateX(10deg); }
+    }
+
+    /* Ambient Stream Card Backgrounds */
+    .stream-card-bg {
+      width: 235px;
+      height: 135px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      background: rgba(10, 10, 11, 0.7);
+      box-shadow: 0 14px 44px rgba(0,0,0,0.65);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .stream-card-bg:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .vod-thumb {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #000000;
+    }
+
+    .vod-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.82;
+      filter: saturate(0.9) brightness(0.85);
+      transition: opacity 0.3s, filter 0.3s;
+    }
+
+    .stream-card-bg:hover .vod-thumb img {
+      opacity: 0.98;
+      filter: saturate(1.0) brightness(1.0);
+    }
+
+    .stream-card-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.82) 100%);
+    }
+
+    .stream-card-bg b {
+      position: absolute;
+      z-index: 3;
+      left: 12px;
+      bottom: 24px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .stream-card-bg span:not(.live-tag-text) {
+      position: absolute;
+      z-index: 3;
+      left: 12px;
+      bottom: 10px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 10px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .live-tag {
+      position: absolute;
+      z-index: 4;
+      top: 10px;
+      left: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #eb5757;
+      color: #ffffff;
+      padding: 3px 6.5px;
+      border-radius: 4px;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 6px rgba(235, 87, 87, 0.5);
+    }
+
+    .live-pulse {
+      width: 5px;
+      height: 5px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
+      animation: livePulseGlow 1.8s infinite;
+    }
+
+    @keyframes livePulseGlow {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+      }
+    }
+
+    .game-tag {
+      position: absolute;
+      z-index: 4;
+      top: 10px;
+      right: 10px;
+      display: inline-flex;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.9);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 8.5px;
+      font-weight: 500;
+      max-width: 105px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .stream-card-bg i {
+      position: absolute;
+      z-index: 3;
+      right: 10px;
+      top: 10px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 9px;
+      font-style: normal;
+      font-weight: 500;
+      letter-spacing: .02em;
+    }
+
+    .left-gradient {
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      background: linear-gradient(90deg, #000000 0%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.3) 60%, transparent 100%);
+    }
+
+    .bottom-gradient {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background: linear-gradient(0deg, #000000 0%, rgba(0,0,0,0.8) 25%, transparent 60%);
+    }
+
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      opacity: 0.15;
+    }
+
+    .grid-lines span {
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .grid-lines span:last-child { 
+      border-right: 0; 
+    }
+
+    .center-glow {
+      position: absolute;
+      left: 50%;
+      top: 8%;
+      width: min(700px, 90vw);
+      height: 180px;
+      transform: translateX(-50%);
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    /* Hero Typography */
+    .hero-layout {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 6;
+      width: min(820px, 100%);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .wide-accent {
+      font-family: 'Geist', 'Inter', sans-serif !important;
+      font-weight: 700 !important;
+      color: #ffffff;
+      letter-spacing: -0.04em;
+      text-transform: none;
+      line-height: 0.95;
+      background: linear-gradient(135deg, #ffffff 40%, #a5c7f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      font-size: 11px;
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0 auto;
+      max-width: 900px;
+      min-height: 1.1em;
+      font-family: 'Geist', 'Inter', sans-serif;
+      font-size: clamp(34px, 5.5vw, 64px);
+      line-height: 1.05;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .typewriter-line {
+      display: inline;
+    }
+
+    .typewriter-text {
+      display: inline;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: .075em;
+      height: .75em;
+      margin-left: .08em;
+      translate: 0 .08em;
+      border-radius: 999px;
+      background: #ffffff;
+    }
+
+    .accent-period { 
+      color: var(--accent); 
+    }
+
+    .hero-description {
+      max-width: 600px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    /* Product Hardware Mockup Box */
+    .product-stage {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      perspective: 1200px;
+      pointer-events: none;
+      scroll-margin-top: 100px;
+    }
+
+    .product-window {
+      position: relative;
+      z-index: 4;
+      width: min(980px, 85vw);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      background: rgba(10, 10, 11, 0.85);
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      transform: translateZ(0) scale(.99);
+      filter: blur(0);
+      animation: mockupCinematicIn 1s var(--ease-premium) both;
+      transition: border-color 0.4s var(--ease-premium), transform 0.4s var(--ease-premium), box-shadow 0.4s var(--ease-premium);
+      cursor: zoom-in;
+      pointer-events: auto;
+    }
+
+    .product-window:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 48px 140px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    @keyframes mockupCinematicIn {
+      0% { opacity: 0; filter: blur(10px); transform: translateY(20px) scale(.97); }
+      100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(.99); }
+    }
+
+    .mac-top {
+      height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: #09090b;
+    }
+
+    .mac-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .mac-dot.red { background: rgba(255, 95, 87, 0.6); }
+    .mac-dot.yellow { background: rgba(255, 189, 46, 0.6); }
+    .mac-dot.green { background: rgba(40, 200, 64, 0.6); }
+
+    .mac-title {
+      margin-left: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+
+    .product-shot {
+      position: relative;
+      padding: 6px;
+      background: #000000;
+    }
+
+    .screen-stack {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      background: #020203;
+    }
+
+    .screen-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.01);
+      transition: opacity 0.4s var(--ease-premium);
+    }
+
+    .screen-frame.active {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    /* Embedded Platfoms Badge Strip */
+    .source-strip {
+      position: relative;
+      z-index: 8;
+      width: min(820px, calc(100% - 48px));
+      margin: 64px auto 16px;
+      padding: 20px 24px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(10, 10, 11, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+    }
+
+    .source-strip-head {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .source-strip-head span {
+      color: #ffffff;
+    }
+
+    .source-strip-head b {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .source-platforms {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .platform-card {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 72px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.01);
+      overflow: hidden;
+      transition: all 0.3s var(--ease-premium);
+    }
+
+    .platform-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .platform-card img {
+      width: auto !important;
+      max-height: 34px;
+      display: block;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+
+    .platform-card:hover img {
+      opacity: 0.95;
+    }
+
+    /* Core Section Styles */
+    section {
+      padding: 72px 0;
+      position: relative;
+    }
+
+    #projects {
+      padding: 48px 0 24px;
+    }
+
+    #beta {
+      padding: 24px 0 72px;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      align-items: end;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 12px 0 0;
+      font-family: 'Geist', 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .section-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14.5px;
+    }
+
+    /* Bento Grid */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .tile {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      min-height: 220px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(8, 8, 9, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      transition: all 0.3s var(--ease-premium);
+    }
+
+    .tile.wide { 
+      grid-column: span 2; 
+    }
+
+    .tile:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* Raycast spotlight on tile */
+    .tile::before {
+      content: "";
+      position: absolute;
+      left: var(--spotlight-x, 82%);
+      top: var(--spotlight-y, 18%);
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 70%);
+      transform: translate(-50%, -50%) scale(0.9);
+      transition: opacity 0.4s var(--ease-premium), transform 0.4s var(--ease-premium);
+      will-change: left, top, transform, opacity;
+      z-index: 0;
+    }
+
+    .tile:hover::before {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .tile > * { 
+      position: relative; 
+      z-index: 1; 
+    }
+
+    .tile-kicker {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .tile h3 {
+      margin: 14px 0 6px;
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .tile p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 13.5px;
+    }
+
+    .tile-metric {
+      position: absolute;
+      right: 24px;
+      bottom: 20px;
+      color: #ffffff;
+      font-size: clamp(32px, 3.5vw, 44px);
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .signal-map {
+      position: absolute;
+      inset: auto 24px 20px;
+      height: 64px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      align-items: end;
+    }
+
+    .signal-map span {
+      display: block;
+      min-height: 10px;
+      border-radius: 4px 4px 2px 2px;
+      background: linear-gradient(180deg, rgba(86, 204, 242, 0.7), rgba(61, 125, 255, 0.15));
+      opacity: .8;
+    }
+
+    .signal-map span:nth-child(1) { height: 38%; }
+    .signal-map span:nth-child(2) { height: 68%; }
+    .signal-map span:nth-child(3) { height: 34%; }
+    .signal-map span:nth-child(4) { height: 88%; }
+    .signal-map span:nth-child(5) { height: 52%; }
+    .signal-map span:nth-child(6) { height: 72%; }
+    .signal-map span:nth-child(7) { height: 44%; }
+
+    .mini-shot {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 20px;
+      height: 110px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      background-image: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.9)), url("data:image/svg+xml,%3Csvg rx='8' width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23050506'/%3E%3Cpath d='M0,50 Q100,10 200,50 T400,50' fill='none' stroke='%2338bdf8' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.45;
+    }
+
+    /* Live Telemetry Panels */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      width: min(var(--max), 100%);
+      margin: 0 auto 24px;
+    }
+
+    .stat-card {
+      min-height: 94px;
+      padding: 16px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      background: rgba(10, 10, 11, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.01);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-card span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .stat-card strong {
+      display: block;
+      color: #ffffff;
+      font-size: clamp(24px, 2.5vw, 36px);
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    #beta .top-streamers-head {
+      width: min(var(--max), 100%);
+      margin: 32px auto 16px;
+    }
+
+    .top-streamers {
+      display: block;
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+    }
+
+    /* Redesigned Clean Monolith Podium */
+    .podium {
+      height: 480px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 14px;
+      padding: 24px 20px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      background: rgba(8, 8, 9, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .podium-card {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      height: var(--bar-height);
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      background: rgba(14, 14, 15, 0.7);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: all 0.4s var(--ease-premium);
+    }
+
+    .podium-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .podium-card.first {
+      order: 2;
+      border-top: 2px solid #ffbd2e;
+      background: linear-gradient(180deg, rgba(255, 189, 46, 0.02), rgba(12, 12, 13, 0.7));
+    }
+    .podium-card.second {
+      order: 1;
+      border-top: 2px solid #a5c7f7;
+      background: linear-gradient(180deg, rgba(165, 199, 247, 0.02), rgba(12, 12, 13, 0.7));
+    }
+    .podium-card.third {
+      order: 3;
+      border-top: 2px solid #f2994a;
+      background: linear-gradient(180deg, rgba(242, 153, 74, 0.02), rgba(12, 12, 13, 0.7));
+    }
+
+    .podium-media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .12;
+      filter: saturate(0.8) contrast(1);
+    }
+
+    .podium-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.92) 100%);
+    }
+
+    .medal {
+      position: absolute;
+      z-index: 3;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      font-weight: 700;
+      font-size: 13px;
+      color: #ffffff;
+    }
+
+    .podium-card.first .medal { border-color: rgba(255, 189, 46, 0.35); color: #ffbd2e; }
+    .podium-card.second .medal { border-color: rgba(165, 199, 247, 0.35); color: #a5c7f7; }
+    .podium-card.third .medal { border-color: rgba(242, 153, 74, 0.35); color: #f2994a; }
+
+    .streamer-avatar {
+      position: absolute;
+      z-index: 3;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      background: rgba(10,10,12,0.8);
+    }
+
+    .podium-card.first .streamer-avatar { border-color: #ffbd2e; }
+    .podium-card.second .streamer-avatar { border-color: #a5c7f7; }
+    .podium-card.third .streamer-avatar { border-color: #f2994a; }
+
+    .streamer-avatar[hidden],
+    .podium-media[hidden] {
+      display: none;
+    }
+
+    .podium-card.is-empty {
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(10, 10, 11, 0.15);
+    }
+
+    .podium-card.is-empty::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      z-index: 1;
+      border-radius: 10px;
+      opacity: .25;
+      background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      background-size: 200% 100%;
+      animation: podiumSkeleton 1.8s ease-in-out infinite;
+    }
+
+    .podium-card.is-empty .medal,
+    .podium-card.is-empty .podium-content {
+      opacity: .4;
+    }
+
+    @keyframes podiumSkeleton {
+      0% { background-position: 120% 0, 0 0; }
+      100% { background-position: -120% 0, 0 0; }
+    }
+
+    .podium-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 60px 14px 20px;
+      text-align: center;
+    }
+
+    .podium-content h3 {
+      margin: 0;
+      max-width: 100%;
+      font-size: clamp(16px, 2.2vw, 24px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      overflow-wrap: anywhere;
+    }
+
+    .download-badge {
+      display: inline-flex;
+      justify-content: center;
+      padding: 5px 10px;
+      border-radius: 6px;
+      color: #eaeaea;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-weight: 500;
+      font-size: 11.5px;
+    }
+
+    /* Footer Symmetrical Border Line */
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 13px;
+    }
+
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .6s var(--ease-premium), transform .6s var(--ease-premium);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .section-head {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .podium { 
+        height: 420px; 
+      }
+    }
+
+    @media (max-width: 768px) {
+      .desktop-nav,
+      .nav-actions .btn:not(.btn-primary):not(.btn-theme) {
+        display: none;
+      }
+      .menu-btn {
+        display: inline-grid;
+        place-items: center;
+      }
+      .nav-shell {
+        grid-template-columns: auto 1fr auto;
+        width: 100%;
+      }
+      .nav-actions {
+        justify-self: end;
+      }
+      .grid-lines { 
+        display: none; 
+      }
+      .hero {
+        padding-top: 110px;
+      }
+      .bento {
+        grid-template-columns: 1fr;
+      }
+      .tile.wide {
+        grid-column: auto;
+      }
+      .stats-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .container { 
+        width: min(100% - 32px, var(--max)); 
+      }
+      .nav-shell {
+        border-radius: 999px;
+        min-height: 44px;
+        padding: 4px 6px 4px 12px;
+      }
+      .brand-logo { 
+        font-size: 17px; 
+      }
+      .nav-actions .btn-primary {
+        display: none;
+      }
+      .mobile-menu {
+        padding: 24px;
+      }
+      .mobile-links {
+        gap: 10px;
+      }
+      .hero {
+        padding: 90px 0 40px;
+      }
+      h1 {
+        font-size: clamp(26px, 7vw, 36px);
+      }
+      .hero-description {
+        font-size: 13.5px;
+        margin-top: 14px;
+      }
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 8px;
+      }
+      .hero-actions .btn {
+        width: 100%;
+        min-height: 40px;
+      }
+      .source-platforms {
+        grid-template-columns: 1fr;
+      }
+      .platform-card {
+        min-height: 60px;
+      }
+      .podium {
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+      }
+      .podium-card.first,
+      .podium-card.second,
+      .podium-card.third {
+        order: initial;
+        height: auto;
+        min-height: 160px;
+      }
+      .podium-content {
+        padding: 50px 12px 16px;
+      }
+    }
+
+    /* Light Theme Styling Overrides */
+    body.light-theme {
+      --bg: #ffffff;
+      --card-bg: #fafafa;
+      --card-hover-bg: #f5f5f7;
+      --ink: #111113;
+      --muted: #6e6e73;
+      --soft: #48484a;
+      --accent: #3d7dff;
+      --cyan: #0088cc;
+      --blue: #3d7dff;
+      --violet: #865cff;
+      --line: rgba(0, 0, 0, 0.08);
+      --line-strong: rgba(0, 0, 0, 0.16);
+      --glass: rgba(0, 0, 0, 0.02);
+      --shadow: 0 40px 100px rgba(0, 0, 0, 0.06);
+    }
+    body.light-theme::-webkit-scrollbar-track {
+      background: #fafafa;
+    }
+    body.light-theme::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+    }
+    body.light-theme::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.25);
+    }
+    body.light-theme .desktop-nav a:hover {
+      color: #000000;
+      background: rgba(0, 0, 0, 0.05);
+    }
+    body.light-theme .menu-btn {
+      background: rgba(0, 0, 0, 0.03);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+    body.light-theme .menu-btn:hover {
+      color: #000000;
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+    body.light-theme .btn {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    body.light-theme .btn:hover {
+      border-color: rgba(0, 0, 0, 0.16);
+      background: rgba(0, 0, 0, 0.06);
+      color: #000000;
+    }
+    body.light-theme .btn-primary {
+      background: #000000;
+      color: #ffffff;
+      border-color: #000000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    }
+    body.light-theme .btn-primary:hover {
+      background: #27272a;
+      border-color: #27272a;
+      color: #ffffff;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.1);
+    }
+    body.light-theme .btn-icon {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    body.light-theme .btn-telegram:hover {
+      color: #0284c7;
+      border-color: rgba(2, 132, 199, 0.22);
+      background: rgba(2, 132, 199, 0.04);
+    }
+    body.light-theme .mobile-menu {
+      background: rgba(255, 255, 255, 0.96);
+    }
+    body.light-theme .mobile-close {
+      background: rgba(0, 0, 0, 0.03);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+    body.light-theme .mobile-links a {
+      border-color: rgba(0, 0, 0, 0.06);
+      background: rgba(0, 0, 0, 0.02);
+    }
+    body.light-theme .mobile-links a:hover {
+      color: #000000;
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+    body.light-theme .video-fallback {
+      background: #ffffff;
+    }
+    body.light-theme .stream-wall {
+      opacity: 0.44;
+    }
+    body.light-theme .stream-card-bg {
+      background: rgba(255, 255, 255, 0.82);
+      border-color: rgba(0, 0, 0, 0.11);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+    }
+    body.light-theme .stream-card-bg b {
+      color: #0b0b0c;
+    }
+    body.light-theme .stream-card-bg span:not(.live-tag-text) {
+      color: rgba(15, 15, 18, 0.72);
+      text-shadow: none;
+    }
+    body.light-theme .stream-card-bg::after {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.85) 100%);
+    }
+    body.light-theme .left-gradient {
+      background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.92) 20%, rgba(255,255,255,0.3) 60%, transparent 100%);
+    }
+    body.light-theme .bottom-gradient {
+      background: linear-gradient(0deg, #ffffff 0%, rgba(255,255,255,0.8) 25%, transparent 60%);
+    }
+    body.light-theme .grid-lines span {
+      border-right: 1px solid rgba(0, 0, 0, 0.04);
+    }
+    body.light-theme .center-glow ellipse {
+      fill: rgba(61, 125, 255, 0.07);
+    }
+    body.light-theme .wide-accent {
+      background: linear-gradient(135deg, #111113 40%, #0066cc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    body.light-theme .typewriter-cursor {
+      background: #111113;
+    }
+    body.light-theme .product-window {
+      background: rgba(250, 250, 252, 0.85);
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+    body.light-theme .product-window:hover {
+      border-color: rgba(0, 0, 0, 0.16);
+      box-shadow: 0 48px 140px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+    body.light-theme .mac-top {
+      background: #f4f4f5;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    body.light-theme .source-strip {
+      border-color: var(--line);
+      background: rgba(250, 250, 252, 0.7);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+    body.light-theme .source-strip-head span {
+      color: #000000;
+    }
+    body.light-theme .source-strip-head b {
+      color: rgba(0, 0, 0, 0.35);
+    }
+    body.light-theme .platform-card {
+      border-color: rgba(0, 0, 0, 0.06);
+      background: rgba(0, 0, 0, 0.01);
+    }
+    body.light-theme .platform-card:hover {
+      border-color: rgba(0, 0, 0, 0.14);
+      background: rgba(0, 0, 0, 0.03);
+    }
+    body.light-theme .platform-card img {
+      filter: none !important;
+    }
+    body.light-theme .label {
+      border-color: rgba(0, 0, 0, 0.08);
+      color: #000000;
+      background: rgba(0, 0, 0, 0.03);
+    }
+    body.light-theme .tile {
+      background: rgba(250, 250, 252, 0.7);
+      border-color: var(--line);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    body.light-theme .tile:hover {
+      border-color: rgba(0, 0, 0, 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    body.light-theme .tile::before {
+      background: radial-gradient(circle, rgba(0, 0, 0, 0.04), transparent 70%);
+    }
+    body.light-theme .tile-kicker {
+      border-color: rgba(0, 0, 0, 0.05);
+      background: rgba(0, 0, 0, 0.02);
+    }
+    body.light-theme .tile-metric {
+      color: #000000;
+    }
+    body.light-theme .stat-card {
+      background: rgba(250, 250, 252, 0.7);
+      border-color: rgba(0, 0, 0, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    body.light-theme .stat-card strong {
+      color: #111113;
+    }
+    body.light-theme .podium {
+      border-color: rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    body.light-theme .podium-card {
+      background: rgba(250, 250, 252, 0.85);
+      border-color: rgba(0, 0, 0, 0.06);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    body.light-theme .podium-card::after {
+      background: linear-gradient(180deg, transparent 30%, rgba(255, 255, 255, 0.95) 100%);
+    }
+    body.light-theme .podium-content h3 {
+      color: #111113;
+    }
+    body.light-theme .download-badge {
+      color: #48484a;
+      background: rgba(0, 0, 0, 0.03);
+      border-color: rgba(0, 0, 0, 0.06);
+    }
+    body.light-theme .medal {
+      border-color: rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.8);
+      color: #111113;
+    }
+    body.light-theme .podium-card.first .medal { border-color: rgba(255, 189, 46, 0.35); }
+    body.light-theme .podium-card.second .medal { border-color: rgba(165, 199, 247, 0.35); }
+    body.light-theme .podium-card.third .medal { border-color: rgba(242, 153, 74, 0.35); }
+    body.light-theme .podium-card.is-empty {
+      border-color: rgba(0, 0, 0, 0.05);
+      background: rgba(0, 0, 0, 0.02);
+    }
+    body.light-theme footer {
+      border-top-color: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.45);
+    }
+
+    /* Language Selector & Theme Toggle Styles */
+    .lang-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .lang-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      color: var(--soft);
+      padding: 0 24px 0 10px;
+      min-height: 38px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.25s var(--ease-premium);
+    }
+    .lang-select:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+    }
+    body.light-theme .lang-select {
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--soft);
+    }
+    body.light-theme .lang-select:hover {
+      border-color: rgba(0, 0, 0, 0.16);
+      background: rgba(0, 0, 0, 0.06);
+      color: #000000;
+    }
+    .lang-chevron {
+      position: absolute;
+      right: 10px;
+      pointer-events: none;
+      color: var(--muted);
+      transition: transform 0.2s;
+    }
+    .lang-select:focus + .lang-chevron {
+      transform: rotate(180deg);
+    }
+    .lang-select option {
+      background: #09090b;
+      color: #ffffff;
+    }
+    body.light-theme .lang-select option {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .btn-theme svg {
+      transition: transform 0.3s var(--ease-premium);
+    }
+    .btn-theme:hover svg {
+      transform: rotate(15deg);
+    }
+    
+    body.light-theme .icon-moon {
+      display: none !important;
+    }
+    body.light-theme .icon-sun {
+      display: block !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="custom-cursor" aria-hidden="true"></div>
+  
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="/" aria-label="Fetchr">
+        <span class="brand-mark"></span>
+        <span class="brand-logo">Fetchr</span>
+      </a>
+      <div class="desktop-nav">
+        <a href="#projects" data-i18n="nav-features">Возможности</a>
+        <a href="#beta" data-i18n="nav-telemetry">Телеметрия</a>
+      </div>
+      <div class="nav-actions">
+        <div class="lang-wrapper">
+          <select class="lang-select" id="langSelect" aria-label="Change language">
+            <option value="ru" selected>RU</option>
+            <option value="en">EN</option>
+            <option value="es">ES</option>
+            <option value="zh">ZH</option>
+            <option value="hi">HI</option>
+            <option value="ar">AR</option>
+            <option value="pt">PT</option>
+            <option value="ja">JA</option>
+            <option value="de">DE</option>
+            <option value="fr">FR</option>
+          </select>
+          <svg class="lang-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <button class="btn btn-icon btn-theme" id="themeToggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <a class="btn btn-icon btn-telegram" href="https://t.me/streamcutter" target="_blank" rel="noopener noreferrer" aria-label="Telegram-канал Fetchr">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 4.16c.31-1.28-.9-2.35-2.07-1.83L2.58 9.96c-1.29.57-1.22 2.42.11 2.9l4.42 1.58 1.7 5.32c.39 1.23 1.97 1.57 2.84.61l2.45-2.7 4.36 3.2c1.11.82 2.69.22 3.01-1.13l2.47-15.58ZM8.24 13.39l9.4-5.78c.18-.11.36.13.21.28l-7.77 7.37-.3 3.24-1.54-5.11Z"/></svg>
+        </a>
+        <a class="btn btn-primary" href="https://github.com/h3r0nchick/Fetchr" target="_blank" rel="noopener noreferrer"><span data-i18n="nav-github">GitHub</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="margin-left: 4px;"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.11.79-.25.79-.56v-2.01c-3.22.7-3.9-1.39-3.9-1.39-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.41-1.27.74-1.56-2.57-.29-5.27-1.28-5.27-5.72 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.47.11-3.07 0 0 .98-.31 3.18 1.19a10.96 10.96 0 0 1 5.79 0c2.2-1.5 3.17-1.19 3.17-1.19.64 1.6.24 2.78.12 3.07.74.81 1.18 1.85 1.18 3.11 0 4.45-2.71 5.43-5.29 5.72.42.36.79 1.07.79 2.16v3.03c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+        <button class="menu-btn" type="button" aria-label="Открыть меню" aria-controls="mobileMenu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <button class="mobile-close" type="button" aria-label="Закрыть меню">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="mobile-links" aria-label="Мобильная навигация">
+      <a href="#projects" data-i18n="nav-features">Возможности</a>
+      <a href="#beta" data-i18n="nav-telemetry">Телеметрия</a>
+      <a href="https://github.com/h3r0nchick/Fetchr" target="_blank" rel="noopener noreferrer" data-i18n="nav-github">GitHub</a>
+      <a href="https://t.me/streamcutter" target="_blank" rel="noopener noreferrer">Telegram</a>
+    </nav>
+  </div>
+
+  <main id="top">
+    <section class="hero" aria-label="Fetchr hero">
+      <div class="video-fallback" aria-hidden="true"></div>
+      
+      <div class="stream-wall" aria-hidden="true">
+        <div class="stream-track">
+          <!-- Track 1: KaiCenat, xQc, ibai, shroud, and repeat -->
+          <div class="stream-card-bg live-card" data-streamer="kaicenat"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_kaicenat-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>KaiCenat</b><span class="spec-text" data-raw-viewers="84100">84.1K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="xqc"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_xqc-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>xQc</b><span class="spec-text" data-raw-viewers="28500">28.5K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="ibai"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_ibai-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>ibai</b><span class="spec-text" data-raw-viewers="114000">114K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="shroud"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_shroud-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>shroud</b><span class="spec-text" data-raw-viewers="14200">14.2K viewers</span></div>
+          <!-- Repeat once more for seamless scrolling -->
+          <div class="stream-card-bg live-card" data-streamer="kaicenat"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_kaicenat-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>KaiCenat</b><span class="spec-text" data-raw-viewers="84100">84.1K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="xqc"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_xqc-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>xQc</b><span class="spec-text" data-raw-viewers="28500">28.5K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="ibai"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_ibai-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>ibai</b><span class="spec-text" data-raw-viewers="114000">114K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="shroud"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_shroud-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>shroud</b><span class="spec-text" data-raw-viewers="14200">14.2K viewers</span></div>
+        </div>
+        <div class="stream-track">
+          <!-- Track 2: tarik, Jynxzi, gaules, CaseOh and repeat -->
+          <div class="stream-card-bg live-card" data-streamer="tarik"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_tarik-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>tarik</b><span class="spec-text" data-raw-viewers="19800">19.8K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="jynxzi"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_jynxzi-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>Jynxzi</b><span class="spec-text" data-raw-viewers="26400">26.4K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="gaules"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_gaules-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>gaules</b><span class="spec-text" data-raw-viewers="34100">34.1K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="caseoh_"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_caseoh_-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>CaseOh</b><span class="spec-text" data-raw-viewers="41500">41.5K viewers</span></div>
+          <!-- Repeat once more for seamless scrolling -->
+          <div class="stream-card-bg live-card" data-streamer="tarik"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_tarik-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>tarik</b><span class="spec-text" data-raw-viewers="19800">19.8K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="jynxzi"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_jynxzi-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>Jynxzi</b><span class="spec-text" data-raw-viewers="26400">26.4K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="gaules"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_gaules-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>gaules</b><span class="spec-text" data-raw-viewers="34100">34.1K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="caseoh_"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_caseoh_-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>CaseOh</b><span class="spec-text" data-raw-viewers="41500">41.5K viewers</span></div>
+        </div>
+        <div class="stream-track">
+          <!-- Track 3: shroud, gaules, xQc, CaseOh and repeat -->
+          <div class="stream-card-bg live-card" data-streamer="shroud"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_shroud-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>shroud</b><span class="spec-text" data-raw-viewers="14200">14.2K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="gaules"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_gaules-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>gaules</b><span class="spec-text" data-raw-viewers="34100">34.1K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="xqc"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_xqc-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>xQc</b><span class="spec-text" data-raw-viewers="28500">28.5K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="caseoh_"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_caseoh_-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>CaseOh</b><span class="spec-text" data-raw-viewers="41500">41.5K viewers</span></div>
+          <!-- Repeat once more for seamless scrolling -->
+          <div class="stream-card-bg live-card" data-streamer="shroud"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_shroud-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>shroud</b><span class="spec-text" data-raw-viewers="14200">14.2K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="gaules"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_gaules-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>gaules</b><span class="spec-text" data-raw-viewers="34100">34.1K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="xqc"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_xqc-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>xQc</b><span class="spec-text" data-raw-viewers="28500">28.5K viewers</span></div>
+          <div class="stream-card-bg live-card" data-streamer="caseoh_"><div class="vod-thumb"><img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_caseoh_-440x248.jpg" alt="" loading="lazy" referrerPolicy="no-referrer"></div><div class="live-tag"><span class="live-pulse"></span><span class="live-tag-text">LIVE</span></div><b>CaseOh</b><span class="spec-text" data-raw-viewers="41500">41.5K viewers</span></div>
+        </div>
+      </div>
+
+      <div class="left-gradient" aria-hidden="true"></div>
+      <div class="bottom-gradient" aria-hidden="true"></div>
+      <div class="grid-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      
+      <svg class="center-glow" viewBox="0 0 900 220" aria-hidden="true">
+        <defs>
+          <filter id="ellipseBlur" x="-20%" y="-80%" width="140%" height="260%">
+            <feGaussianBlur stdDeviation="30"></feGaussianBlur>
+          </filter>
+        </defs>
+        <ellipse cx="450" cy="92" rx="300" ry="36" fill="rgba(61,125,255,.22)" filter="url(#ellipseBlur)"></ellipse>
+      </svg>
+
+      <div class="container">
+        <div class="hero-layout">
+          <div class="hero-copy reveal">
+            <p class="eyebrow" data-i18n="hero-eyebrow">Менеджеры загрузок</p>
+            <h1 aria-live="polite"><span class="typewriter-line"><span class="typewriter-text wide-accent" id="heroTypewriter">Fetchr</span><span class="typewriter-cursor" aria-hidden="true"></span></span></h1>
+            <p class="hero-description" data-i18n="hero-desc">Fetchr берет на себя рутину автоматической загрузки стрим-контента: скачивает VOD, находит скрытые исходники, блёрит спонсорские блоки, сохраняет чат и отдает чистые стримы для монтажа.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="https://github.com/h3r0nchick/Fetchr" target="_blank" rel="noopener noreferrer" data-i18n="hero-btn-primary">Репозиторий в GitHub</a>
+              <a class="btn" href="#projects" data-i18n="hero-btn-secondary">Смотреть демо</a>
+            </div>
+          </div>
+
+          <div class="product-stage reveal">
+            <article class="product-window" id="productWindow" aria-label="Демонстрация интерфейса Fetchr">
+              <div class="mac-top" aria-hidden="true">
+                <span class="mac-dot red"></span>
+                <span class="mac-dot yellow"></span>
+                <span class="mac-dot green"></span>
+                <span class="mac-title">Fetchr Beta</span>
+              </div>
+              <div class="product-shot">
+                <div class="screen-stack" id="screenStack">
+                  <img class="screen-frame active" src="/docs/design/fetchr-redesign/site/screen-1-topaz-web.jpg" alt="Скриншот Fetchr 1" data-screen-index="0">
+                  <img class="screen-frame" src="/docs/design/fetchr-redesign/site/screen-2-topaz-web.jpg" alt="Скриншот Fetchr 2" data-screen-index="1">
+                  <img class="screen-frame" src="/docs/design/fetchr-redesign/site/screen-3-topaz-web.jpg" alt="Скриншот Fetchr 3" data-screen-index="2">
+                  <img class="screen-frame" src="/docs/design/fetchr-redesign/site/screen-4-topaz-web.jpg" alt="Скриншот Fetchr 4" data-screen-index="3">
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="source-strip reveal" aria-label="Поддерживаемые платформы">
+        <div class="source-strip-head">
+          <span data-i18n="source-head">Поддерживаемые платформы</span>
+          <b data-i18n="source-sub">источники загрузки VOD</b>
+        </div>
+        <div class="source-platforms">
+          <div class="platform-card" aria-label="YouTube Support">
+            <img src="/docs/design/fetchr-redesign/site/platform-youtube-badge.png?v=20260522" alt="YouTube">
+          </div>
+          <div class="platform-card" aria-label="Twitch Support">
+            <img src="/docs/design/fetchr-redesign/site/platform-twitch-badge.png?v=20260522" alt="Twitch">
+          </div>
+          <div class="platform-card" aria-label="Kick Support">
+            <img src="/docs/design/fetchr-redesign/site/platform-kick-badge.png?v=20260522" alt="Kick">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="label" data-i18n="section-features-label">Возможности</span>
+            <h2 data-i18n="section-features-title">Премиальный <span class="wide-accent">стрим-конвейер</span></h2>
+          </div>
+          <p class="section-copy" data-i18n="section-features-desc">Fetchr разработан как бескомпромиссная утилита для медиа-команд. Он полностью заменяет хаос ручных скриптов и хрупких сайтов-загрузчиков, собирая VOD, чаты и вырезанные записи в один чистый поток автоматических загрузок.</p>
+        </div>
+        
+        <div class="bento reveal" aria-label="Ключевые возможности Fetchr">
+          <article class="tile wide">
+            <span class="tile-kicker" data-i18n="tile1-kicker">Интеграции</span>
+            <h3 data-i18n="tile1-title">Кастомный спонсорский блёр</h3>
+            <p data-i18n="tile1-desc">Автоматически глушит и скрывает рекламные и партнерские промо-интеграции внутри записей, помогая команде монтировать чистые исходники без ручной подготовки контента.</p>
+            <div class="mini-shot" aria-hidden="true"></div>
+          </article>
+          
+          <article class="tile">
+            <span class="tile-kicker" data-i18n="tile2-kicker">Метаданные</span>
+            <h3 data-i18n="tile2-title">Синхронная выгрузка чата</h3>
+            <p data-i18n="tile2-desc">Сохраняет чат стрима один-в-один к загруженному VOD в текстовом и JSON форматах, чтобы сохранить реакции сообщества.</p>
+            <strong class="tile-metric">1:1</strong>
+          </article>
+          
+          <article class="tile">
+            <span class="tile-kicker" data-i18n="tile3-kicker">Архивариус</span>
+            <h3 data-i18n="tile3-title">Авто-поиск скрытых стримов</h3>
+            <p data-i18n="tile3-desc">Помогает находить непубличные или преждевременно удаленные стримы, используя интеллектуальное сканирование кэш-индексов веб-архива.</p>
+            <div class="signal-map" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </article>
+          
+          <article class="tile">
+            <span class="tile-kicker" data-i18n="tile4-kicker">Универсальность</span>
+            <h3 data-i18n="tile4-title">Прямой импорт с трех платформ</h3>
+            <p data-i18n="tile4-desc">Работает одновременно с Twitch, YouTube и Kick, объединяя разрозненные пайплайны контента в одну центральную панель управления.</p>
+          </article>
+          
+          <article class="tile">
+            <span class="tile-kicker" data-i18n="tile5-kicker">Продакшн</span>
+            <h3 data-i18n="tile5-title">Чистые исходники без артефактов</h3>
+            <p data-i18n="tile5-desc">Загружает медиафайлы напрямую, без малейшей потери битрейта, гарантируя идеальное качество для транскодинга и монтажа.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="beta">
+      <div class="container">
+        <div class="stats-strip reveal" aria-label="Статистика Fetchr beta">
+          <article class="stat-card">
+            <span data-i18n="stat-app-downloads">загрузок приложения</span>
+            <strong data-live-metric="app-downloads">—</strong>
+          </article>
+          <article class="stat-card">
+            <span data-i18n="stat-vod-downloads">скачанных записей</span>
+            <strong data-live-metric="vod-downloads">—</strong>
+          </article>
+        </div>
+
+        <div class="section-head top-streamers-head reveal">
+          <div>
+            <span class="label" data-i18n="streamers-label">Топ стримеры</span>
+            <h2 data-i18n="streamers-title">Популярные <span class="wide-accent">нарезки VOD</span></h2>
+          </div>
+        </div>
+
+        <div class="top-streamers">
+          <div class="podium reveal" aria-label="Топ стримеры по скачиванию записей">
+            
+            <article class="podium-card second is-empty" style="--bar-height: 72%;">
+              <img class="podium-media" alt="" loading="lazy" hidden>
+              <div class="medal">2</div>
+              <img class="streamer-avatar" alt="" loading="lazy" hidden>
+              <div class="podium-content">
+                <h3>—</h3>
+                <span class="download-badge">—</span>
+              </div>
+            </article>
+            
+            <article class="podium-card first is-empty" style="--bar-height: 100%;">
+              <img class="podium-media" alt="" loading="lazy" hidden>
+              <div class="medal">1</div>
+              <img class="streamer-avatar" alt="" loading="lazy" hidden>
+              <div class="podium-content">
+                <h3>—</h3>
+                <span class="download-badge">—</span>
+              </div>
+            </article>
+            
+            <article class="podium-card third is-empty" style="--bar-height: 56%;">
+              <img class="podium-media" alt="" loading="lazy" hidden>
+              <div class="medal">3</div>
+              <img class="streamer-avatar" alt="" loading="lazy" hidden>
+              <div class="podium-content">
+                <h3>—</h3>
+                <span class="download-badge">—</span>
+              </div>
+            </article>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <span data-i18n="footer-copyright">Fetchr © 2026. Beta Build.</span>
+      <div class="footer-links">
+        <a class="btn btn-icon btn-telegram" href="https://t.me/streamcutter" target="_blank" rel="noopener noreferrer" aria-label="Telegram-канал Fetchr">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 4.16c.31-1.28-.9-2.35-2.07-1.83L2.58 9.96c-1.29.57-1.22 2.42.11 2.9l4.42 1.58 1.7 5.32c.39 1.23 1.97 1.57 2.84.61l2.45-2.7 4.36 3.2c1.11.82 2.69.22 3.01-1.13l2.47-15.58ZM8.24 13.39l9.4-5.78c.18-.11.36.13.21.28l-7.77 7.37-.3 3.24-1.54-5.11Z"/></svg>
+        </a>
+        <span data-i18n="footer-rights">Все права защищены.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- Theme Switcher Logic ---
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const sunIcon = themeToggleBtn ? themeToggleBtn.querySelector(".icon-sun") : null;
+    const moonIcon = themeToggleBtn ? themeToggleBtn.querySelector(".icon-moon") : null;
+
+    const currentTheme = localStorage.getItem("theme") || "dark";
+    if (currentTheme === "light") {
+      document.body.classList.add("light-theme");
+      if (sunIcon) sunIcon.style.display = "block";
+      if (moonIcon) moonIcon.style.display = "none";
+    } else {
+      document.body.classList.remove("light-theme");
+      if (sunIcon) sunIcon.style.display = "none";
+      if (moonIcon) moonIcon.style.display = "block";
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const isLight = document.body.classList.toggle("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        if (sunIcon && moonIcon) {
+          sunIcon.style.display = isLight ? "block" : "none";
+          moonIcon.style.display = isLight ? "none" : "block";
+        }
+      });
+    }
+
+    // --- Internationalization Database (10 Most Popular Languages) ---
+    const i18nData = {
+      ru: {
+        "nav-features": "Возможности",
+        "nav-telemetry": "Телеметрия",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "Менеджеры загрузок",
+        "hero-desc": "Fetchr берет на себя рутину автоматической загрузки стрим-контента: скачивает VOD, находит скрытые исходники, блёрит спонсорские блоки, сохраняет чат и отдает чистые стримы для монтажа.",
+        "hero-btn-primary": "Репозиторий в GitHub",
+        "hero-btn-secondary": "Смотреть демо",
+        "source-head": "Поддерживаемые платформы",
+        "source-sub": "источники загрузки VOD",
+        "section-features-label": "Возможности",
+        "section-features-title": "Премиальный <span class=\"wide-accent\">стрим-конвейер</span>",
+        "section-features-desc": "Fetchr разработан как бескомпромиссная утилита для медиа-команд. Он полностью заменяет хаос ручных скриптов и хрупких сайтов-загрузчиков, собирая VOD, чаты и вырезанные записи в один чистый поток автоматических загрузок.",
+        "tile1-kicker": "Интеграции",
+        "tile1-title": "Кастомный спонсорский блёр",
+        "tile1-desc": "Автоматически глушит и скрывает рекламные и партнерские промо-интеграции внутри записей, помогая команде монтировать чистые исходники без ручной подготовки контента.",
+        "tile2-kicker": "Метаданные",
+        "tile2-title": "Синхронная выгрузка чата",
+        "tile2-desc": "Сохраняет чат стрима один-в-один к загруженному VOD в текстовом и JSON форматах, чтобы сохранить реакции сообщества.",
+        "tile3-kicker": "Архивариус",
+        "tile3-title": "Авто-поиск скрытых стримов",
+        "tile3-desc": "Помогает находить непубличные или преждевременно удаленные стримы, используя интеллектуальное сканирование кэш-индексов веб-архива.",
+        "tile4-kicker": "Универсальность",
+        "tile4-title": "Прямой импорт с трех платформ",
+        "tile4-desc": "Работает одновременно с Twitch, YouTube и Kick, объединяя разрозненные пайплайны контента в одну центральную панель управления.",
+        "tile5-kicker": "Продакшн",
+        "tile5-title": "Чистые исходники без артефактов",
+        "tile5-desc": "Загружает медиафайлы напрямую, без малейшей потери битрейта, гарантируя идеальное качество для транскодинга и монтажа.",
+        "stat-app-downloads": "загрузок приложения",
+        "stat-vod-downloads": "скачанных записей",
+        "streamers-label": "Топ стримеры",
+        "streamers-title": "Популярные <span class=\"wide-accent\">нарезки VOD</span>",
+        "footer-copyright": "Fetchr © 2026. Beta Build.",
+        "footer-rights": "Все права защищены.",
+        "downloads-label": "скачиваний",
+        "text-yesterday": "Вчера",
+        "text-days-ago": "дн. назад"
+      },
+      en: {
+        "nav-features": "Features",
+        "nav-telemetry": "Telemetry",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "Download Managers",
+        "hero-desc": "Fetchr automates stream download routines: downloads VODs, uncovers hidden sources, blurs sponsor segments, saves chat logs, and delivers clean content for editing.",
+        "hero-btn-primary": "GitHub Repository",
+        "hero-btn-secondary": "Watch Demo",
+        "source-head": "Supported Platforms",
+        "source-sub": "sources of VOD downloads",
+        "section-features-label": "Features",
+        "section-features-title": "Premium <span class=\"wide-accent\">stream pipeline</span>",
+        "section-features-desc": "Fetchr is designed as an uncompromising utility for media teams. It completely replaces the chaos of manual scripts and fragile downloader sites, gathering VODs, chats, and cuts into a single clean flow of automated downloads.",
+        "tile1-kicker": "Integrations",
+        "tile1-title": "Custom sponsor blur",
+        "tile1-desc": "Automatically mutes and hides ad and partner promotional integrations inside recordings, helping teams edit clean footage without manual curation.",
+        "tile2-kicker": "Metadata",
+        "tile2-title": "Synchronous chat export",
+        "tile2-desc": "Saves live stream chat 1:1 with the downloaded VOD in both text and JSON formats, preserving community reactions.",
+        "tile3-kicker": "Archival",
+        "tile3-title": "Auto-discovery of hidden streams",
+        "tile3-desc": "Helps locate unlisted or prematurely deleted streams using intelligent scanning of web archive cache indices.",
+        "tile4-kicker": "Versatility",
+        "tile4-title": "Direct import from three platforms",
+        "tile4-desc": "Works synchronously across Twitch, YouTube, and Kick, consolidating fragmented stream pipelines into a central control dash.",
+        "tile5-kicker": "Production",
+        "tile5-title": "Clean source files without artifacts",
+        "tile5-desc": "Downloads media directly with zero bitrate degradation, ensuring optimal quality for transcoding and editing.",
+        "stat-app-downloads": "app downloads",
+        "stat-vod-downloads": "stream downloads",
+        "streamers-label": "Top Streamers",
+        "streamers-title": "Popular <span class=\"wide-accent\">VOD cuts</span>",
+        "footer-copyright": "Fetchr © 2026. Beta Build.",
+        "footer-rights": "All rights reserved.",
+        "downloads-label": "downloads",
+        "text-yesterday": "Yesterday",
+        "text-days-ago": "days ago"
+      },
+      es: {
+        "nav-features": "Características",
+        "nav-telemetry": "Telemetría",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "Gestores de descargas",
+        "hero-desc": "Fetchr automatiza las descargas de transmisiones: descarga VOD, detecta fuentes ocultas, difumina segmentos de patrocinadores, guarda chats y entrega contenido limpio para edición.",
+        "hero-btn-primary": "Repositorio en GitHub",
+        "hero-btn-secondary": "Ver demo",
+        "source-head": "Plataformas compatibles",
+        "source-sub": "fuentes de descarga de VOD",
+        "section-features-label": "Características",
+        "section-features-title": "Canal de transmisión <span class=\"wide-accent\">premium</span>",
+        "section-features-desc": "Fetchr está diseñado como una utilidad inflexible para equipos de medios. Reemplaza el caos de sripts manuales y sitios de descarga frágiles, unificando VOD, chats y cortes en un flujo de descarga automatizado.",
+        "tile1-kicker": "Integraciones",
+        "tile1-title": "Difuminado de patrocinadores",
+        "tile1-desc": "Silencia y oculta automáticamente integraciones promocionales e integraciones de socios, ayudando al equipo a editar metraje limpio sin preparación manual.",
+        "tile2-kicker": "Metadatos",
+        "tile2-title": "Exportación síncrona de chat",
+        "tile2-desc": "Guarda el chat de transmisión en vivo 1:1 con el VOD descargado tanto en formato de texto como en JSON, conservando las reacciones de la comunidad.",
+        "tile3-kicker": "Archivador",
+        "tile3-title": "Auto-descubrimiento de streams ocultos",
+        "tile3-desc": "Ayuda a localizar transmisiones no listadas o eliminadas prematuramente utilizando el escaneo inteligente de índices de caché del archivo web.",
+        "tile4-kicker": "Versatilidad",
+        "tile4-title": "Importación directa de tres plataformas",
+        "tile4-desc": "Funciona sincrónicamente en Twitch, YouTube y Kick, consolidando los flujos de transmisión fragmentados en una interfaz de control central.",
+        "tile5-kicker": "Producción",
+        "tile5-title": "Archivos fuente limpios sin artefactos",
+        "tile5-desc": "Descarga medios directamente sin degradación del bitrate, asegurando una calidad impecable para transcodificación y montaje.",
+        "stat-app-downloads": "descargas de la aplicación",
+        "stat-vod-downloads": "transmisiones descargadas",
+        "streamers-label": "Mejores streamers",
+        "streamers-title": "Recortes de VOD <span class=\"wide-accent\">populares</span>",
+        "footer-copyright": "Fetchr © 2026. Versión Beta.",
+        "footer-rights": "Todos los derechos reservados.",
+        "downloads-label": "descargas",
+        "text-yesterday": "Ayer",
+        "text-days-ago": "días atrás"
+      },
+      zh: {
+        "nav-features": "功能",
+        "nav-telemetry": "遥测",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "下载管理器",
+        "hero-desc": "Fetchr 自动执行流下载常规流程：下载 VOD、寻找隐藏源、模糊赞助商片段、保存聊天记录，并提供干净的流媒体以供剪辑。",
+        "hero-btn-primary": "GitHub 仓库",
+        "hero-btn-secondary": "观看演示",
+        "source-head": "支持的平台",
+        "source-sub": "VOD 下载来源",
+        "section-features-label": "功能",
+        "section-features-title": "高级 <span class=\"wide-accent\">流处理流程</span>",
+        "section-features-desc": "Fetchr 专为媒体团队设计，是一款不妥协的实用工具。它彻底取代了手动脚本和脆弱下载网站的混乱状态，将 VOD、聊天记录 and 剪切片段汇集到单一干净的自动下载流程中。",
+        "tile1-kicker": "集成",
+        "tile1-title": "自定赞助商模糊",
+        "tile1-desc": "自动静音并隐藏录像内广告和合作伙伴促销集成，帮助团队在无需人工手动准备内容的情况下剪辑出干净的源素材。",
+        "tile2-kicker": "元数据",
+        "tile2-title": "同步聊天导出",
+        "tile2-desc": "将直播聊天以 1:1 的比例与下载的 VOD 保存为文本和 JSON 格式，保留社区观众的实时反应。",
+        "tile3-kicker": "档案保管",
+        "tile3-title": "自动发现隐藏流",
+        "tile3-desc": "通过智能扫描网络档案缓存索引，帮助查找未列出或提前删除的流媒体。",
+        "tile4-kicker": "多功能性",
+        "tile4-title": "三平台直接导入",
+        "tile4-desc": "同时支持 Twitch、YouTube 和 Kick，将分散的媒体处理流程整合到一个中央控制面板中。",
+        "tile5-kicker": "制作",
+        "tile5-title": "无损且干净的源文件",
+        "tile5-desc": "直接下载流媒体文件，不损失任何码率，确保转码和剪辑时的完美无损品质。",
+        "stat-app-downloads": "应用下载量",
+        "stat-vod-downloads": "已下载流媒体",
+        "streamers-label": "顶级主播",
+        "streamers-title": "流行 <span class=\"wide-accent\">VOD 剪辑</span>",
+        "footer-copyright": "Fetchr © 2026. Beta 属性。",
+        "footer-rights": "版权所有。",
+        "downloads-label": "下载",
+        "text-yesterday": "昨天",
+        "text-days-ago": "天前"
+      },
+      hi: {
+        "nav-features": "विशेषताएं",
+        "nav-telemetry": "टेलीमेट्री",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "डाउनलोड प्रबंधक",
+        "hero-desc": "Fetchr स्ट्रीम डाउनलोड दिनचर्या को स्वचालित करता है: VOD डाउनलोड करता है, छिपे हुए स्रोतों को खोजता है, प्रायोजक खंडों को धुंधला करता है, चैट को सहेजता है, और संपादन के लिए साफ स्ट्रीम प्रदान करता है।",
+        "hero-btn-primary": "GitHub रिपॉजिटरी",
+        "hero-btn-secondary": "डेमो देखें",
+        "source-head": "समर्थित प्लेटफ़ॉर्म",
+        "source-sub": "VOD डाउनलोड के स्रोत",
+        "section-features-label": "विशेषताएं",
+        "section-features-title": "प्रीमियम <span class=\"wide-accent\">स्ट्रीम पाइपलाइन</span>",
+        "section-features-desc": "Fetchr को मीडिया टीमों के लिए एक बेजोड़ उपयोगिता के रूप में डिज़ाइन किया गया है। यह मैनुअल स्क्रिप्ट और अस्थिर डाउनलोडर साइटों की अराजकता को पूरी तरह से बदल देता है, VOD, चैट और कट्स को स्वचालित डाउनलोड के एक स्वच्छ प्रवाह में इकट्ठा करता है।",
+        "tile1-kicker": "एकीकरण",
+        "tile1-title": "कस्टम प्रायोजकों को धुंधला करना",
+        "tile1-desc": "रिकॉर्डिंग के भीतर विज्ञापन और भागीदार प्रचारक एकीकरणों को स्वचालित रूप से म्यूट और छुपाता है, जिससे टीमों को मैन्युअल संपादन के बिना साफ फुटेज संपादन में मदद मिलती है।",
+        "tile2-kicker": "मेटाडेटा",
+        "tile2-title": "सहानुभूतिपूर्ण चैट विलेख",
+        "tile2-desc": "लाइव स्ट्रीम चैट को डाउनलोड किए गए VOD के साथ 1:1 टेक्स्ट और JSON दोनों प्रारूपों में सहेजता है, जिससे दर्शकों की प्रतिक्रिया सुरक्षित रहती है।",
+        "tile3-kicker": "संग्रहक",
+        "tile3-title": "छिपे हुए स्ट्रीम की खोज",
+        "tile3-desc": "वेब संग्रह के कैश इंडेक्स के बुद्धिमान स्कैनिंग का उपयोग करके अप्राप्य या समय से पहले हटाए गए स्ट्रीम खोजने में मदद करता है।",
+        "tile4-kicker": "बहुमुखी प्रतिभा",
+        "tile4-title": "तीन प्लेटफॉर्म से सीधा आयात",
+        "tile4-desc": "Twitch, YouTube और Kick दोनों पर काम करता है, बिखरते स्ट्रीम पाइपलाइनों को एक केंद्र नियंत्रण में एकीकृत करता है।",
+        "tile5-kicker": "उत्पादन",
+        "tile5-title": "बिना बाधा के स्वच्छ स्रोत",
+        "tile5-desc": "बिना बिटरेट गिरावट के सीधे फ़ाइलें डाउनलोड करता है, संपादन के लिए उत्तम वीडियो गुणवत्ता की गारंटी देता है।",
+        "stat-app-downloads": "ऐप डाउनलोड",
+        "stat-vod-downloads": "डाउनलोड सामग्री",
+        "streamers-label": "शीर्ष स्ट्रीमर्स",
+        "streamers-title": "लोकप्रिय <span class=\"wide-accent\">VOD कट्स</span>",
+        "footer-copyright": "Fetchr © 2026. बीटा संस्करण।",
+        "footer-rights": "सर्वाधिकार सुरक्षित।",
+        "downloads-label": "डाउनलोड",
+        "text-yesterday": "कल",
+        "text-days-ago": "दिन पहले"
+      },
+      ar: {
+        "nav-features": "الميزات",
+        "nav-telemetry": "التتبع",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "مديرو التنزيل",
+        "hero-desc": "يقوم Fetchr بأتمتة تنزيل البث: يقوم بتنزيل الـ VOD، ويكشف عن المصادر المخفية، ويطمس الأجزاء الإعلانية، ويحفظ الدردشة ويقدم بثًا نظيفًا للمونتاج.",
+        "hero-btn-primary": "مستودع GitHub",
+        "hero-btn-secondary": "شاهد العرض",
+        "source-head": "المنصات المدعومة",
+        "source-sub": "مصادر تنزيل الـ VOD",
+        "section-features-label": "الميزات",
+        "section-features-title": "قناة بث <span class=\"wide-accent\">متميزة</span>",
+        "section-features-desc": "تم تصميم Fetchr كأداة لا تقبل المساومة لفرق الإعلام. إنه يستبدل تمامًا فوضى السكربتات اليدوية ومواقع التنزيل الضعيفة، حيث يجمع الـ VOD والدردشات والمقتطفات في تدفق تلقائي نظيف واحد.",
+        "tile1-kicker": "التكاملات",
+        "tile1-title": "طمس مخصص للإعلانات",
+        "tile1-desc": "يكتم الصوت ويخفي تلقائيًا الإعلانات والترويج الشريك داخل التسجيلات، ليساعد فريق العمل على مونتاج المصادر النظيفة دون الحاجة لتحضير يدوي.",
+        "tile2-kicker": "البيانات",
+        "tile2-title": "تصدير متزامن للدردشة",
+        "tile2-desc": "يحفظ دردشة البث المباشر بنسبة 1:1 مع الـ VOD الذي تم تنزيله بتنسيق نصي وJSON، للاحتفاظ بتفاعلات المجتمع.",
+        "tile3-kicker": "الأرشيف",
+        "tile3-title": "البحث التلقائي عن البث",
+        "tile3-desc": "يساعد في تحديد موقع البث غير المدرج أو المحذوف قبل أوانه باستخدام الفحص الذكي لمؤشرات تخزين الأرشيف.",
+        "tile4-kicker": "سهولة كاملة",
+        "tile4-title": "استيراد من ثلاث منصات",
+        "tile4-desc": "يعمل بشكل متزامن عبر Twitch وYouTube وKick، ليوحّد قنوات البث المجزأة في واجهة تحكم رئيسية واحدة.",
+        "tile5-kicker": "الإنتاج",
+        "tile5-title": "ملفات مصدر نظيفة تماماً",
+        "tile5-desc": "ينزل الوسائط مباشرة دون أي انخفاض في جودة معدل البت، مما يضمن جودة مثالية لعمليات ترميز ومونتاج الفيديو.",
+        "stat-app-downloads": "تنزيلات التطبيق",
+        "stat-vod-downloads": "بث تنزيله",
+        "streamers-label": "أبرز صناع البث",
+        "streamers-title": "مقتطفات VOD <span class=\"wide-accent\">شائعة</span>",
+        "footer-copyright": "Fetchr © 2026. نسخة تجريبية.",
+        "footer-rights": "جميع الحقوق محفوظة.",
+        "downloads-label": "تنزيل",
+        "text-yesterday": "أمس",
+        "text-days-ago": "أيام مضت"
+      },
+      pt: {
+        "nav-features": "Recursos",
+        "nav-telemetry": "Telemetria",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "Gerenciadores de download",
+        "hero-desc": "Fetchr automatiza o download de transmissões: baixa VODs, descobre origens ocultas, borra blocos de patrocinadores, salva logs de chat e fornece streams limpos para edição.",
+        "hero-btn-primary": "Repositório no GitHub",
+        "hero-btn-secondary": "Ver Demo",
+        "source-head": "Plataformas Suportadas",
+        "source-sub": "fontes de download de VOD",
+        "section-features-label": "Recursos",
+        "section-features-title": "Pipeline de stream <span class=\"wide-accent\">premium</span>",
+        "section-features-desc": "O Fetchr foi projetado como uma ferramenta sem concessões para equipes de mídia. Substitui completamente o caos de scripts manuais e sites de download frágeis, reunindo VODs, chats e cortes em um fluxo de download automatizado.",
+        "tile1-kicker": "Integrações",
+        "tile1-title": "Desfoque de patrocinador",
+        "tile1-desc": "Muta e oculta automaticamente anúncios e integrações promocionais de parceiros dentro das gravações, auxiliando na edição de arquivos limpos sem curadoria manual.",
+        "tile2-kicker": "Metadados",
+        "tile2-title": "Exportação síncrona de chat",
+        "tile2-desc": "Salva o chat da transmissão ao vivo em sincronia 1:1 com o VOD baixado, em formatos texto e JSON, preservando as reações da comunidade.",
+        "tile3-kicker": "Arquivamento",
+        "tile3-title": "Busca de streams ocultos",
+        "tile3-desc": "Ajuda a localizar streams privados ou excluídos prematuramente, usando escaneamento inteligente de índices de cache em arquivos web.",
+        "tile4-kicker": "Versatilidade",
+        "tile4-title": "Importação de três plataformas",
+        "tile4-desc": "Trabalha de forma sincronizada no Twitch, YouTube e Kick, consolidando fluxos de mídia fragmentados em um painel centralizado.",
+        "tile5-kicker": "Produção",
+        "tile5-title": "Arquivos fonte limpos e perfeitos",
+        "tile5-desc": "Baixa arquivos de mídia diretamente com taxa de bits impecável, garantindo qualidade máxima para transcodificação e edição.",
+        "stat-app-downloads": "downloads do app",
+        "stat-vod-downloads": "streams baixados",
+        "streamers-label": "Top Streamers",
+        "streamers-title": "Cortes de VOD <span class=\"wide-accent\">populares</span>",
+        "footer-copyright": "Fetchr © 2026. Compilação Beta.",
+        "footer-rights": "Todos os direitos reservados.",
+        "downloads-label": "downloads",
+        "text-yesterday": "Ontem",
+        "text-days-ago": "dias atrás"
+      },
+      ja: {
+        "nav-features": "機能",
+        "nav-telemetry": "テレメトリー",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "ダウンロードマネージャー",
+        "hero-desc": "Fetchrは配信ダウンロードのルーチンを自動化します: VODをダウンロードし、非公開ソースを特定し、スポンサー枠をぼかし、チャットを保存して、編集用のクリーンな映像を提供します。",
+        "hero-btn-primary": "GitHub リポジトリ",
+        "hero-btn-secondary": "デモを観る",
+        "source-head": "対応プラットフォーム",
+        "source-sub": "VODダウンロードのソース",
+        "section-features-label": "機能",
+        "section-features-title": "プレミアムな <span class=\"wide-accent\">ストリーム・パイプライン</span>",
+        "section-features-desc": "Fetchrは、メディアクリエイターチームのために一切の妥協なく設計されたユーティリティです。手動スクリプトや不安定なWeb上のダウンロードサイトがもたらすカオスを完全に置き換え、VOD、チャット、カット動画を自動ダウンロードのクリーンなワークフローへと統合します。",
+        "tile1-kicker": "インテグレーション",
+        "tile1-title": "カスタムのスポンサーぼかし",
+        "tile1-desc": "録画内の広告やパートナー契約のプロモーション部分を自動的にミュート＆非表示にし、編集作業をスムーズにするクリーンな素材を自動で作成します。",
+        "tile2-kicker": "メタデータ",
+        "tile2-title": "チャットの完全同期書き出し",
+        "tile2-desc": "配信チャットを、テキスト形式およびJSON形式でダウンロードしたVODと1:1の完全同期で保存し、コミュニティのリアルタイムな反応を記録します。",
+        "tile3-kicker": "アーカイブ",
+        "tile3-title": "非公開配信の自動特定",
+        "tile3-desc": "Webアーカイブのキャッシュインデックスの高度なスキャン処理により、限定公開配信やアーカイブから早々に削除された配信を見つけ出すサポートをします。",
+        "tile4-kicker": "マルチプラットフォーム",
+        "tile4-title": "3大プラットフォームに対応",
+        "tile4-desc": "Twitch、YouTube、Kickに対応。散らばったダウンロード手段を1つの直感的で中央集約的なダッシュボードに統合します。",
+        "tile5-kicker": "高品質プロダクション",
+        "tile5-title": "劣化のないクリーンな収録ソース",
+        "tile5-desc": "ビットレートの損失を一切生じさせずに直接メディアファイルをダウンロードし、トランスコーディングやノンリニア編集に最良のクオリティを保証します。",
+        "stat-app-downloads": "アプリのダウンロード数",
+        "stat-vod-downloads": "ストリーム의ダウンロード総数",
+        "streamers-label": "トップ配信者",
+        "streamers-title": "人気な <span class=\"wide-accent\">VODカット</span>",
+        "footer-copyright": "Fetchr © 2026. Beta Build.",
+        "footer-rights": "All rights reserved.",
+        "downloads-label": "ダウンロード",
+        "text-yesterday": "昨日",
+        "text-days-ago": "日前"
+      },
+      de: {
+        "nav-features": "Funktionen",
+        "nav-telemetry": "Telemetrie",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "Download-Manager",
+        "hero-desc": "Fetchr automatisiert Stream-Downloads: lädt VODs herunter, findet versteckte Quellen, verpixelt Sponsorenblöcke, speichert Chatprotokolle und liefert sauberes Material für den Schnitt.",
+        "hero-btn-primary": "GitHub-Repository",
+        "hero-btn-secondary": "Demo ansehen",
+        "source-head": "Unterstützte Plattformen",
+        "source-sub": "Quellen für VOD-Downloads",
+        "section-features-label": "Funktionen",
+        "section-features-title": "Premium-<span class=\"wide-accent\">Stream-Pipeline</span>",
+        "section-features-desc": "Fetchr wurde als kompromissloses Tool für Medienteams konzipiert. Es ersetzt das Chaos manueller Skripte und fehleranfälliger Downloader-Websites vollständig, indem es VODs, Chats und Zuschnitte in einem automatisierten Ablauf bündelt.",
+        "tile1-kicker": "Integrationen",
+        "tile1-title": "Individuelle Sponsoren-Verpixelung",
+        "tile1-desc": "Blendet Werbung und gesponserte Segmente in Videos automatisch aus und schaltet sie stumm, um die Vorbereitung der Clips für den Schnitt zu beschleunigen.",
+        "tile2-kicker": "Metadaten",
+        "tile2-title": "Synchroner Chat-Export",
+        "tile2-desc": "Speichert den Live-Chat 1:1 synchron zum geladenen VOD im Text- und JSON-Format, um Community-Reaktionen zu bewahren.",
+        "tile3-kicker": "Archivierung",
+        "tile3-title": "Suche nach versteckten Streams",
+        "tile3-desc": "Hilft beim Auffinden nicht gelisteter oder vorzeitig gelöschter Streams durch intelligentes Scannen von Web-Archiv-Indizes.",
+        "tile4-kicker": "Vielseitigkeit",
+        "tile4-title": "Direct import",
+        "tile4-desc": "Funktioniert nahtlos auf Twitch, YouTube und Kick und führt verteilte Pipelines in einem zentralen Dashboard zusammen.",
+        "tile5-kicker": "Produktion",
+        "tile5-title": "Verlustfreie Rohdateien",
+        "tile5-desc": "Lädt Mediendateien direkt und ohne Bitratenverlust herunter – garantiert perfekte Qualität für Transkodierung und Schnitt.",
+        "stat-app-downloads": "App-Downloads",
+        "stat-vod-downloads": "Stream-Downloads",
+        "streamers-label": "Top-Streamer",
+        "streamers-title": "Beliebte <span class=\"wide-accent\">VOD-Zuschnitte</span>",
+        "footer-copyright": "Fetchr © 2026. Betaversion.",
+        "footer-rights": "Alle Rechte vorbehalten.",
+        "downloads-label": "Downloads",
+        "text-yesterday": "Gestern",
+        "text-days-ago": "Tage zuvor"
+      },
+      fr: {
+        "nav-features": "Fonctionnalités",
+        "nav-telemetry": "Télémétrie",
+        "nav-github": "GitHub",
+        "hero-eyebrow": "Gestionnaires de téléchargement",
+        "hero-desc": "Fetchr automatise le téléchargement de streams : télécharge les VOD, découvre les sources masquées, floute les segments sponsors, sauvegarde le tchat et livre des fichiers propres pour le montage.",
+        "hero-btn-primary": "Dépôt GitHub",
+        "hero-btn-secondary": "Voir la démo",
+        "source-head": "Plateformes supportées",
+        "source-sub": "sources de téléchargement de VOD",
+        "section-features-label": "Fonctionnalités",
+        "section-features-title": "Pipeline de stream <span class=\"wide-accent\">premium</span>",
+        "section-features-desc": "Fetchr est conçu comme une solution sans compromis pour les équipes de conception média. Il remplace le chaos des scripts manuels et des téléchargeurs fragiles, centralisant VOD, tchats et découpes dans un flux automatisé.",
+        "tile1-kicker": "Intégrations",
+        "tile1-title": "Floutage sponsorisé personnalisé",
+        "tile1-desc": "Coupe le son et masque automatiquement les intégrations publicitaires et promos partenaires dans les vidéos, offrant des fichiers sources propres sans préparation manuelle.",
+        "tile2-kicker": "Métadonnées",
+        "tile2-title": "Exportation synchrone du tchat",
+        "tile2-desc": "Enregistre le tchat du direct en 1:1 avec la VOD téléchargée aux formats texte et JSON pour préserver les réactions de la communauté.",
+        "tile3-kicker": "Archives",
+        "tile3-title": "Détection de streams masqués",
+        "tile3-desc": "Aide à retrouver les streams non répertoriés ou supprimés prématurément grâce à l'analyse intelligente des index de caches d'archives web.",
+        "tile4-kicker": "Polyvalence",
+        "tile4-title": "Importation depuis trois plateformes",
+        "tile4-desc": "Fonctionne simultanément sur Twitch, YouTube et Kick, unifiant les différents flux de clips en un panneau de contrôle unique.",
+        "tile5-kicker": "Production",
+        "tile5-title": "Fichiers sources d'une netteté parfaite",
+        "tile5-desc": "Télécharge les flux directement sans aucune baisse de débit, garantissant une qualité optimale de transcodage et de montage.",
+        "stat-app-downloads": "téléchargements de l'app",
+        "stat-vod-downloads": "streams téléchargés",
+        "streamers-label": "Top Streamers",
+        "streamers-title": "Séquences VOD <span class=\"wide-accent\">populaires</span>",
+        "footer-copyright": "Fetchr © 2026. Build Bêta.",
+        "footer-rights": "Tous droits réservés.",
+        "downloads-label": "téléchargements",
+        "text-yesterday": "Hier",
+        "text-days-ago": "jours"
+      }
+    };
+
+    const i18nPhrases = {
+      ru: ["Fetchr", "Умный софт", "Авто-пайплайн", "Менеджер загрузок"],
+      en: ["Fetchr", "Smart Tools", "Auto-Pipeline", "Download Manager"],
+      es: ["Fetchr", "Herramientas", "Auto-Pipeline", "Gestor de descargas"],
+      zh: ["Fetchr", "智能工具", "自动管线", "下载管理器"],
+      hi: ["Fetchr", "स्मार्ट टूल्स", "ऑटो-पाइपलाइन", "डाउनलोड प्रबंधक"],
+      ar: ["Fetchr", "أدوات ذكية", "أتمتة التدفق", "مدير التنزيل"],
+      pt: ["Fetchr", "Ferramentas", "Auto-Pipeline", "Gerenciador"],
+      ja: ["Fetchr", "自動化ツール", "自動パイプライン", "ダウンロード管理"],
+      de: ["Fetchr", "Smarte Tools", "Auto-Pipeline", "Download-Manager"],
+      fr: ["Fetchr", "Outils", "Auto-Pipeline", "Gestionnaire de VOD"]
+    };
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const customCursor = document.querySelector(".custom-cursor");
+    const canUseCustomCursor = customCursor && !reduceMotion && window.matchMedia("(pointer: fine)").matches;
+
+    // Premium interactive custom cursor logic
+    if (canUseCustomCursor) {
+      const cursorState = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        targetX: window.innerWidth / 2,
+        targetY: window.innerHeight / 2,
+        scale: 1,
+        targetScale: 1,
+      };
+
+      document.body.classList.add("cursor-ready");
+
+      const renderCursor = () => {
+        cursorState.x += (cursorState.targetX - cursorState.x) * 0.22;
+        cursorState.y += (cursorState.targetY - cursorState.y) * 0.22;
+        customCursor.style.transform = `translate(${cursorState.x}px, ${cursorState.y}px) translate(-50%, -50%) scale(${cursorState.scale})`;
+        window.requestAnimationFrame(renderCursor);
+      };
+
+      window.addEventListener("mousemove", (event) => {
+        cursorState.targetX = event.clientX;
+        cursorState.targetY = event.clientY;
+        customCursor.classList.add("is-visible");
+      }, { passive: true });
+
+      document.addEventListener("mouseleave", () => {
+        customCursor.classList.remove("is-visible");
+      });
+
+      document.addEventListener("mouseenter", () => {
+        customCursor.classList.add("is-visible");
+      });
+
+      document.querySelectorAll("a, button, .btn, .tile").forEach((node) => {
+        node.addEventListener("mouseenter", () => {
+          customCursor.classList.add("is-hovering");
+        });
+        node.addEventListener("mouseleave", () => {
+          customCursor.classList.remove("is-hovering");
+        });
+      });
+
+      window.requestAnimationFrame(renderCursor);
+    }
+
+    // Interactive spotlight positioning on tiles
+    document.querySelectorAll(".tile").forEach((tile) => {
+      tile.addEventListener("mousemove", (event) => {
+        const rect = tile.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        tile.style.setProperty("--spotlight-x", `${x.toFixed(2)}%`);
+        tile.style.setProperty("--spotlight-y", `${y.toFixed(2)}%`);
+      });
+
+      tile.addEventListener("mouseleave", () => {
+        tile.style.setProperty("--spotlight-x", "82%");
+        tile.style.setProperty("--spotlight-y", "18%");
+      });
+    });
+
+    // Mobile menu drawer
+    const menu = document.getElementById("mobileMenu");
+    const openMenu = document.querySelector(".menu-btn");
+    const closeMenu = document.querySelector(".mobile-close");
+    const setMenu = (isOpen) => {
+      menu.classList.toggle("open", isOpen);
+      menu.setAttribute("aria-hidden", String(!isOpen));
+      openMenu.setAttribute("aria-expanded", String(isOpen));
+      document.body.style.overflow = isOpen ? "hidden" : "";
+    };
+    if (openMenu) openMenu.addEventListener("click", () => setMenu(true));
+    if (closeMenu) closeMenu.addEventListener("click", () => setMenu(false));
+    if (menu) {
+      menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenu(false)));
+    }
+
+    // Scroll reveal animation
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".reveal").forEach((node) => revealObserver.observe(node));
+
+    // Typewriter headline animation
+    const typewriterNode = document.getElementById("heroTypewriter");
+    let typewriterPhrases = ["Fetchr", "Умный софт", "Авто-пайплайн", "Менеджер загрузок"];
+
+    const randomNextPhrase = (current) => {
+      if (typewriterPhrases.length < 2) return typewriterPhrases[0];
+      let next = current;
+      while (next === current) {
+        next = typewriterPhrases[Math.floor(Math.random() * typewriterPhrases.length)];
+      }
+      return next;
+    };
+
+    if (typewriterNode) {
+      let activePhrase = typewriterNode.textContent || typewriterPhrases[0];
+      let charIndex = activePhrase.length;
+      let deleting = false;
+
+      const tickTypewriter = () => {
+        if (reduceMotion) {
+          activePhrase = randomNextPhrase(activePhrase);
+          typewriterNode.textContent = activePhrase;
+          window.setTimeout(tickTypewriter, 2000);
+          return;
+        }
+
+        if (deleting) {
+          charIndex -= 1;
+          typewriterNode.textContent = activePhrase.slice(0, Math.max(0, charIndex));
+
+          if (charIndex <= 0) {
+            deleting = false;
+            activePhrase = randomNextPhrase(activePhrase);
+            window.setTimeout(tickTypewriter, 200);
+            return;
+          }
+
+          window.setTimeout(tickTypewriter, 30 + Math.random() * 20);
+          return;
+        }
+
+        charIndex += 1;
+        typewriterNode.textContent = activePhrase.slice(0, charIndex);
+
+        if (charIndex >= activePhrase.length) {
+          deleting = true;
+          window.setTimeout(tickTypewriter, 1500 + Math.random() * 500);
+          return;
+        }
+
+        window.setTimeout(tickTypewriter, 50 + Math.random() * 40);
+      };
+
+      window.setTimeout(tickTypewriter, 1000);
+    }
+
+    // Automated crossfade screen demonstrator inside mockup window
+    const frames = Array.from(document.querySelectorAll("#screenStack .screen-frame"));
+    if (frames.length > 1) {
+      let currentFrameIndex = 0;
+      window.setInterval(() => {
+        frames[currentFrameIndex].classList.remove("active");
+        currentFrameIndex = (currentFrameIndex + 1) % frames.length;
+        frames[currentFrameIndex].classList.add("active");
+      }, 4000);
+    }
+
+    // Telemetry and Podium sync polling
+    const metricNodes = {
+      appDownloads: document.querySelector('[data-live-metric="app-downloads"]'),
+      vodDownloads: document.querySelector('[data-live-metric="vod-downloads"]'),
+    };
+    const podiumCards = Array.from(document.querySelectorAll(".podium-card"));
+    const podiumByPlace = {
+      1: podiumCards.find((card) => card.classList.contains("first")),
+      2: podiumCards.find((card) => card.classList.contains("second")),
+      3: podiumCards.find((card) => card.classList.contains("third")),
+    };
+
+    const formatMetric = (value) => {
+      const number = Number(value || 0);
+      const currentLang = localStorage.getItem("lang") || "ru";
+      return Number.isFinite(number) ? number.toLocaleString(currentLang === "ru" ? "ru-RU" : "en-US") : "0";
+    };
+
+    const setMetricText = (node, value) => {
+      if (!node) return;
+      node.textContent = formatMetric(value);
+    };
+
+    const updatePodiumCard = (place, item, maxDownloads) => {
+      const card = podiumByPlace[place];
+      if (!card) return;
+      const name = card.querySelector("h3");
+      const badge = card.querySelector(".download-badge");
+      const avatar = card.querySelector(".streamer-avatar");
+      const media = card.querySelector(".podium-media");
+      const downloads = Number(item?.downloads || 0);
+      const height = maxDownloads > 0 ? Math.max(38, Math.round((downloads / maxDownloads) * 100)) : 38;
+
+      card.style.setProperty("--bar-height", `${height}%`);
+      if (name) name.textContent = item?.streamer || "—";
+      
+      const currentLang = localStorage.getItem("lang") || "ru";
+      const downloadsWord = i18nData[currentLang]?.[ "downloads-label" ] || "скачиваний";
+      if (badge) badge.textContent = item ? `${formatMetric(downloads)} ${downloadsWord}` : "—";
+      
+      if (avatar) {
+        avatar.onerror = () => {
+          avatar.hidden = true;
+        };
+        if (item?.avatar_url) {
+          avatar.src = item.avatar_url;
+          avatar.hidden = false;
+        } else {
+          avatar.hidden = true;
+        }
+      }
+      
+      if (media) {
+        media.onerror = () => {
+          media.hidden = true;
+        };
+        if (item?.preview_url) {
+          media.src = item.preview_url;
+          media.hidden = false;
+        } else {
+          media.hidden = true;
+        }
+      }
+      card.classList.toggle("is-empty", !item);
+    };
+
+    // Global Language Toggle & Update Handler
+    const langSelect = document.getElementById("langSelect");
+    let updateLiveTelemetry = () => {};
+
+    const changeLanguage = (lang) => {
+      localStorage.setItem("lang", lang);
+      document.documentElement.lang = lang;
+      
+      // Update typewriter phrases
+      typewriterPhrases = i18nPhrases[lang] || i18nPhrases.ru;
+      if (typewriterNode) {
+        typewriterNode.textContent = typewriterPhrases[0];
+      }
+
+      // Translate all data-i18n elements
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.getAttribute("data-i18n");
+        const translation = i18nData[lang]?.[key];
+        if (translation) {
+          element.innerHTML = translation;
+        }
+      });
+
+      // Synchronize live streamer cards
+      const liveViewerSuffixMap = {
+        ru: "зрителей", en: "viewers", es: "espectadores", zh: "位观众", hi: "दर्शक", ar: "مشاهدًا", pt: "espectadores", ja: "人の視聴者", de: "Zuschauer", fr: "spectateurs"
+      };
+      const liveTagMap = {
+        ru: "ЭФИР", en: "LIVE", es: "VIVO", zh: "直播", hi: "लाइव", ar: "مباشр", pt: "AO VIVO", ja: "ライブ", de: "LIVE", fr: "DIRECT"
+      };
+
+      document.querySelectorAll(".live-card").forEach((card) => {
+        const specSpan = card.querySelector(".spec-text");
+        const liveSpan = card.querySelector(".live-tag-text");
+        if (specSpan) {
+          const rawViewers = Number(specSpan.getAttribute("data-raw-viewers") || 0);
+          const formatted = rawViewers >= 1000 ? (rawViewers / 1000).toFixed(1) + "K" : rawViewers;
+          const suffix = liveViewerSuffixMap[lang] || liveViewerSuffixMap.ru;
+          specSpan.textContent = `${formatted} ${suffix}`;
+        }
+        if (liveSpan) {
+          liveSpan.textContent = liveTagMap[lang] || liveTagMap.ru;
+        }
+      });
+
+      // Re-trigger live telemetry update to display with localized formatting
+      updateLiveTelemetry();
+    };
+
+    if (langSelect) {
+      langSelect.addEventListener("change", (e) => {
+        changeLanguage(e.target.value);
+      });
+      
+      // Apply persisted language choice
+      const savedLang = localStorage.getItem("lang") || "ru";
+      langSelect.value = savedLang;
+      changeLanguage(savedLang);
+    } else {
+      const savedLang = localStorage.getItem("lang") || "ru";
+      changeLanguage(savedLang);
+    }
+
+    updateLiveTelemetry = async () => {
+      try {
+        const response = await fetch("/api/telemetry/summary", {
+          headers: { "Accept": "application/json" },
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error(`Telemetry HTTP ${response.status}`);
+        const telemetry = await response.json();
+        const topStreamers = Array.isArray(telemetry.top_streamers) ? telemetry.top_streamers : [];
+        const maxDownloads = Math.max(...topStreamers.slice(0, 3).map((item) => Number(item.downloads || 0)), 0);
+
+        setMetricText(metricNodes.appDownloads, telemetry.app_downloads ?? telemetry.app_launches);
+        setMetricText(metricNodes.vodDownloads, telemetry.downloaded_streams);
+        updatePodiumCard(1, topStreamers[0], maxDownloads);
+        updatePodiumCard(2, topStreamers[1], maxDownloads);
+        updatePodiumCard(3, topStreamers[2], maxDownloads);
+      } catch (err) {
+        console.error("Telemetry fetch failing:", err);
+      }
+    };
+
+    updateLiveTelemetry();
+    window.setInterval(updateLiveTelemetry, 15000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+/* ---------- Пресет настроек ----------
+   .trigger висит рядом с shared.secondaryButton, .editorInput — рядом с shared.input;
+   оба несут только переопределения (с префиксом страницы: копии примитивов
+   из CSS других страниц грузятся позже). */
+
+.presetSelect {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.anchor {
+  position: relative;
+  min-width: 0;
+}
+
+[data-fetchr-mute-page] .trigger {
+  width: 100%;
+  min-width: 0;
+  justify-content: flex-start;
+}
+
+.trigger svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.triggerLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.presetMenu {
+  position: absolute;
+  top: calc(100% + var(--fetchr-space-2));
+  left: 0;
+  min-width: 100%;
+}
+
+.checkSlot {
+  display: grid;
+  width: 15px;
+  height: 15px;
+  flex: none;
+  place-items: center;
+}
+
+.checkSlot svg {
+  color: var(--fetchr-color-accent);
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-2);
+}
+
+.editorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+}
+
+[data-fetchr-mute-page] .editorInput {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.editorError {
+  margin: 0;
+  color: var(--fetchr-color-danger);
+  font-size: var(--fetchr-font-size-sm);
+}

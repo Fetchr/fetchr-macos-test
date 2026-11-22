@@ -1,0 +1,205 @@
+/* ---------- Кнопки плеера ---------- */
+/* .abSwitch/.abOption висят рядом с shared.segmented*, .hitNavButton —
+   рядом с shared.ghostButton; здесь только переопределения. */
+
+/* Одна строка без переноса: ширину ловим container-запросами ниже —
+   на узкой карточке (окно 960) прячем подписи, а не переносим контролы. */
+.controlsRow {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  flex-wrap: nowrap;
+  container-type: inline-size;
+}
+
+.playButton {
+  display: grid;
+  flex: none;
+  padding: var(--fetchr-space-5);
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--fetchr-color-accent);
+  color: var(--fetchr-color-on-accent);
+  cursor: pointer;
+  transition: background-color var(--fetchr-transition-fast);
+}
+
+.playButton:hover:not(:disabled) {
+  background: var(--fetchr-color-accent-hover);
+}
+
+.playButton:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.playButton:disabled {
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.playButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.clock {
+  flex: none;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.clockTotal {
+  color: var(--fetchr-color-text-tertiary);
+}
+
+/* ── Навигатор хитов ─────────────────────────────────────────────── */
+
+.hitNav {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+}
+
+[data-fetchr-mute-page] .hitNavButton {
+  width: 28px;
+  padding: 0;
+}
+
+.hitNavLabel {
+  min-width: 92px;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  flex: none;
+  background: var(--fetchr-color-border);
+}
+
+/* ── «Слушать: Результат | Исходник» ─────────────────────────────── */
+
+.listen {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.listenLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+}
+
+/* Переопределения примитивов идут с префиксом [data-fetchr-mute-page]:
+   копии примитивов из CSS других страниц (их композят все страницы)
+   подгружаются позже и при равной специфичности перебили бы правило. */
+[data-fetchr-mute-page] .abSwitch {
+  flex: none;
+}
+
+[data-fetchr-mute-page] .abOption {
+  height: 26px;
+  padding: 0 var(--fetchr-space-6);
+  font-size: var(--fetchr-font-size-md);
+}
+
+/* ── Звук: иконка + поповер с ползунком ─────────────────────────── */
+
+.volumeWrap {
+  position: relative;
+  flex: none;
+}
+
+[data-fetchr-mute-page] .volumeTriggerOpen {
+  border-color: color-mix(in srgb, var(--fetchr-color-accent) 55%, transparent);
+  color: var(--fetchr-color-text);
+}
+
+.volumePopover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--fetchr-space-4));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-3) var(--fetchr-space-5);
+  border: 1px solid var(--fetchr-color-border-strong);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: var(--fetchr-shadow-elevated);
+  transform-origin: bottom right;
+  animation: volumePopoverIn var(--fetchr-dur-fast) var(--fetchr-ease-out);
+}
+
+.volume {
+  width: 120px;
+  accent-color: var(--fetchr-color-accent);
+}
+
+.volume:focus-visible {
+  outline: none;
+  border-radius: var(--fetchr-radius-sm);
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.volumeValue {
+  min-width: 4ch;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@keyframes volumePopoverIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+/* Узкая строка плеера: сначала уходят подписи, контролы остаются. */
+@container (max-width: 620px) {
+  .listenLabel {
+    display: none;
+  }
+}
+
+@container (max-width: 540px) {
+  .clockTotal {
+    display: none;
+  }
+
+  .hitNavLabel {
+    min-width: 0;
+  }
+}
+
+@container (max-width: 440px) {
+  .hitNavLabel,
+  .divider {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playButton {
+    transition: none;
+  }
+
+  .volumePopover {
+    animation: none;
+  }
+}

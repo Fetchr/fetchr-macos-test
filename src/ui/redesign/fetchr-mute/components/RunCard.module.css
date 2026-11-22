@@ -1,0 +1,77 @@
+/* ---------- Запуск ---------- */
+/* .primaryButton висит рядом с shared.primaryButton и несёт только переопределения. */
+
+.runCard {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-12);
+  padding: var(--fetchr-space-8) var(--fetchr-space-8) var(--fetchr-space-8) var(--fetchr-space-12);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel);
+}
+
+.runFacts {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(120px, auto));
+  gap: var(--fetchr-space-4) var(--fetchr-space-12);
+  margin: 0;
+}
+
+.runFacts div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+}
+
+.runFacts dt {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.runFacts dd {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: var(--fetchr-weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.runFacts .runTarget {
+  grid-column: 1 / -1;
+}
+
+.runDir {
+  display: block;
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-normal);
+  text-overflow: ellipsis;
+}
+
+.runCard > .primaryButton {
+  width: auto;
+  flex: none;
+  padding: 0 var(--fetchr-space-12);
+}
+
+@media (max-width: 1180px) {
+  .runCard {
+    flex-wrap: wrap;
+  }
+
+  .runCard > .primaryButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .runFacts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

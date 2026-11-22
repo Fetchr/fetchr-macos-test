@@ -1,0 +1,109 @@
+/* ---------- Слова-теги чёрного и белого списков ---------- */
+
+.tags {
+  display: flex;
+  max-height: 180px;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--fetchr-space-2);
+  padding: var(--fetchr-space-4);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+  overflow-y: auto;
+}
+
+.tags:focus-within {
+  border-color: var(--fetchr-color-accent);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-1);
+  padding: 2px 2px 2px var(--fetchr-space-4);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.tagsWhite .tag {
+  background: var(--fetchr-color-success-soft);
+  color: var(--fetchr-color-success);
+}
+
+.tagText {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tagRemove {
+  display: grid;
+  padding: var(--fetchr-space-1);
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.tagRemove:hover {
+  background: var(--fetchr-color-border-hairline);
+  opacity: 1;
+}
+
+.tagRemove:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+  opacity: 1;
+}
+
+.tagRemove svg {
+  width: 10px;
+  height: 10px;
+}
+
+.tagInput {
+  flex: 1 1 80px;
+  min-width: 80px;
+  padding: 2px var(--fetchr-space-2);
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+}
+
+.tagInput::placeholder {
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.tagInput:focus {
+  outline: none;
+}
+
+.tagHint {
+  flex: 0 0 auto;
+  padding: 1px var(--fetchr-space-3);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-pill);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  cursor: pointer;
+}
+
+.tagHint:hover {
+  color: var(--fetchr-color-text);
+}
+
+.tagHint:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}

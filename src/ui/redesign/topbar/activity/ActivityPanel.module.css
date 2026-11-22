@@ -1,0 +1,350 @@
+.panel {
+  position: fixed;
+  z-index: 7000;
+  display: flex;
+  width: min(440px, calc(100vw - 16px));
+  max-height: calc(100vh - 90px);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: 16px;
+  background: var(--fetchr-color-panel-raised, var(--fetchr-color-panel));
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.5);
+  color: var(--fetchr-color-text);
+  -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  backdrop-filter: blur(30px) saturate(1.5);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 4px;
+}
+
+.headNumbers {
+  display: grid;
+  gap: 2px;
+}
+
+.headNumbers span {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.headNumbers b {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.headNumbers small {
+  color: var(--fetchr-color-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.counts {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 12px;
+}
+
+.counts b {
+  color: var(--fetchr-color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.headSpark {
+  display: block;
+  width: 100%;
+  height: 44px;
+}
+
+.sparkLine {
+  fill: none;
+  stroke: var(--fetchr-color-accent);
+  stroke-width: 1.6;
+}
+
+.sparkArea {
+  fill: var(--fetchr-color-accent);
+  opacity: 0.14;
+}
+
+.list {
+  display: grid;
+  min-height: 0;
+  gap: 10px;
+  overflow: auto;
+  padding: 10px 12px 12px;
+}
+
+.empty {
+  margin: 12px 0;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.group {
+  display: grid;
+  gap: 6px;
+}
+
+.group h3 {
+  margin: 4px 4px 0;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.queuedRow {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  background: var(--fetchr-color-panel-inset, rgb(255 255 255 / 0.03));
+  font-size: 12.5px;
+  padding: 8px 10px;
+}
+
+.queuedRow span {
+  color: var(--fetchr-color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.queuedRow b {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: 12px;
+  background: var(--fetchr-color-panel-inset, rgb(255 255 255 / 0.03));
+  padding: 12px;
+}
+
+.job_error {
+  border-color: rgb(255 69 58 / 0.35);
+}
+
+.jobHead {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.jobHead b {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jobStatus {
+  flex: none;
+  border-radius: 999px;
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text-secondary);
+  font-size: 11px;
+  padding: 2px 8px;
+}
+
+.job_running .jobStatus {
+  background: rgb(10 132 255 / 0.16);
+  color: var(--fetchr-color-accent);
+}
+
+.job_done .jobStatus {
+  background: rgb(48 209 88 / 0.14);
+  color: var(--fetchr-color-success, #30d158);
+}
+
+.job_error .jobStatus {
+  background: rgb(255 69 58 / 0.14);
+  color: var(--fetchr-color-danger, #ff453a);
+}
+
+.jobStage,
+.jobError {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.jobStage {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.jobError {
+  color: var(--fetchr-color-danger, #ff453a);
+}
+
+.jobHint {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.bar {
+  position: relative;
+  height: 18px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--fetchr-color-hover);
+}
+
+.bar i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--fetchr-color-accent);
+  transition: width 0.4s ease;
+}
+
+.bar .barStage {
+  top: auto;
+  height: 3px;
+  background: rgb(255 255 255 / 0.7);
+}
+
+.job_done .bar i {
+  background: var(--fetchr-color-success, #30d158);
+}
+
+.job_error .bar i,
+.job_cancelled .bar i {
+  background: var(--fetchr-color-danger, #ff453a);
+}
+
+.bar span {
+  position: relative;
+  display: block;
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.jobSpark {
+  display: block;
+  width: 100%;
+  height: 30px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 10px;
+  margin: 0;
+}
+
+.stats div {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.stats dt {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 10.5px;
+}
+
+.stats dd {
+  margin: 0;
+  overflow: hidden;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tail {
+  display: grid;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgb(0 0 0 / 0.25);
+  color: var(--fetchr-color-text-tertiary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  line-height: 1.5;
+  padding: 6px 8px;
+}
+
+.tail span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jobActions {
+  display: flex;
+  gap: 4px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font-size: 11.5px;
+  padding: 5px 9px;
+}
+
+.action:hover {
+  color: var(--fetchr-color-text);
+}
+
+.foot {
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  padding: 8px;
+}
+
+.foot button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fetchr-color-accent);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px;
+}
+
+.foot button:hover {
+  background: var(--fetchr-color-hover);
+}

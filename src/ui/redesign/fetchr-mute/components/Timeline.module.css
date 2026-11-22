@@ -1,0 +1,221 @@
+/* ---------- Таймлайн плеера ---------- */
+
+.timeline {
+  position: relative;
+  height: 22px;
+  cursor: pointer;
+}
+
+.timeline:focus-visible {
+  outline: none;
+}
+
+.timeline:focus-visible .timelineRail {
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.timelineRail {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 6px;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-inset);
+  box-shadow: inset 0 0 0 1px var(--fetchr-color-border-subtle);
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+
+.timelineFill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--fetchr-color-accent) 75%, transparent);
+  transform-origin: left center;
+}
+
+/* Метка мата: тонкая красная засечка поверх дорожки, шире по хит-зоне. */
+.marker {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 9px;
+  margin-left: -4px;
+  cursor: pointer;
+}
+
+.marker::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--fetchr-color-danger);
+}
+
+/* Хит-зона шире видимой засечки: ::after прозрачный, вид не меняется. */
+.marker::after {
+  content: "";
+  position: absolute;
+  inset: -6px -4px;
+}
+
+.marker:hover::before {
+  background: var(--fetchr-color-danger-bright);
+}
+
+.knob {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border: 2px solid var(--fetchr-color-panel);
+  border-radius: 50%;
+  background: var(--fetchr-color-text);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.timelineBubble {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: var(--fetchr-space-2);
+  padding: 2px var(--fetchr-space-4);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-danger);
+  color: var(--fetchr-color-on-accent);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+/* ── Шкала плеера волной (видео 3B, аудио 4A) ─────────────────────
+   В режиме транскрипта дорожка — это волна: синим пройдено, красные
+   засечки — заглушённые места, тонкая белая линия — позиция. */
+.timelineWave {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.timelineWaveStatus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Ошибка — мелкая подпись над правым краем шкалы, не поверх меток. */
+.timelineWaveError {
+  top: auto;
+  right: 0;
+  bottom: 100%;
+  left: auto;
+  font-size: var(--fetchr-font-size-xs);
+  line-height: 1;
+  transform: none;
+}
+
+.timelineWave i {
+  flex: 1 1 0;
+  border-radius: 2px;
+  background: var(--fetchr-color-border-strong);
+}
+
+.timelineWave i.timelineWavePlayed {
+  background: var(--fetchr-color-accent);
+}
+
+[data-fetchr-mute-page][data-review] .timeline {
+  height: 40px;
+}
+
+/* У аудио кадра нет — дорожка выше (раньше .playerCard:has(.stageAudio) .timeline). */
+[data-fetchr-mute-page][data-review] .timeline.timelineAudio {
+  height: 64px;
+}
+
+[data-fetchr-mute-page][data-review] .timelineRail {
+  opacity: 0;
+}
+
+/* Сотня меток не должна заливать волну красным: тонкие засечки
+   посередине высоты, полупрозрачные, ярче при наведении. */
+[data-fetchr-mute-page][data-review] .marker {
+  top: 22%;
+  bottom: 22%;
+  width: 7px;
+  margin-left: -3px;
+}
+
+[data-fetchr-mute-page][data-review] .marker::before {
+  left: 2.5px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--fetchr-color-danger);
+  opacity: 0.85;
+}
+
+[data-fetchr-mute-page][data-review] .marker::after {
+  inset: -9px -4px;
+}
+
+/* Метки проверки по статусу: заглушено — danger, вручную — zone (как бейдж
+   в списке), под вопросом — warning, вернули звук — приглушённый текст.
+   Текущий хит — акцентное кольцо. */
+[data-fetchr-mute-page][data-review] .markerMuted::before {
+  background: var(--fetchr-color-danger);
+}
+
+[data-fetchr-mute-page][data-review] .markerManual::before {
+  background: var(--fetchr-color-zone);
+}
+
+[data-fetchr-mute-page][data-review] .markerUncertain::before {
+  background: var(--fetchr-color-warning);
+}
+
+[data-fetchr-mute-page][data-review] .markerRestored::before {
+  background: var(--fetchr-color-text-muted);
+}
+
+[data-fetchr-mute-page][data-review] .markerCurrent {
+  z-index: 1;
+}
+
+[data-fetchr-mute-page][data-review] .markerCurrent::before {
+  left: 1.5px;
+  width: 4px;
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--fetchr-color-accent);
+}
+
+[data-fetchr-mute-page][data-review] .knob {
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  height: auto;
+  margin-left: -1px;
+  border: 0;
+  border-radius: 1px;
+  background: var(--fetchr-color-text);
+  box-shadow: 0 0 0 1px var(--fetchr-color-app-bg);
+  transform: none;
+}
+
+[data-fetchr-mute-page][data-review] .marker:not(.markerCurrent):hover::before {
+  opacity: 1;
+  box-shadow: none;
+}

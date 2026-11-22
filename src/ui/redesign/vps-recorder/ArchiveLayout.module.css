@@ -1,0 +1,153 @@
+/* Архив VPS «плеер в центре»: сверху командная строка, слева библиотека
+   записей, в центре открытая запись. Клипы, каналы и сервер занимают всю
+   ширину под командной строкой. Только токены Fetchr. */
+.host {
+  height: 100%;
+  min-height: 0;
+  container-name: archive;
+  container-type: inline-size;
+}
+
+.archive {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--fetchr-color-app-bg);
+  color: var(--fetchr-color-text);
+  font-family: var(--fetchr-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.archiveWide {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Контейнер высоты для записи: плеер, чат и панель клипа считаются от
+   100cqh этой области, а не от окна. Сама она не прокручивается — так
+   выезжающая панель чата остаётся на месте, пока листается запись. */
+.pane {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  container: recording / size;
+}
+
+.paneScroll {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-6);
+  overflow: auto;
+  padding: var(--fetchr-space-8) var(--fetchr-space-10) var(--fetchr-space-8);
+  scrollbar-width: thin;
+}
+
+.alert {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+  font-size: var(--fetchr-font-size-base);
+  padding: var(--fetchr-space-4) var(--fetchr-space-6);
+}
+
+.alert > span {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.alertAction {
+  flex: none;
+  border: 1px solid currentcolor;
+  border-radius: var(--fetchr-radius-md);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--fetchr-weight-strong);
+  padding: var(--fetchr-space-2) var(--fetchr-space-5);
+}
+
+.alertAction:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* Пустая область и открытая запись сменяют друг друга плавным проявлением. */
+.paneFade {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  animation: paneFade var(--fetchr-dur-base) var(--fetchr-ease-out) backwards;
+}
+
+.paneEmpty {
+  animation: paneFade var(--fetchr-dur-base) var(--fetchr-ease-out) backwards;
+  display: grid;
+  flex: 1;
+  align-content: center;
+  justify-items: center;
+  gap: var(--fetchr-space-5);
+  color: var(--fetchr-color-text-tertiary);
+  text-align: center;
+}
+
+.paneEmpty p {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-relaxed);
+}
+
+.sourceSwitch {
+  align-self: flex-start;
+}
+
+.primary {
+  composes: buttonPrimary from "../theme/primitives.module.css";
+}
+
+.archive :focus-visible {
+  outline: 2px solid var(--fetchr-color-focus);
+  outline-offset: 2px;
+}
+
+@container archive (max-width: 1300px) {
+  .archive:not(.archiveWide) {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+}
+
+/* Библиотека сжимается до превью: плееру нужнее ширина. */
+@container archive (max-width: 1000px) {
+  .archive:not(.archiveWide) {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .paneScroll {
+    padding: var(--fetchr-space-6) var(--fetchr-space-8);
+  }
+}
+
+@keyframes paneFade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paneFade,
+  .paneEmpty {
+    animation: none;
+  }
+}

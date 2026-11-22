@@ -1,0 +1,109 @@
+/* ── Стена стримов ─────────────────────────────────────────────── */
+.sw {
+  z-index: 5;
+  overflow: hidden;
+  perspective: 1800px;
+  perspective-origin: 50% 45%;
+  pointer-events: none;
+}
+
+.swPlane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 2170px;
+  margin: -468px 0 0 -1085px;
+  grid-template-columns: repeat(4, 520px);
+  gap: 30px;
+  transform-style: preserve-3d;
+}
+
+.swTile {
+  position: relative;
+  height: 292px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #07080b;
+  box-shadow:
+    0 30px 80px -30px rgb(0 0 0 / 0.9),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.swImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swImgContain {
+  object-fit: contain;
+  background: radial-gradient(ellipse at 50% 50%, #2a1406, #07080b 70%);
+}
+
+/* Подсветка экрана под глаголом: рамка акцентного цвета и свечение */
+.swGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 3px rgb(var(--fetchr-accent-rgb) / 0.95),
+    inset 0 0 90px rgb(var(--fetchr-accent-rgb) / 0.35);
+  opacity: 0;
+}
+
+/* Затемнение и виньетка поверх стены — слова читаются на любом кадре */
+.swShade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgb(5 6 9 / 0.55), rgb(5 6 9 / 0.2) 60%, rgb(5 6 9 / 0.85) 100%);
+}
+
+/* ── Слова вступления ──────────────────────────────────────────── */
+.ow {
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.owProblem,
+.owVerb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  opacity: 0;
+  white-space: nowrap;
+}
+
+.owProblem {
+  margin-top: -64px;
+  color: #eef1f5;
+  font-size: 104px;
+  font-weight: 560;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  text-shadow: 0 10px 60px rgb(0 0 0 / 0.8);
+}
+
+.owVerb {
+  margin-top: -96px;
+  font-size: 164px;
+  font-weight: 650;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+  filter: drop-shadow(0 12px 50px rgb(0 0 0 / 0.75));
+}
+
+/* ── Вспышка ───────────────────────────────────────────────────── */
+.flash {
+  z-index: 90;
+  background: radial-gradient(ellipse at 50% 50%, #ffffff, #dfe8ff 60%, #a9c4ff);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}

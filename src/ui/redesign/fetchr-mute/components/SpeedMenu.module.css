@@ -1,0 +1,21 @@
+/* ---------- Скорость воспроизведения ---------- */
+/* .speedButton висит рядом с shared.ghostButton и несёт только переопределения. */
+
+.speedWrap {
+  position: relative;
+}
+
+.speedButton {
+  font-variant-numeric: tabular-nums;
+}
+
+.speedButtonOpen {
+  border-color: color-mix(in srgb, var(--fetchr-color-accent) 55%, transparent);
+}
+
+.speedPopover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--fetchr-space-4));
+  z-index: 5;
+}

@@ -1,0 +1,89 @@
+.viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-md);
+}
+
+.hand {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing;
+}
+
+/* Пустое место кадра тянется рукой; у зон и кнопок остаются свои курсоры. */
+.hand:not(.grabbing) {
+  cursor: grab;
+}
+
+.grabbing,
+.grabbing * {
+  cursor: grabbing !important;
+}
+
+.stage {
+  width: 100%;
+  transform-origin: 0 0;
+}
+
+.controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 12px;
+  background: rgb(14 15 17 / 0.78);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 8px 24px rgb(0 0 0 / 0.45);
+  padding: 3px;
+}
+
+.zoomButton {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.zoomButton:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.1);
+  color: var(--fetchr-color-text);
+}
+
+.zoomButton:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.zoomSelect {
+  height: 28px;
+  border: 0;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.06);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 0 6px;
+}
+
+.zoomButton:focus-visible,
+.zoomSelect:focus-visible {
+  outline: 2px solid var(--fetchr-color-accent-bright);
+  outline-offset: 1px;
+}

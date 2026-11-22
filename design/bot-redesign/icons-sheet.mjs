@@ -1,0 +1,20 @@
+import { writeFileSync } from "node:fs";
+import { Resvg } from "@resvg/resvg-js";
+const I = await import("./icons.mjs");
+const names = Object.keys(I.GLYPHS);
+const items = [...names.map((n) => I.GLYPHS[n]), ...["A","B","C"].flatMap((d) => I.PLAN_IDS.map((p) => I.planGlyph(d, p))), ...[1,3,6,12].map(I.termGlyph)];
+const cols = 8, cw = 190, ch = 150;
+const rows = Math.ceil(items.length / cols);
+let body = "";
+items.forEach((g, i) => {
+  const x = (i % cols) * cw, y = Math.floor(i / cols) * ch;
+  const tile = (s, tx, ty) => `<g transform="translate(${tx} ${ty}) scale(${s/100})">${I.tileSvg(g).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</g>`;
+  body += `<rect x="${x}" y="${y}" width="${cw/2}" height="${ch}" fill="#0e1621"/><rect x="${x+cw/2}" y="${y}" width="${cw/2}" height="${ch}" fill="#ffffff"/>`;
+  body += tile(64, x+14, y+8) + tile(32, x+20, y+86) + tile(20, x+60, y+92);
+  body += tile(32, x+cw/2+20, y+86) + tile(20, x+cw/2+60, y+92);
+  body += `<g transform="translate(${x+cw/2+14} ${y+12}) scale(2.2)">${I.glyphSvg(g,{mono:true}).replace(/#fff/g,"#1d2733")}</g>`;
+  body += `<rect x="${x+cw/2+10}" y="${y+124}" width="80" height="20" rx="5" fill="#3e88f7"/><g transform="translate(${x+cw/2+14} ${y+126}) scale(0.67)">${I.glyphSvg(g,{mono:true})}</g>`;
+  body += `<rect x="${x+10}" y="${y+124}" width="80" height="20" rx="5" fill="#203042"/><g transform="translate(${x+14} ${y+126}) scale(0.67)">${I.glyphSvg(g,{mono:true})}</g>`;
+});
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cols*cw}" height="${rows*ch}">${body}</svg>`;
+writeFileSync(new URL("./icons/sheet.png", import.meta.url), new Resvg(svg).render().asPng());

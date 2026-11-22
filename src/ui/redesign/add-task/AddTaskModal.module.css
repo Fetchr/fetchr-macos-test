@@ -1,0 +1,999 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--fetchr-z-modal);
+  display: grid;
+  place-items: center;
+  background: var(--fetchr-color-overlay-bg);
+  backdrop-filter: var(--fetchr-overlay-blur);
+  -webkit-backdrop-filter: var(--fetchr-overlay-blur);
+  color: var(--fetchr-color-text);
+  padding: var(--fetchr-space-12);
+}
+
+.modal {
+  display: grid;
+  width: min(1360px, calc(100vw - 48px));
+  height: min(860px, calc(100vh - 48px));
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  /* Модалка поднимается ступенью лестницы и hairline, без стекла и тени */
+  background: var(--fetchr-color-panel-elevated);
+  transition: border-color var(--fetchr-transition-slow), box-shadow var(--fetchr-transition-slow);
+
+  --platform-color: var(--fetchr-color-accent);
+  --platform-color-hover: var(--fetchr-color-accent-deep);
+  --platform-color-rgb: var(--fetchr-accent-rgb);
+  --platform-shadow: rgb(var(--fetchr-accent-rgb) / 0.25);
+  --platform-glow: rgb(var(--fetchr-accent-rgb) / 0.12);
+  --platform-text-accent: var(--fetchr-color-accent-bright);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--fetchr-space-8);
+  padding: var(--fetchr-space-12) var(--fetchr-space-12) var(--fetchr-space-8);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fetchr-font-size-display);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0;
+  line-height: var(--fetchr-line-height-tight);
+}
+
+.subtitle {
+  margin-top: var(--fetchr-space-3);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-base);
+}
+
+.closeButton,
+.iconButton {
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  transition:
+    background var(--fetchr-transition-base),
+    border-color var(--fetchr-transition-base),
+    color var(--fetchr-transition-base),
+    opacity var(--fetchr-transition-base),
+    transform var(--fetchr-transition-base),
+    box-shadow var(--fetchr-transition-base);
+  width: 34px;
+  height: 34px;
+}
+
+.closeButton:hover,
+.iconButton:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fetchr-color-text);
+}
+
+.tabShell {
+  padding: 0 var(--fetchr-space-12) var(--fetchr-space-8);
+}
+
+/* Вкладки источника — сегментный переключатель из промо: утопленная
+   дорожка и приподнятая пилюля, которая переезжает на выбранную вкладку */
+.tabs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: var(--fetchr-weight-medium);
+  letter-spacing: 0;
+  transition: color var(--fetchr-transition-fast);
+}
+
+.tab > :not(.tabPill) {
+  position: relative;
+  z-index: 1;
+}
+
+.tab:hover {
+  color: var(--fetchr-color-text);
+}
+
+.tabActive {
+  color: var(--fetchr-color-text);
+}
+
+.tabPill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: inset 0 0 0 1px var(--fetchr-color-border-hairline);
+}
+
+.content {
+  min-height: 0;
+  overflow: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--fetchr-space-10) var(--fetchr-space-12);
+}
+
+/* Две независимые колонки: форма слева течёт сверху вниз одним
+   ритмом, превью с карточкой сведений — справа. Раньше строки сетки
+   были общими, и опции отъезжали вниз под высоту плеера. */
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(320px, 520px);
+  align-items: start;
+  gap: var(--fetchr-space-14);
+}
+
+.formColumn,
+.previewColumn {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.formColumn {
+  gap: var(--fetchr-space-8);
+}
+
+.inputsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-7);
+  width: 100%;
+}
+
+.resolvedRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.section {
+  display: grid;
+  min-width: 0;
+  gap: var(--fetchr-space-5);
+}
+
+.sourceSection {
+  background: transparent;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-4);
+  margin-bottom: var(--fetchr-space-3);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0;
+}
+
+.sectionMeta {
+  color: var(--fetchr-color-text-tertiary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.fieldRow,
+.folderRow,
+.rangeEditor {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+}
+
+.compactFields {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1fr 190px;
+  gap: var(--fetchr-space-6);
+}
+
+.compactField {
+  display: grid;
+  min-width: 0;
+  gap: var(--fetchr-space-3);
+}
+
+.compactField > span {
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.qualityRow {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.qualityButton {
+  composes: button from "../theme/primitives.module.css";
+  padding: 0 var(--fetchr-space-6);
+}
+
+.qualityButton:hover,
+.qualityButtonActive {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.5);
+  background: rgb(var(--fetchr-accent-rgb) / 0.12);
+  color: var(--fetchr-color-text);
+  box-shadow: var(--fetchr-glow-accent);
+}
+
+.folderField {
+  grid-column: 1 / -1;
+}
+
+.input {
+  composes: input from "../theme/primitives.module.css";
+}
+
+.select {
+  composes: input from "../theme/primitives.module.css";
+}
+
+/* Переопределения через вложенный селектор: CSS примитива подключается в
+   каждый модуль, который его композит, и может встать позже этого файла,
+   так что одноклассовое правило здесь проигрывало бы по порядку */
+.compactField > .input,
+.qualityRow > .select {
+  height: 38px;
+  background: var(--fetchr-color-panel-inset);
+}
+
+.qualityRow > .select {
+  cursor: pointer;
+}
+
+/* Поле с иконкой: папка сохранения, локальный файл */
+.iconField {
+  composes: inputWithIcon from "../theme/primitives.module.css";
+}
+
+.iconFieldAction {
+  composes: inputAction from "../theme/primitives.module.css";
+}
+
+.textarea {
+  composes: input from "../theme/primitives.module.css";
+  height: auto;
+  min-height: 84px;
+  resize: vertical;
+  padding: var(--fetchr-space-5) var(--fetchr-space-6);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--fetchr-color-text-muted);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: rgba(var(--platform-color-rgb), 0.35);
+  box-shadow: 0 0 0 2px rgba(var(--platform-color-rgb), 0.1);
+}
+
+/* Главное поле — ссылка: выше остальных и с иконкой, как в промо */
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  box-sizing: border-box;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-tertiary);
+  padding: 0 var(--fetchr-space-3) 0 var(--fetchr-space-7);
+  transition:
+    border-color var(--fetchr-transition-base),
+    box-shadow var(--fetchr-transition-base);
+}
+
+.inputContainer > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.inputContainer:focus-within {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.7);
+  box-shadow: 0 0 0 3px var(--fetchr-color-focus);
+}
+
+.inputTransparent {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: var(--fetchr-font-size-lg);
+  letter-spacing: 0;
+  outline: none;
+}
+
+.inputTransparent:focus-visible {
+  box-shadow: none;
+}
+
+.inputTransparent::placeholder {
+  color: var(--fetchr-color-text-muted);
+}
+
+.inputInnerButton {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  transition: color var(--fetchr-transition-base), background-color var(--fetchr-transition-base);
+}
+
+.inputInnerButton:hover:not(:disabled) {
+  background: rgba(var(--platform-color-rgb), 0.12);
+  color: var(--platform-text-accent);
+}
+
+.inputInnerButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.button,
+.primaryButton,
+.ghostButton {
+  display: inline-flex;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0;
+  padding: 0 var(--fetchr-space-6);
+  white-space: nowrap;
+  transition:
+    background var(--fetchr-transition-base),
+    border-color var(--fetchr-transition-base),
+    color var(--fetchr-transition-base),
+    opacity var(--fetchr-transition-base),
+    transform var(--fetchr-transition-base),
+    box-shadow var(--fetchr-transition-base);
+}
+
+.analyzeButton {
+  min-width: 176px;
+}
+
+.button,
+.ghostButton {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.button:hover,
+.ghostButton:hover {
+  background: rgba(var(--platform-color-rgb), 0.08);
+  border-color: rgba(var(--platform-color-rgb), 0.3);
+  color: var(--platform-text-accent);
+}
+
+.primaryButton {
+  background: var(--fetchr-gradient-accent);
+  border: 1px solid transparent;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--fetchr-gradient-accent-hover);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.button:disabled,
+.primaryButton:disabled,
+.ghostButton:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.hint {
+  margin-top: var(--fetchr-space-3);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+/* Опции задачи — строки из промо: чекбокс, иконка, подпись, справа
+   пресет. Строка целиком подсвечивается под курсором, по подписи можно
+   щёлкать; пресет и «Настроить» живут вне label, чтобы клик по ним не
+   переключал галочку. */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+  /* Подсветка строки выходит за колонку, а галочка встаёт по левому краю
+     полей выше */
+  margin-inline: calc(-1 * var(--fetchr-space-6));
+}
+
+.optionRow {
+  display: flex;
+  min-width: 0;
+  min-height: 46px;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-2) var(--fetchr-space-6);
+  border-radius: var(--fetchr-radius-lg);
+  transition: background-color var(--fetchr-transition-fast);
+}
+
+.optionRow:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.optionMain {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font-size: var(--fetchr-font-size-lg);
+}
+
+.optionMain > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.check {
+  composes: check from "../theme/primitives.module.css";
+}
+
+/* Пресет справа выглядит как метка-плашка, но остаётся select */
+.optionSelect {
+  max-width: 190px;
+  height: 30px;
+  flex: 0 1 auto;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  outline: none;
+  padding: 0 var(--fetchr-space-5);
+  text-overflow: ellipsis;
+}
+
+.optionSelect:disabled {
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.optionButton {
+  display: inline-flex;
+  height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-pill);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  padding: 0 var(--fetchr-space-5);
+  transition:
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.optionButton:hover {
+  border-color: var(--fetchr-color-border-strong);
+  color: var(--fetchr-color-text);
+}
+
+.optionButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Кнопка «Добавить диапазон» — в рост полей таймкода рядом */
+.rangeEditor > .button {
+  height: 38px;
+}
+
+.ranges {
+  display: grid;
+  gap: var(--fetchr-space-4);
+}
+
+.rangeList {
+  display: grid;
+  gap: var(--fetchr-space-3);
+  margin-top: var(--fetchr-space-5);
+}
+
+.rangeItem {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.rangeIndex {
+  color: var(--fetchr-color-text-tertiary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  text-align: right;
+  width: 24px;
+  flex: 0 0 auto;
+}
+
+.timecodeInput {
+  width: 110px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.analysisGrid,
+.analysisResult {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: var(--fetchr-space-6);
+  align-items: center;
+}
+
+.analysisCompact {
+  display: grid;
+  min-width: 0;
+  gap: var(--fetchr-space-2);
+  border: 1px solid rgb(var(--fetchr-success-rgb) / 0.2);
+  border-radius: var(--fetchr-radius-md);
+  background: rgb(var(--fetchr-success-rgb) / 0.08);
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+}
+
+.analysisImage,
+.previewPanel {
+  position: relative;
+  width: 150px;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-md);
+  background: #000;
+}
+
+.previewPanel {
+  width: 220px;
+}
+
+.previewFrame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: #000;
+}
+
+.previewPlayer {
+  width: 100%;
+}
+
+.previewPlayer :global(.video-js) {
+  min-height: 0;
+}
+
+.previewOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: var(--fetchr-space-3);
+  background: rgba(0, 0, 0, 0.54);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  text-align: center;
+}
+
+.analysisText {
+  min-width: 0;
+}
+
+.analysisTitle {
+  overflow: hidden;
+  color: var(--fetchr-color-text);
+  font-weight: var(--fetchr-weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analysisMeta {
+  margin-top: var(--fetchr-space-2);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.previewError {
+  margin-top: var(--fetchr-space-4);
+  overflow-wrap: anywhere;
+  color: var(--fetchr-color-warning);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.error {
+  border: 1px solid rgb(var(--fetchr-danger-hover-rgb) / 0.28);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger);
+  padding: var(--fetchr-space-5) var(--fetchr-space-6);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.errorActions {
+  display: grid;
+  gap: var(--fetchr-space-3);
+  margin-top: var(--fetchr-space-4);
+}
+
+.errorHint {
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-xs);
+}
+
+.errorActionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-4);
+}
+
+.errorDetails {
+  margin-top: var(--fetchr-space-3);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs);
+}
+
+.errorDetails summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.errorDetails pre {
+  margin: var(--fetchr-space-2) 0 0;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* summaryCard removed */
+
+.summaryHeader {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+}
+
+.summaryPlatform {
+  display: inline-flex;
+  flex: 0 0 auto;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-pill);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs);
+  font-weight: var(--fetchr-weight-strong);
+  padding: 3px 8px;
+}
+
+.summaryTitle {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.presetName {
+  margin-top: var(--fetchr-space-2);
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.mediaPreview {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-xl);
+  background: #000;
+  /* Волосяная рамка поверх картинки: светлый кадр не сливается с модалкой */
+  box-shadow: inset 0 0 0 1px var(--fetchr-color-border-hairline);
+}
+
+.rightDetailsGroup {
+  width: 100%;
+}
+
+.previewPlayerLarge {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.previewCategoryPlaceholder {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  place-items: center;
+  background:
+    radial-gradient(circle at 34% 22%, rgba(var(--platform-color-rgb), 0.22), transparent 40%),
+    linear-gradient(135deg, rgba(24, 24, 32, 0.98), rgba(7, 12, 17, 0.98) 66%, rgba(13, 18, 24, 0.98));
+}
+
+.previewCategoryIcon {
+  width: clamp(42px, 10vw, 76px);
+  height: clamp(42px, 10vw, 76px);
+  color: rgba(255, 255, 255, 0.78);
+  filter: drop-shadow(0 0 18px rgba(var(--platform-color-rgb), 0.24));
+  opacity: 0.92;
+}
+
+.markButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--fetchr-space-6);
+  margin-top: var(--fetchr-space-7);
+}
+
+.markButtons > button {
+  height: 38px;
+}
+
+/* Карточка сведений под плеером: стример, длительность, источник */
+.summaryList {
+  display: grid;
+  gap: var(--fetchr-space-5);
+  margin-top: var(--fetchr-space-7);
+  padding: var(--fetchr-space-7) var(--fetchr-space-8);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-base);
+}
+
+.summaryValue {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fetchr-color-text);
+  font-weight: var(--fetchr-weight-medium);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summaryValueMono {
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-8);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel-elevated);
+  padding: var(--fetchr-space-8) var(--fetchr-space-12);
+}
+
+.extraButton {
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-accent-hover);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+}
+
+/* Почему «Скачать» неактивна: стоит рядом с кнопкой, а не в тултипе */
+.footerHint {
+  min-width: 0;
+  flex: 1;
+  margin: 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  text-align: right;
+}
+
+.inlineExtraButton {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-accent-hover);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .resolvedRow {
+    position: static;
+    grid-column: 1;
+    margin-bottom: var(--fetchr-space-4);
+  }
+
+  .analysisGrid,
+  .analysisResult {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .analysisImage,
+  .previewPanel {
+    width: 100%;
+  }
+}
+
+.expandBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+  margin-top: var(--fetchr-space-4);
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+  padding: 0;
+  transition: color var(--fetchr-transition-fast);
+}
+
+.expandBtn:hover {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.togglesSection {
+  padding-top: var(--fetchr-space-2);
+}
+
+.timecodePicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 110px;
+  height: 38px;
+  box-sizing: border-box;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  padding: 0 var(--fetchr-space-2);
+  transition:
+    border-color var(--fetchr-transition-base),
+    box-shadow var(--fetchr-transition-base);
+}
+
+.timecodePicker:focus-within {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.7);
+  box-shadow: 0 0 0 3px var(--fetchr-color-focus);
+}
+
+.rangeDash {
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.timecodeSubInput {
+  width: 20px;
+  border: 0;
+  background: transparent;
+  outline: none;
+  text-align: center;
+  color: var(--fetchr-color-text);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-base);
+  padding: 0;
+}
+
+.timecodeSep {
+  color: var(--fetchr-color-text-muted);
+  font-weight: var(--fetchr-weight-strong);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  user-select: none;
+}
+

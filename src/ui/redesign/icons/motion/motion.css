@@ -1,0 +1,46 @@
+svg[data-mi] * {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Duotone Depth: line + soft tone fill; hover thickens the stroke and lights a halo. */
+svg[data-mi] {
+  stroke-width: var(--icon-sw);
+  transition:
+    stroke-width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease;
+}
+
+svg[data-mi] [data-tone] {
+  fill: var(--icon-tone, currentColor);
+  fill-opacity: var(--icon-tone-opacity, 0.28);
+  transition: fill-opacity 0.3s ease;
+}
+
+svg[data-mi] [data-tone-extra] {
+  stroke: none;
+}
+
+:where(button, a[href], [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="switch"], summary):is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"])
+  svg[data-mi] {
+  stroke-width: calc(var(--icon-sw) * 1.2);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, currentColor 38%, transparent));
+}
+
+:where(button, a[href], [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="switch"], summary):is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"])
+  svg[data-mi]
+  [data-tone] {
+  fill-opacity: calc(var(--icon-tone-opacity, 0.28) + 0.14);
+}
+
+[aria-current="page"] svg[data-mi] {
+  --icon-tone: rgb(var(--fetchr-accent-rgb));
+  --icon-tone-opacity: 0.42;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  svg[data-mi],
+  svg[data-mi] [data-tone] {
+    transition: none;
+  }
+}

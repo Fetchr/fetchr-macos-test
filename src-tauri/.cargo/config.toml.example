@@ -1,0 +1,7 @@
+# Copy to config.toml (git-ignored) to build with a Twitch resolver proxy.
+
+[env]
+# Clean, Twitch-unflagged HTTP proxy for the gql+usher master-playlist request
+# ONLY (unlocks 1440p/2K source). Put your residential/ISP proxy here to test in
+# dev, e.g. "http://user:pass@ip:port". Empty = disabled.
+FETCHR_TWITCH_RESOLVER = ""

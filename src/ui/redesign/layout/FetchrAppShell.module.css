@@ -1,0 +1,276 @@
+.shell {
+  height: 100dvh;
+  min-height: 560px;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  /* Плоский canvas: DESIGN.md держит одну непрерывную поверхность без
+     градиентных подложек, а панели поверх градиента меняли бы свой
+     эффективный цвет в зависимости от места на экране. */
+  background: var(--fetchr-color-app-bg);
+  color: var(--fetchr-color-text);
+}
+
+.frame {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  grid-template-columns:
+    var(--fetchr-shell-sidebar-width, 236px)
+    minmax(0, 1fr)
+    minmax(300px, var(--fetchr-shell-right-panel-width, 344px));
+  grid-template-rows: var(--fetchr-shell-topbar-height, 76px) minmax(0, 1fr) var(--fetchr-shell-bottom-bar-height, 72px);
+  grid-template-areas:
+    "topbar topbar topbar"
+    "sidebar main rightpanel"
+    "sidebar bottombar bottombar";
+}
+
+.topBar {
+  grid-area: topbar;
+  min-height: 0;
+  min-width: 0;
+  overflow: visible;
+  position: relative;
+  z-index: 20;
+  background: transparent;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--fetchr-color-border-hairline);
+  background: var(--fetchr-color-chrome);
+}
+
+.main {
+  grid-area: main;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.mainInner {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: var(--fetchr-shell-main-padding, var(--fetchr-space-12));
+}
+
+.rightPanel {
+  grid-area: rightpanel;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-left: 1px solid var(--fetchr-color-border-hairline);
+  background: var(--fetchr-color-chrome);
+}
+
+.bottomBar {
+  grid-area: bottombar;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-top: 1px solid var(--fetchr-color-border);
+  background: var(--fetchr-color-chrome-raised);
+}
+
+.slot {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.noSidebar {
+  grid-template-columns: minmax(0, 1fr) var(--fetchr-shell-right-panel-width, 344px);
+  grid-template-areas:
+    "topbar topbar"
+    "main rightpanel"
+    "bottombar bottombar";
+}
+
+.noRightPanel {
+  grid-template-columns: var(--fetchr-shell-sidebar-width, 244px) minmax(0, 1fr);
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar main"
+    "sidebar bottombar";
+}
+
+.noSidebar.noRightPanel {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "topbar"
+    "main"
+    "bottombar";
+}
+
+.noTopBar {
+  grid-template-rows: minmax(0, 1fr) var(--fetchr-shell-bottom-bar-height, 72px);
+  grid-template-areas:
+    "sidebar main rightpanel"
+    "sidebar bottombar bottombar";
+}
+
+.noTopBar.noSidebar {
+  grid-template-areas:
+    "main rightpanel"
+    "bottombar bottombar";
+}
+
+.noTopBar.noRightPanel {
+  grid-template-areas:
+    "sidebar main"
+    "sidebar bottombar";
+}
+
+.noTopBar.noSidebar.noRightPanel {
+  grid-template-areas:
+    "main"
+    "bottombar";
+}
+
+.noBottomBar {
+  grid-template-rows: var(--fetchr-shell-topbar-height, 76px) minmax(0, 1fr);
+  grid-template-areas:
+    "topbar topbar topbar"
+    "sidebar main rightpanel";
+}
+
+.noBottomBar.noSidebar {
+  grid-template-areas:
+    "topbar topbar"
+    "main rightpanel";
+}
+
+.noBottomBar.noRightPanel {
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar main";
+}
+
+.noBottomBar.noSidebar.noRightPanel {
+  grid-template-areas:
+    "topbar"
+    "main";
+}
+
+.noTopBar.noBottomBar {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "sidebar main rightpanel";
+}
+
+.noTopBar.noBottomBar.noSidebar {
+  grid-template-areas: "main rightpanel";
+}
+
+.noTopBar.noBottomBar.noRightPanel {
+  grid-template-areas: "sidebar main";
+}
+
+.noTopBar.noBottomBar.noSidebar.noRightPanel {
+  grid-template-areas: "main";
+}
+
+@media (max-width: 1400px) {
+  .frame {
+    grid-template-columns: var(--fetchr-shell-sidebar-width, 220px) minmax(0, 1fr);
+    grid-template-areas:
+      "topbar topbar"
+      "sidebar main"
+      "sidebar bottombar";
+  }
+
+  .rightPanel {
+    display: none;
+  }
+
+  .noSidebar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "topbar"
+      "main"
+      "bottombar";
+  }
+
+  .noTopBar {
+    grid-template-areas:
+      "sidebar main"
+      "sidebar bottombar";
+  }
+
+  .noBottomBar {
+    grid-template-rows: var(--fetchr-shell-topbar-height, 76px) minmax(0, 1fr);
+    grid-template-areas:
+      "topbar topbar"
+      "sidebar main";
+  }
+}
+
+@media (max-width: 760px) {
+  .frame {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "topbar"
+      "sidebar"
+      "main"
+      "bottombar";
+  }
+
+  .noBottomBar {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      "topbar"
+      "sidebar"
+      "main";
+  }
+
+  .noSidebar {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "topbar"
+      "main"
+      "bottombar";
+  }
+
+  .noBottomBar.noSidebar {
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "topbar"
+      "main";
+  }
+
+  .noTopBar.noSidebar {
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "main"
+      "bottombar";
+  }
+
+  .noTopBar.noBottomBar.noSidebar {
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "main";
+  }
+
+  .sidebar {
+    max-height: 220px;
+    border-right: 0;
+    border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  }
+
+  .mainInner {
+    padding: var(--fetchr-shell-main-padding-mobile, var(--fetchr-space-8));
+  }
+
+  .rightPanel {
+    display: none;
+  }
+}

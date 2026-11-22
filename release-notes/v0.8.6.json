@@ -1,0 +1,6 @@
+{
+  "version": "0.8.6",
+  "ru": "Fetchr v0.8.6 — новые ключи\n- Ключи перешли на новый формат: в них больше нет имени и Telegram ID\n- Старые ключи скоро перестанут работать, и Fetchr сам попросит новый\n- Новый ключ выдаёт бот @fetchr_beta_bot, ссылка на него есть в окне активации",
+  "en": "Fetchr v0.8.6 — new license keys\n- Keys moved to a new format: they no longer contain your name or Telegram ID\n- Old keys will stop working soon, and Fetchr will ask for a new one\n- Get a new key from @fetchr_beta_bot, the link is in the activation window",
+  "created_at": "2026-11-04T13:28:47.947556+00:00"
+}

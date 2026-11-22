@@ -1,0 +1,153 @@
+/* «Удалить маты». Общий язык — в audio-tools/AudioTool.module.css;
+   здесь мост к нему и к примитивам темы плюс мелочи, общие для
+   нескольких компонентов страницы.
+   Красный — только мат и заглушённое; синий — выбор и прогресс.
+
+   Это единственный файл фичи, где есть composes из чужих модулей.
+   Vite подкладывает CSS зависимости перед каждым модулем с composes,
+   а минификатор оставляет только последнюю копию: второй такой модуль
+   утащил бы AudioTool и примитивы ниже правил компонентов и сломал
+   их переопределения. Компоненты вешают классы отсюда рядом со своими
+   (cn(shared.input, styles.timeInput)), а этот файл грузится первым. */
+
+.page { composes: page from "../audio-tools/AudioTool.module.css"; }
+.mainLayout { composes: mainLayout from "../audio-tools/AudioTool.module.css"; }
+.content { composes: content from "../audio-tools/AudioTool.module.css"; }
+.workspace { composes: workspace from "../audio-tools/AudioTool.module.css"; }
+.dropZone { composes: dropZone from "../audio-tools/AudioTool.module.css"; }
+.dropZoneActive { composes: dropZoneActive from "../audio-tools/AudioTool.module.css"; }
+.dropIcon { composes: dropIcon from "../audio-tools/AudioTool.module.css"; }
+.dropTitle { composes: dropTitle from "../audio-tools/AudioTool.module.css"; }
+.dropHint { composes: dropHint from "../audio-tools/AudioTool.module.css"; }
+.formats { composes: formats from "../audio-tools/AudioTool.module.css"; }
+.format { composes: format from "../audio-tools/AudioTool.module.css"; }
+.source { composes: source from "../audio-tools/AudioTool.module.css"; }
+.sourceIcon { composes: sourceIcon from "../audio-tools/AudioTool.module.css"; }
+.sourceText { composes: sourceText from "../audio-tools/AudioTool.module.css"; }
+.sourceName { composes: sourceName from "../audio-tools/AudioTool.module.css"; }
+.sourceMeta { composes: sourceMeta from "../audio-tools/AudioTool.module.css"; }
+.errorBox { composes: errorBox from "../audio-tools/AudioTool.module.css"; }
+.noticeBox { composes: noticeBox from "../audio-tools/AudioTool.module.css"; }
+.primaryButton { composes: primaryButton from "../audio-tools/AudioTool.module.css"; }
+.secondaryButton { composes: secondaryButton from "../audio-tools/AudioTool.module.css"; }
+.ghostButton { composes: ghostButton from "../audio-tools/AudioTool.module.css"; }
+.iconButton { composes: iconButton from "../audio-tools/AudioTool.module.css"; }
+.spinning { composes: spinning from "../audio-tools/AudioTool.module.css"; }
+.card { composes: card from "../audio-tools/AudioTool.module.css"; }
+.sectionHead { composes: sectionHead from "../audio-tools/AudioTool.module.css"; }
+.sectionTitle { composes: sectionTitle from "../audio-tools/AudioTool.module.css"; }
+.count { composes: count from "../audio-tools/AudioTool.module.css"; }
+.sidebar { composes: sidebar from "../audio-tools/AudioTool.module.css"; }
+.sidebarSection { composes: sidebarSection from "../audio-tools/AudioTool.module.css"; }
+.sidebarTitle { composes: sidebarTitle from "../audio-tools/AudioTool.module.css"; }
+.sidebarHint { composes: sidebarHint from "../audio-tools/AudioTool.module.css"; }
+.switch { composes: switch from "../audio-tools/AudioTool.module.css"; }
+.switchTrack { composes: switchTrack from "../audio-tools/AudioTool.module.css"; }
+.historyDelete { composes: historyDelete from "../audio-tools/AudioTool.module.css"; }
+.input { composes: input from "../theme/primitives.module.css"; }
+.segmented { composes: segmented from "../theme/primitives.module.css"; }
+.segmentedItem { composes: segmentedItem from "../theme/primitives.module.css"; }
+.segmentedItemAccent { composes: segmentedItemAccent from "../theme/primitives.module.css"; }
+.inputWithIcon { composes: inputWithIcon from "../theme/primitives.module.css"; }
+.buttonDashed { composes: buttonDashed from "../theme/primitives.module.css"; }
+.segmentedItemActive { composes: segmentedItemActive from "../theme/primitives.module.css"; }
+.chip { composes: chip from "../theme/primitives.module.css"; }
+.inputAction { composes: inputAction from "../theme/primitives.module.css"; }
+
+/* Кнопки страницы — одна система: primaryButton (главное действие),
+   secondaryButton, ghostButton (мелкие), iconButton, quietButton, buttonDashed.
+   Тихая кнопка: геометрия secondaryButton без заливки и контура —
+   второстепенное действие рядом с primary. */
+.quietButton {
+  composes: secondaryButton;
+}
+
+/* Префикс страницы: копии .button из CSS других страниц грузятся позже. */
+[data-fetchr-mute-page] .quietButton {
+  border-color: transparent;
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.quietButton svg,
+.buttonDashed svg {
+  width: 15px;
+  height: 15px;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.countDanger {
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+}
+
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--fetchr-space-3);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fetchr-color-accent-bright);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.linkButton:hover {
+  color: var(--fetchr-color-text);
+}
+
+.linkButton:focus-visible {
+  outline: none;
+  border-radius: var(--fetchr-radius-xs);
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.linkButton svg {
+  width: 13px;
+  height: 13px;
+}
+
+.ghostDanger {
+  color: var(--fetchr-color-danger);
+}
+
+.controlsSpacer {
+  flex: 1 1 auto;
+}
+
+.emptySearch {
+  padding: var(--fetchr-space-10);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-base);
+  text-align: center;
+}
+
+/* Пульсирующая точка состояния: экран анализа и «шоу удаления». */
+.hudDot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--fetchr-color-accent);
+  box-shadow: none;
+  animation: pulse var(--fetchr-dur-pulse) var(--fetchr-ease-standard) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hudDot {
+    animation: none;
+  }
+}

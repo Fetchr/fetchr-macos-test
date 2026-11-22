@@ -1,0 +1,9 @@
+# Файлы установщика Windows: путь_в_папке_установки=путь_в_репозитории.
+# Первая строка — главный exe приложения. Держать в согласии с
+# bundle.resources в src-tauri/tauri.windows.conf.json и tauri.conf.json.
+fetchr.exe=src-tauri/target/release/fetchr.exe
+resources/yt-dlp.exe=yt-dlp.exe
+resources/N_m3u8DL-RE.exe=N_m3u8DL-RE.exe
+resources/ffmpeg.exe=ffmpeg.exe
+resources/ffprobe.exe=ffprobe.exe
+resources/wordlist.txt=wordlist.txt

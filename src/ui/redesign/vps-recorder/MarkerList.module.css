@@ -1,0 +1,182 @@
+/* Метки записи в боковой панели: оглавление моментов. */
+
+.markers {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.markerAdd {
+  display: flex;
+  flex: none;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-6) var(--fetchr-space-6) var(--fetchr-space-4);
+}
+
+.markerAddButton {
+  composes: button from "../theme/primitives.module.css";
+  flex: none;
+}
+
+.markerAddButton svg {
+  width: 13px;
+  height: 13px;
+}
+
+.markersEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  margin: auto 0;
+  padding: var(--fetchr-space-12) var(--fetchr-space-10);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-relaxed);
+  text-align: center;
+}
+
+.markersEmpty p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.markersEmptyIcon {
+  display: grid;
+  padding: var(--fetchr-space-6);
+  place-items: center;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: 50%;
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-zone);
+}
+
+.markersEmptyIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.markerList {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0 var(--fetchr-space-3) var(--fetchr-space-6);
+  overflow-y: auto;
+  list-style: none;
+}
+
+.marker {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+  border-radius: var(--fetchr-radius-md);
+  transition: background-color var(--fetchr-transition-fast);
+}
+
+.marker:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.markerMain {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-4) var(--fetchr-space-3);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.markerMain:focus-visible {
+  outline: none;
+  border-radius: var(--fetchr-radius-md);
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.markerTime {
+  flex: none;
+  color: var(--fetchr-color-zone);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.markerText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.markerText strong {
+  overflow: hidden;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.markerText small {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+}
+
+/* Действия проявляются при наведении: список меток читается как оглавление,
+   а не как ряд кнопок. С клавиатуры они видны при фокусе внутри строки. */
+.markerActions {
+  display: flex;
+  flex: none;
+  gap: var(--fetchr-space-1);
+  padding-right: var(--fetchr-space-3);
+  opacity: 0;
+  transition: opacity var(--fetchr-transition-fast);
+}
+
+.marker:hover .markerActions,
+.marker:focus-within .markerActions {
+  opacity: 1;
+}
+
+.markerAction {
+  display: grid;
+  min-width: 26px;
+  min-height: 32px;
+  padding: var(--fetchr-space-2) var(--fetchr-space-3);
+  place-items: center;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.markerAction:hover {
+  color: var(--fetchr-color-text);
+  background: var(--fetchr-color-panel-hover);
+}
+
+.markerAction:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.markerAction svg {
+  width: 12px;
+  height: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker,
+  .markerActions {
+    transition: none;
+  }
+}

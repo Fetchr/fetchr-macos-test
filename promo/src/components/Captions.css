@@ -1,0 +1,79 @@
+.cap {
+  z-index: 40;
+  pointer-events: none;
+}
+
+.capBlock {
+  position: absolute;
+  width: 700px;
+}
+
+.cap-left {
+  top: 372px;
+  left: 112px;
+}
+
+.cap-right {
+  top: 372px;
+  right: 112px;
+  text-align: right;
+}
+
+.cap-top {
+  top: 70px;
+  left: 50%;
+  width: 1400px;
+  margin-left: -700px;
+  text-align: center;
+}
+
+.cap-top .capTitle {
+  font-size: 64px;
+}
+
+.cap-top .capTitle .lineMask {
+  display: inline-block;
+  margin-right: 0.28em;
+}
+
+.cap-bottom {
+  bottom: 96px;
+  left: 112px;
+  width: 1100px;
+}
+
+.capEyebrow {
+  color: var(--fetchr-color-accent-bright);
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.capTitle {
+  margin: 22px 0 0;
+  font-size: 66px;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.03;
+  white-space: nowrap;
+}
+
+/* Затемнение под подписью поверх полноэкранного кадра */
+.capShade {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 520px;
+  opacity: 0;
+}
+
+.capShadeBottom {
+  bottom: 0;
+  background: linear-gradient(0deg, rgb(4 5 8 / 0.92), rgb(4 5 8 / 0.6) 45%, rgb(4 5 8 / 0));
+}
+
+.capShadeTop {
+  top: 0;
+  height: 360px;
+  background: linear-gradient(180deg, rgb(4 5 8 / 0.9), rgb(4 5 8 / 0.5) 55%, rgb(4 5 8 / 0));
+}

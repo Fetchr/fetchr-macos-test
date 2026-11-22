@@ -1,0 +1,610 @@
+/* Общие примитивы страниц Fetchr.
+ *
+ * Каждая страница подключает их через `composes:` — Vite резолвит это на
+ * сборке, рантайма нет, JSX не меняется. Страница-специфичные отклонения
+ * пишутся рядом с composes в том же правиле и выигрывают по порядку.
+ *
+ *   .button {
+ *     composes: button from "../theme/primitives.module.css";
+ *     width: 100%;   // отклонение этой страницы
+ *   }
+ *
+ * Правила держим одноклассовыми: composes вставляет класс ПЕРЕД локальным,
+ * поэтому любая добавка специфичности здесь перебьёт страницу.
+ */
+
+/* ── Поверхности ──────────────────────────────────────────────────── */
+
+.card {
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel);
+}
+
+.cardPadded {
+  composes: card;
+  padding: var(--fetchr-space-8);
+}
+
+.cardRaised {
+  composes: card;
+  background: var(--fetchr-color-panel-raised);
+}
+
+/* Анти-карточка: строка секции, отбитая только волосяной линией снизу.
+   Паттерн add-task; chat-render приходил к тому же виду переопределениями. */
+.sectionRow {
+  border: 0;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: 0;
+  background: transparent;
+  padding: var(--fetchr-space-4) 0;
+}
+
+.sectionRow:last-of-type {
+  border-bottom: 0;
+}
+
+/* ── Кнопки ───────────────────────────────────────────────────────── */
+
+.button {
+  display: inline-flex;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-3);
+  border: 1px solid var(--fetchr-color-border-control);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-graphite-750);
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+  letter-spacing: 0.2px;
+  padding: 0 var(--fetchr-space-7);
+  white-space: nowrap;
+  transition:
+    background var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--fetchr-color-panel-hover);
+  border-color: rgb(255 255 255 / 0.52);
+  color: var(--fetchr-color-text);
+}
+
+/* Не opacity: она гасила и границу, из-за чего выключенная кнопка теряла
+   контур и растворялась в панели. Гасим только заливку и текст, контур
+   остаётся — форма кнопки читается, а состояние всё равно очевидно. */
+.button:disabled {
+  border-color: var(--fetchr-color-border-strong);
+  background: transparent;
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.buttonPrimary {
+  composes: button;
+  border-color: transparent;
+  background: var(--fetchr-gradient-accent);
+  color: var(--fetchr-color-on-accent);
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  border-color: transparent;
+  background: var(--fetchr-gradient-accent-hover);
+  color: var(--fetchr-color-on-accent);
+}
+
+/* Полноширинная CTA под длинную операцию: «Запустить обработку» и т.п. */
+.buttonHero {
+  composes: buttonPrimary;
+  width: 100%;
+  height: 40px;
+  border-radius: var(--fetchr-radius-lg);
+  font-size: var(--fetchr-font-size-lg);
+}
+
+.buttonSmall {
+  composes: button;
+  height: 28px;
+  font-size: var(--fetchr-font-size-sm);
+  padding: 0 var(--fetchr-space-5);
+}
+
+.buttonIcon {
+  composes: button;
+  width: 34px;
+  padding: 0;
+}
+
+/* Кнопка занята: операция идёт. Курсор progress вместо not-allowed —
+   disabled на время работы говорит «нельзя», а нужно «подожди». Подпись
+   гасится, но не исчезает: ширина кнопки не должна прыгать. */
+.buttonLoading {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.buttonLoading:disabled {
+  cursor: progress;
+}
+
+/* Прошлая попытка упала. Обводка, не заливка: кнопка остаётся нажимаемой,
+   потому что единственное разумное действие здесь — повторить. */
+.buttonError {
+  border-color: rgb(var(--fetchr-danger-rgb) / 0.55);
+  color: var(--fetchr-color-danger);
+}
+
+/* Пунктирная «добавить» — закладки и прочие необязательные добавления.
+   24px — минимальный размер цели по WCAG 2.2 SC 2.5.8 (AA). Правило
+   продублировано в трёх модулях с высотой 20px; здесь единственная копия. */
+.buttonDashed {
+  display: inline-flex;
+  height: 24px;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+  border: 1px dashed var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+  padding: 0 var(--fetchr-space-3);
+  transition:
+    background var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.buttonDashed:hover {
+  border-style: solid;
+  border-color: rgb(var(--fetchr-accent-bright-rgb) / 0.4);
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.buttonDanger {
+  composes: button;
+  border-color: rgb(var(--fetchr-danger-rgb) / 0.35);
+  background: rgb(var(--fetchr-danger-rgb) / 0.08);
+  color: var(--fetchr-color-danger);
+}
+
+.buttonDanger:hover:not(:disabled) {
+  border-color: rgb(var(--fetchr-danger-rgb) / 0.55);
+  background: rgb(var(--fetchr-danger-rgb) / 0.16);
+  color: var(--fetchr-color-danger-bright);
+}
+
+/* ── Формы ────────────────────────────────────────────────────────── */
+
+/* Поле — «колодец» на ступень ниже панели, как в промо-ролике: ввод
+   читается как место, куда кладут данные, а не как ещё одна кнопка */
+.input {
+  width: 100%;
+  height: 34px;
+  min-width: 0;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  outline: none;
+  padding: 0 var(--fetchr-space-6);
+  transition:
+    border-color var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+}
+
+.input::placeholder {
+  color: var(--fetchr-color-text-muted);
+}
+
+.input:focus {
+  border-color: var(--fetchr-color-accent);
+  box-shadow: 0 0 0 3px var(--fetchr-color-focus);
+}
+
+.field {
+  display: grid;
+  min-width: 0;
+  gap: var(--fetchr-space-3);
+}
+
+.label {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Заголовки ────────────────────────────────────────────────────── */
+
+/* Служебный заголовок группы: секции панелей, группы полей */
+.sectionHeading {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Заголовок карточки: обычный регистр, читается как имя блока */
+.cardTitle {
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0;
+}
+
+/* ── Каркас страницы ──────────────────────────────────────────────── */
+
+/* Панель действий вверху страницы. Заголовков у страниц нет — имя
+   страницы несёт pill-tab топбара, дубль съедал бы рабочую высоту. */
+.toolbar {
+  display: flex;
+  min-height: 44px;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fetchr-space-6);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  padding: 0 var(--fetchr-space-6);
+}
+
+/* Правая колонка инструментов. Сужается вместе с окном, а на узком окне
+   уходит под основную область во всю ширину. Живёт здесь, а не в модулях
+   страниц: переопределение ширины в композящем модуле проигрывает этому
+   правилу, когда примитивы подключаются заново (см. порядок composes). */
+.rail {
+  width: clamp(328px, 30vw, 380px);
+  flex: 0 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-left: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel);
+}
+
+.railSection {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--fetchr-space-5);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  padding: var(--fetchr-space-6);
+}
+
+.railSection:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 860px) {
+  .rail {
+    width: 100%;
+    overflow-y: visible;
+    border-top: 1px solid var(--fetchr-color-border-subtle);
+    border-left: 0;
+  }
+}
+
+/* ── Таблицы ──────────────────────────────────────────────────────── */
+
+/* Шапка липнет к верху скролл-контейнера: на длинном списке колонки
+   иначе уезжают и строку становится нечем читать. Фон обязателен —
+   без него строки просвечивают сквозь шапку. */
+.tableHeader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 42px;
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Список сдвинут: без этого шапка сливается с первой строкой, потому что
+   глубина в системе строится только границами, а тени нет. */
+.tableHeaderScrolled {
+  border-bottom-color: var(--fetchr-color-border-strong);
+}
+
+/* Кликабельный заголовок сортируемой колонки */
+.sortButton {
+  display: inline-flex;
+  min-width: 0;
+  /* Высота шла от текста и давала 17px — ниже минимальной цели WCAG 2.2 */
+  min-height: 24px;
+  align-items: center;
+  gap: var(--fetchr-space-2);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+  text-transform: inherit;
+  transition: color var(--fetchr-transition-fast);
+}
+
+.sortButton:hover {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.sortButtonActive {
+  color: var(--fetchr-color-text);
+}
+
+.sortArrow {
+  flex: 0 0 auto;
+  opacity: 0.5;
+  transition: transform var(--fetchr-transition-fast);
+}
+
+.sortArrowActive {
+  opacity: 1;
+}
+
+.sortArrowDesc {
+  transform: rotate(180deg);
+}
+
+/* ── Пустое состояние ─────────────────────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  color: var(--fetchr-color-text-muted);
+  padding: var(--fetchr-space-20) var(--fetchr-space-6);
+  text-align: center;
+}
+
+.emptyIconRing {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.emptyTitle {
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.emptyHint {
+  max-width: 340px;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+.emptyIcon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Пустое состояние должно предлагать выход, а не только сообщать о пустоте */
+.emptyAction {
+  composes: button;
+  margin-top: var(--fetchr-space-2);
+}
+
+/* ── Дружелюбные контролы из промо-ролика ────────────────────────────
+   Сегментный переключатель: утопленная дорожка, выбранный пункт —
+   приподнятая пилюля. Нейтральный вариант — для «что показывать»
+   (платформа, вид), акцентный — для «что получится» (качество). */
+.segmented {
+  display: flex;
+  min-width: 0;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+}
+
+.segmentedItem {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+  flex: 1 1 0;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-3);
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+  white-space: nowrap;
+  transition:
+    background-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+}
+
+.segmentedItem:hover:not(:disabled) {
+  color: var(--fetchr-color-text);
+}
+
+.segmentedItem:disabled {
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+.segmentedItemActive {
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: inset 0 0 0 1px var(--fetchr-color-border-hairline);
+  color: var(--fetchr-color-text);
+}
+
+.segmentedItemAccent {
+  background: var(--fetchr-color-accent-soft);
+  box-shadow: inset 0 0 0 1px rgb(var(--fetchr-accent-rgb) / 0.45);
+  color: var(--fetchr-color-accent-bright);
+}
+
+/* Поле с иконкой слева: иконка говорит, что сюда вводить (ссылка,
+   папка), и заменяет подпись там, где она очевидна */
+.inputWithIcon {
+  display: flex;
+  min-width: 0;
+  height: 38px;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  padding: 0 var(--fetchr-space-3) 0 var(--fetchr-space-6);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-tertiary);
+  transition:
+    border-color var(--fetchr-transition-fast),
+    box-shadow var(--fetchr-transition-fast);
+}
+
+.inputWithIcon:focus-within {
+  border-color: rgb(var(--fetchr-accent-rgb) / 0.7);
+  box-shadow: 0 0 0 3px var(--fetchr-color-focus);
+}
+
+.inputWithIcon > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.inputWithIcon > input {
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  outline: none;
+}
+
+.inputWithIcon > input::placeholder {
+  color: var(--fetchr-color-text-tertiary);
+}
+
+/* Кольцо фокуса несёт рамка поля; у самого input оно резало бы строку */
+.inputWithIcon > input:focus-visible {
+  box-shadow: none;
+}
+
+/* Та же высота, что у кнопок 34px рядом: поле в строке с действиями */
+.inputWithIconCompact {
+  composes: inputWithIcon;
+  height: 34px;
+}
+
+/* Кнопка внутри поля справа: выбрать папку, разобрать ссылку */
+.inputAction {
+  display: inline-grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  transition:
+    background-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.inputAction:hover:not(:disabled) {
+  background: var(--fetchr-color-hover-strong);
+  color: var(--fetchr-color-text);
+}
+
+.inputAction:disabled {
+  color: var(--fetchr-color-text-disabled);
+  cursor: default;
+}
+
+/* Чекбокс: нативный input без системной отрисовки. Пустой — контур,
+   отмеченный — синяя плашка с белой галочкой, как в промо */
+.check {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  place-items: center;
+  margin: 0;
+  /* Контур — токен границы контрола: 3:1 к фону, как у кнопок */
+  border: 1.5px solid var(--fetchr-color-border-control);
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color var(--fetchr-transition-fast),
+    border-color var(--fetchr-transition-fast);
+}
+
+.check:hover:not(:disabled) {
+  border-color: rgb(255 255 255 / 0.52);
+}
+
+.check:checked {
+  border-color: var(--fetchr-color-accent);
+  background-color: var(--fetchr-color-accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 13px;
+}
+
+.check:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* Мягкая плашка-метка справа от строки: пресет, канал, модель */
+.chip {
+  display: inline-flex;
+  min-width: 0;
+  height: 26px;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  padding: 0 var(--fetchr-space-5);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  white-space: nowrap;
+}

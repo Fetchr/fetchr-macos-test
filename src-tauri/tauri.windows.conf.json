@@ -1,0 +1,31 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "bundle": {
+    "targets": [
+      "nsis"
+    ],
+    "resources": {
+      "../yt-dlp.exe": "resources/yt-dlp.exe",
+      "../N_m3u8DL-RE.exe": "resources/N_m3u8DL-RE.exe",
+      "../ffmpeg.exe": "resources/ffmpeg.exe",
+      "../ffprobe.exe": "resources/ffprobe.exe"
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper",
+        "silent": true
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "compression": "zlib",
+        "installerHooks": "installer-hooks.nsh",
+        "headerImage": "installer/header.bmp",
+        "sidebarImage": "installer/sidebar.bmp",
+        "languages": [
+          "Russian",
+          "English"
+        ]
+      }
+    }
+  }
+}

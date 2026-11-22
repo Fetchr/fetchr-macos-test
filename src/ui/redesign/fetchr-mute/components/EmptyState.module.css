@@ -1,0 +1,19 @@
+/* Зона загрузки без радиального свечения: ровная ступень поверхности. */
+[data-fetchr-mute-page] .dropZone {
+  background: var(--fetchr-color-panel);
+}
+
+[data-fetchr-mute-page] .dropZone:hover,
+[data-fetchr-mute-page] .dropZoneActive {
+  background: var(--fetchr-color-panel-raised);
+}
+
+/* Текст только для скринридера: список поддерживаемых форматов. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

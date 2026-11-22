@@ -1,0 +1,142 @@
+.cardInner {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardTitle {
+  font-size: 13px;
+  font-weight: var(--fetchr-weight-medium);
+  color: var(--fetchr-color-text);
+  margin-bottom: 4px;
+}
+
+.cardSubtitle {
+  font-size: 12px;
+  color: var(--fetchr-color-text-tertiary);
+  line-height: 1.5;
+}
+
+/* Onboarding row */
+.onboardingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btnRepeat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--fetchr-color-accent);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-accent-soft);
+  color: var(--fetchr-color-accent-bright, var(--fetchr-color-accent-bright));
+  font: inherit;
+  font-size: 12px;
+  font-weight: var(--fetchr-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    opacity 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.btnRepeat:hover {
+  background: rgb(var(--fetchr-accent-rgb) / 0.2);
+  border-color: var(--fetchr-color-accent-hover);
+}
+
+.btnGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Соседка «Повторить обучение»: та же форма, но без акцента */
+.btnSecondary {
+  composes: btnRepeat;
+  border-color: var(--fetchr-color-border-control);
+  background: transparent;
+  color: var(--fetchr-color-text);
+}
+
+.btnSecondary:hover {
+  border-color: var(--fetchr-color-border-strong);
+  background: var(--fetchr-color-hover-strong);
+}
+
+.btnIcon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* FAQ */
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  overflow: hidden;
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--fetchr-color-border);
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  color: var(--fetchr-color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: var(--fetchr-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--fetchr-transition-fast);
+}
+
+.faqQuestion:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.faqChevron {
+  width: 14px;
+  height: 14px;
+  color: var(--fetchr-color-text-tertiary);
+  flex-shrink: 0;
+  transition: transform var(--fetchr-transition-base);
+}
+
+.faqChevronOpen {
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  padding: 0 14px 14px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--fetchr-color-text-secondary, #8a9bb5);
+}

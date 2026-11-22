@@ -1,0 +1,151 @@
+/* ---------- Плеер ---------- */
+
+.playerCard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel);
+  overflow: hidden;
+}
+
+/* Кадр по высоте окна: панель управления и таймлайн под ним остаются
+   на экране при любом соотношении сторон ролика. */
+.stage {
+  position: relative;
+  display: flex;
+  height: clamp(220px, calc(100vh - 380px), 620px);
+  align-items: center;
+  justify-content: center;
+  background: var(--fetchr-color-app-bg);
+  overflow: hidden;
+}
+
+.stageAudio {
+  height: clamp(200px, 36vh, 320px);
+  background: var(--fetchr-color-panel-inset);
+}
+
+/* ── Один размер кадра на всём пути ──────────────────────────────
+   Анализ, показ удаления и готовый результат идут в кадре одного
+   размера, без скачка: кадр во всю карточку той же высоты, что во
+   время обработки. Экран анализа и карточка итога видео помечены
+   data-stage-card. */
+.stage:has([data-stage-card]) {
+  min-height: 0;
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.audioStage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fetchr-space-8);
+}
+
+.audioLabel {
+  max-width: 60ch;
+  overflow: hidden;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mediaError {
+  display: flex;
+  max-width: 60ch;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-12);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  text-align: center;
+}
+
+.mediaError svg {
+  width: 30px;
+  height: 30px;
+  color: var(--fetchr-color-warning);
+}
+
+.mediaError strong {
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-lg);
+}
+
+.mediaErrorPath {
+  max-width: 100%;
+  padding: var(--fetchr-space-3) var(--fetchr-space-5);
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Управление ---------- */
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-7) var(--fetchr-space-8) var(--fetchr-space-6);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+}
+
+/* Пока идёт анализ, шкала плеера ничего не значит: прячем её. */
+.controlsHidden {
+  display: none;
+}
+
+/* ── Режим транскрипта ───────────────────────────────────────────
+   Правки: видео крупно, дорожка под кадром. Кадр во всю ширину
+   карточки, под ним волна и кнопки. */
+[data-fetchr-mute-page][data-review] .playerCard {
+  flex: none;
+  align-items: stretch;
+  border-radius: var(--fetchr-radius-xl);
+}
+
+
+/* ── Аудио в режиме транскрипта ──────────────────────────────────
+   Кадра у аудио нет: плеер одной полосой во всю ширину, без диска. */
+[data-fetchr-mute-page][data-review] .stageAudio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  clip-path: inset(50%);
+  aspect-ratio: auto;
+}
+
+[data-fetchr-mute-page][data-review] .stageAudio .audioLabel {
+  display: none;
+}
+
+[data-fetchr-mute-page][data-review] .controls {
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-5) var(--fetchr-space-7);
+}
+
+[data-fetchr-mute-page][data-review] .playerCard:has(.stageAudio) .controls {
+  border-top: 0;
+}
+
+/* Кадр на экране проверки ниже: под ним полоса правок и панель текста. */
+[data-fetchr-mute-page][data-review] .stage:not(.stageAudio) {
+  height: clamp(180px, calc(100vh - 560px), 420px);
+}

@@ -1,0 +1,252 @@
+/* «Что нового»: страницы по категориям. Сверху картинка/GIF или
+   встроенная анимация категории, снизу текст, внизу точки и кнопки.
+   Палитра остальных страниц: стекло, тонкие линии, цвет со смыслом. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--fetchr-z-modal-priority);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 0.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.modal {
+  position: relative;
+  display: grid;
+  width: min(560px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 32px));
+  grid-template-rows: minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 0.5px solid rgb(255 255 255 / 0.08);
+  border-radius: 22px;
+  background: rgb(28 28 30 / 0.92);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.55), inset 0 0.5px 0 rgb(255 255 255 / 0.08);
+}
+
+.closeButton {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.4);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: rgb(235 235 245 / 0.8);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgb(0 0 0 / 0.6);
+  color: #fff;
+}
+
+/* ── Страница ──────────────────────────────────────────────────── */
+.slide {
+  display: grid;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  animation: slideIn 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.slide[data-dir="-1"] {
+  animation-name: slideInBack;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+}
+
+@keyframes slideInBack {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+}
+
+.text {
+  display: grid;
+  min-height: 0;
+  align-content: start;
+  gap: 10px;
+  overflow: auto;
+  padding: 18px 24px 8px;
+}
+
+.kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.version {
+  color: rgb(235 235 245 / 0.62);
+  font: 600 12px "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+.version span {
+  color: rgb(235 235 245 / 0.32);
+}
+
+.version b {
+  color: #f5f5f7;
+}
+
+.category {
+  border-radius: 999px;
+  background: rgb(var(--cat-rgb, 10 132 255) / 0.16);
+  color: rgb(var(--cat-rgb, 10 132 255));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 9px;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.items {
+  display: grid;
+  gap: 8px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.items li {
+  position: relative;
+  color: rgb(235 235 245 / 0.72);
+  font-size: 14px;
+  line-height: 1.5;
+  padding-left: 18px;
+  animation: itemIn 0.4s ease both;
+}
+
+.items li::before {
+  position: absolute;
+  top: 0.62em;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(var(--cat-rgb, 10 132 255));
+  content: "";
+}
+
+@keyframes itemIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* ── Низ: точки и кнопки ───────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 0.5px solid rgb(255 255 255 / 0.08);
+  padding: 14px 18px;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(235 235 245 / 0.25);
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.35s cubic-bezier(0.32, 0.72, 0, 1), background 0.25s ease;
+}
+
+.dotActive {
+  width: 22px;
+  background: #f5f5f7;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 11px;
+  background: rgb(118 118 128 / 0.24);
+  color: #f5f5f7;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 16px;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.button:hover:not(:disabled) {
+  background: rgb(118 118 128 / 0.36);
+}
+
+.primaryButton {
+  background: #0a84ff;
+  color: #fff;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #2b95ff;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+/* Цвет категории для метки и точек списка: тот же, что у картинки. */
+.modal:has([data-cat="download"]) { --cat-rgb: 10 132 255; }
+.modal:has([data-cat="queue"]) { --cat-rgb: 48 209 88; }
+.modal:has([data-cat="chat"]) { --cat-rgb: 191 90 242; }
+.modal:has([data-cat="blur"]) { --cat-rgb: 255 159 10; }
+.modal:has([data-cat="mute"]) { --cat-rgb: 255 69 58; }
+.modal:has([data-cat="vocal"]) { --cat-rgb: 44 159 189; }
+.modal:has([data-cat="archive"]) { --cat-rgb: 100 170 255; }
+.modal:has([data-cat="live"]) { --cat-rgb: 255 69 58; }
+.modal:has([data-cat="general"]) { --cat-rgb: 61 125 255; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .items li {
+    animation: none;
+  }
+}

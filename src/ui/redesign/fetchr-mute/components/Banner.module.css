@@ -1,0 +1,54 @@
+/* Блоки ошибки и уведомления над рабочей областью.
+   .banner висит рядом с shared.errorBox / shared.noticeBox. */
+
+.body {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--fetchr-space-4);
+}
+
+.message {
+  min-width: 0;
+  color: var(--fetchr-color-text);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-3);
+}
+
+.details {
+  max-height: 160px;
+  margin: 0;
+  overflow: auto;
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-secondary);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: var(--fetchr-font-size-md);
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+}
+
+[data-fetchr-mute-page] .banner {
+  align-items: flex-start;
+}
+
+/* Крестик: висит рядом с shared.inputAction. */
+[data-fetchr-mute-page] .dismiss {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  margin: -2px -6px -2px 0;
+  color: inherit;
+}
+
+[data-fetchr-mute-page] .dismiss svg {
+  width: 14px;
+  height: 14px;
+}

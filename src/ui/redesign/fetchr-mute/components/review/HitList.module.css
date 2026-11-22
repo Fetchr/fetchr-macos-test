@@ -1,0 +1,147 @@
+/* ---------- Вид «Список» ----------
+   Строка хита: время, контекст с выделенным словом, статус и действия.
+   .badge висит рядом с shared.chip, .actionButton — рядом с
+   shared.ghostButton; здесь только переопределения. */
+
+.scroller {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--fetchr-space-4) 0 var(--fetchr-space-8);
+  overscroll-behavior: contain;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-1) var(--fetchr-space-3) var(--fetchr-space-1) 0;
+  border-radius: var(--fetchr-radius-md);
+}
+
+.row:hover {
+  background: var(--fetchr-color-hover);
+}
+
+.rowCursor {
+  background: var(--fetchr-color-panel-selected);
+}
+
+.rowCurrent {
+  box-shadow: inset 0 0 0 2px var(--fetchr-color-accent);
+}
+
+.rowMain {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  border: 0;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  text-align: left;
+}
+
+.rowMain:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.time {
+  flex: none;
+  color: var(--fetchr-color-text-tertiary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.snippet {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.focus {
+  padding: 0 var(--fetchr-space-1);
+  border-bottom: 1px dotted transparent;
+  border-radius: var(--fetchr-radius-xs);
+  background: transparent;
+  color: var(--fetchr-color-text);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.focusMuted {
+  color: var(--fetchr-color-danger);
+  text-decoration: line-through;
+}
+
+.focusUncertain {
+  border-bottom-color: var(--fetchr-color-warning);
+  background: var(--fetchr-color-warning-soft);
+}
+
+.focusRestored {
+  color: var(--fetchr-color-text-muted);
+}
+
+/* Переопределения примитивов идут с префиксом [data-fetchr-mute-page]:
+   копии примитивов из CSS других страниц (их композят все страницы)
+   подгружаются позже и при равной специфичности перебили бы правило. */
+[data-fetchr-mute-page] .badge {
+  height: 22px;
+  font-size: var(--fetchr-font-size-sm);
+}
+
+[data-fetchr-mute-page] .badgeMuted {
+  border-color: color-mix(in srgb, var(--fetchr-color-danger) 35%, transparent);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+}
+
+[data-fetchr-mute-page] .badgeUncertain {
+  border-color: color-mix(in srgb, var(--fetchr-color-warning) 35%, transparent);
+  background: var(--fetchr-color-warning-soft);
+  color: var(--fetchr-color-warning);
+}
+
+[data-fetchr-mute-page] .badgeRestored {
+  color: var(--fetchr-color-text-muted);
+}
+
+[data-fetchr-mute-page] .badgeManual {
+  border-color: color-mix(in srgb, var(--fetchr-color-zone) 35%, transparent);
+  background: var(--fetchr-color-zone-soft);
+  color: var(--fetchr-color-zone);
+}
+
+.actions {
+  display: flex;
+  gap: var(--fetchr-space-1);
+}
+
+[data-fetchr-mute-page] .actionButton {
+  width: 28px;
+  padding: 0;
+}
+
+.footer {
+  padding: var(--fetchr-space-6) var(--fetchr-space-5) 0;
+}

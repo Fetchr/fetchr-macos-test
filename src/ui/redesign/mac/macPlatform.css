@@ -1,0 +1,74 @@
+/*
+ * macOS-слой поверх токенов Fetchr. Всё здесь висит на html[data-ui-style="macos"]: на Mac его ставит
+ * main.tsx до рендера, на Windows — выбор интерфейса «MacOS» в настройках.
+ * Специфичность html[...] выше :root из fetchrTokens.css — токены перекрываются
+ * без !important.
+ */
+html[data-ui-style="macos"] {
+  /* HIG: системный шрифт SF Pro. Inter остаётся запасным для старых систем. */
+  --fetchr-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Inter Variable", system-ui, sans-serif;
+  --fetchr-font-mono: ui-monospace, "SF Mono", Menlo, "JetBrains Mono", monospace;
+
+  /* Liquid Glass. Стекло только на слое навигации (панель, тулбар, меню). */
+  --mac-glass-bg: rgb(38 40 46 / 0.5);
+  --mac-glass-bg-strong: rgb(44 46 53 / 0.72);
+  --mac-glass-border: rgb(255 255 255 / 0.13);
+  --mac-glass-highlight: rgb(255 255 255 / 0.16);
+  --mac-glass-shade: rgb(0 0 0 / 0.22);
+  --mac-glass-shadow: 0 12px 32px rgb(0 0 0 / 0.32), 0 1px 3px rgb(0 0 0 / 0.24);
+  --mac-glass-filter: blur(26px) saturate(180%);
+  --mac-glass-solid: #25272c;
+  --mac-glass-sheen: linear-gradient(140deg, rgb(255 255 255 / 0.14), transparent 36%, transparent 72%, rgb(255 255 255 / 0.05));
+
+  /* Фон под панелью: размытая «обоина» окна, которую видно сквозь стекло. */
+  --mac-backdrop:
+    radial-gradient(70% 55% at 0% 0%, rgb(var(--fetchr-accent-rgb) / 0.26), transparent 70%),
+    radial-gradient(60% 50% at 0% 100%, rgb(124 92 255 / 0.18), transparent 70%),
+    var(--fetchr-color-app-bg);
+
+  --mac-sidebar-width: 232px;
+  --mac-sidebar-inset: 8px;
+  --mac-toolbar-height: 52px;
+  --mac-radius-window-inner: 18px;
+  --mac-control-height: 34px;
+  --mac-selection: rgb(var(--fetchr-accent-rgb) / 0.28);
+  --mac-row-hover: rgb(255 255 255 / 0.06);
+
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+
+html[data-ui-style="macos"] body {
+  font-family: var(--fetchr-font-sans);
+}
+
+/* HIG: в приложениях Mac кнопки не меняют курсор на руку — это поведение ссылок. */
+html[data-ui-style="macos"] :is(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="switch"], label, summary, select) {
+  cursor: default !important;
+}
+
+/* Скроллбары как в системе: тонкие, без дорожки. */
+html[data-ui-style="macos"] * {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.22) transparent;
+}
+
+/* Настройка «Уменьшить прозрачность»: стекло становится плотной панелью. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-ui-style="macos"] {
+    --mac-glass-bg: var(--mac-glass-solid);
+    --mac-glass-bg-strong: var(--mac-glass-solid);
+    --mac-glass-filter: none;
+    --mac-glass-sheen: none;
+    --mac-backdrop: var(--fetchr-color-app-bg);
+  }
+}
+
+/* Настройка «Увеличить контраст»: края стекла и разделители заметнее. */
+@media (prefers-contrast: more) {
+  html[data-ui-style="macos"] {
+    --mac-glass-border: rgb(255 255 255 / 0.4);
+    --mac-glass-bg: rgb(30 32 36 / 0.9);
+    --fetchr-color-border-hairline: rgb(255 255 255 / 0.22);
+  }
+}

@@ -1,0 +1,99 @@
+.menu {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  min-width: 220px;
+  max-width: 320px;
+  gap: 1px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+  opacity: 0;
+  padding: 4px;
+  pointer-events: none;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top left;
+  transition:
+    opacity 0.12s ease,
+    transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.menuShown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.info {
+  display: grid;
+  gap: 4px;
+  border-bottom: 1px solid var(--fetchr-color-border);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  margin-bottom: 3px;
+  padding: 6px 10px 8px;
+}
+
+.separator {
+  height: 1px;
+  background: var(--fetchr-color-border);
+  margin: 3px 6px;
+}
+
+.item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: none;
+  color: var(--fetchr-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-base);
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.item svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.item:hover:not(:disabled),
+.item:focus-visible {
+  background: rgb(255 255 255 / 0.06);
+  outline: none;
+}
+
+.item:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.itemText {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.itemLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemHint {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    transition: none;
+  }
+}

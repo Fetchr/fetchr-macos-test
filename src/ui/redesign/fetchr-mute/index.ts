@@ -1,0 +1,1 @@
+export { FetchrMutePage } from "./FetchrMutePage";

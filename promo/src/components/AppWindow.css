@@ -1,0 +1,301 @@
+/* Камера: окно в 3D-пространстве сцены. Без трансформаций оно стоит по центру. */
+.rig {
+  position: absolute;
+  top: 110px;
+  left: 300px;
+  width: 1320px;
+  height: 860px;
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+.win {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--fetchr-color-app-bg);
+  box-shadow:
+    0 50px 140px -30px rgb(0 0 0 / 0.85),
+    0 20px 60px -20px rgb(var(--fetchr-accent-rgb) / 0.18);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Волосяная рамка поверх содержимого — края не тонут в фоне сцены */
+.win::after {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.winContent {
+  position: absolute;
+  top: 76px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.winNav {
+  position: relative;
+}
+
+.winNavPill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100px;
+  height: 27px;
+  margin-top: -13.5px;
+  border-radius: 999px;
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05);
+}
+
+.winBadge {
+  margin-left: 2px;
+}
+
+.winStatus {
+  opacity: 0;
+}
+
+.winStatusCount {
+  min-width: 56px;
+}
+
+.winFly {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 65;
+  display: inline-flex;
+  height: 32px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--fetchr-color-accent);
+  box-shadow: 0 10px 30px -6px rgb(var(--fetchr-accent-rgb) / 0.7);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+/* ── Курсор ─────────────────────────────────────────────────────── */
+.cur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.curArrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.45));
+  transform-origin: 2px 2px;
+}
+
+.curRipple {
+  position: absolute;
+  top: -22px;
+  left: -22px;
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgb(255 255 255 / 0.85);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+/* ── Общие детали видов ─────────────────────────────────────────── */
+.view {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.panel {
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel);
+}
+
+.btn {
+  display: inline-flex;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid var(--fetchr-color-border-control);
+  border-radius: var(--fetchr-radius-md);
+  color: var(--fetchr-color-text);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.btnPrimary {
+  border-color: transparent;
+  background: var(--fetchr-color-accent);
+  color: #fff;
+}
+
+.btnGhost {
+  border-color: var(--fetchr-color-border);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.field {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.field svg {
+  flex: none;
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.fieldLabel {
+  margin-bottom: 8px;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 16px;
+  margin-left: 1px;
+  background: var(--fetchr-color-accent);
+  vertical-align: middle;
+}
+
+.seg {
+  display: flex;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+}
+
+.segItem {
+  position: relative;
+  display: inline-flex;
+  flex: 1;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 6px;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.segItemActive {
+  background: var(--fetchr-color-panel-elevated);
+  color: var(--fetchr-color-text);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+.toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  flex: none;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+}
+
+.toggleOn {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fetchr-color-accent);
+  opacity: 0;
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+.check {
+  position: relative;
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  place-items: center;
+  border: 1.5px solid rgb(255 255 255 / 0.3);
+  border-radius: 5px;
+}
+
+.checkFill {
+  position: absolute;
+  inset: -1.5px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: var(--fetchr-color-accent);
+  color: #fff;
+  opacity: 0;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.chip {
+  display: inline-flex;
+  height: 26px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: 999px;
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}

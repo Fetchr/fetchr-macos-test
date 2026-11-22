@@ -1,0 +1,134 @@
+/* Полноэкранный режим: кадр на весь экран, панель поверх него снизу */
+.hls-player[data-fullscreen] {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  border: 0;
+  border-radius: 0;
+}
+
+.hls-player[data-fullscreen] .hls-surface {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+
+/* fluid-режим video.js задаёт высоту через padding-top по ширине, из-за
+   чего кадр вылезал за экран и выталкивал панель */
+.hls-player[data-fullscreen] .hls-surface .video-js {
+  width: 100% !important;
+  height: 100% !important;
+  padding-top: 0 !important;
+}
+
+.hls-player[data-fullscreen] .hls-surface video {
+  object-fit: contain;
+}
+
+.hls-player[data-overlay-controls] {
+  position: relative;
+}
+
+.hls-player[data-overlay-controls] .hls-controls,
+.hls-player[data-fullscreen] .hls-controls {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  padding: 56px 20px 10px;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.85), rgb(0 0 0 / 0.45) 55%, transparent);
+  transition: opacity 0.25s ease;
+}
+
+.hls-player[data-overlay-controls] .hls-controls {
+  padding: 44px 14px 6px;
+}
+
+.hls-player[data-overlay-controls] .hls-controls > *,
+.hls-player[data-fullscreen] .hls-controls > * {
+  border-top: 0;
+  background: transparent;
+}
+
+.hls-player[data-fullscreen] .hls-controls button {
+  width: 36px;
+  height: 36px;
+}
+
+.hls-player[data-fullscreen] .hls-controls button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hls-player[data-fullscreen] .hls-controls .font-mono {
+  font-size: 13px;
+}
+
+.hls-player[data-idle] {
+  cursor: none;
+}
+
+.hls-player[data-idle] .hls-controls {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hls-surface-interactive .video-js {
+  cursor: pointer;
+}
+
+.hls-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  place-items: center;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  pointer-events: none;
+  animation: hls-flash 0.6s ease-out forwards;
+}
+
+.hls-flash svg {
+  width: 28px;
+  height: 28px;
+}
+
+.hls-player[data-fullscreen] .hls-flash {
+  width: 88px;
+  height: 88px;
+  margin: -44px 0 0 -44px;
+}
+
+.hls-player[data-fullscreen] .hls-flash svg {
+  width: 38px;
+  height: 38px;
+}
+
+@keyframes hls-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hls-flash {
+    animation-duration: 0.3s;
+    animation-timing-function: linear;
+  }
+}

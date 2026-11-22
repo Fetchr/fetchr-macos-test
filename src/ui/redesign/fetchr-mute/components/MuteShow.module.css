@@ -1,0 +1,251 @@
+/* ---------- «Шоу удаления» ----------
+   Точка состояния — shared.hudDot; .hudDot здесь висит рядом с ней
+   и перекрашивает её в красный. */
+
+/* Показ можно пропустить кликом по кадру или Esc. */
+.show {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
+/* ── Аудио: показ результата прогоном по волне (вариант 2B) ──────
+   Полоса времени: каждая ячейка — отрезок файла, красные — где нашёлся
+   мат. Высота ячейки — волна исходника. */
+.showStrip {
+  position: absolute;
+  right: 8%;
+  bottom: auto;
+  left: 8%;
+  top: 50%;
+  display: flex;
+  height: 72px;
+  align-items: center;
+  gap: 2px;
+  transform: translateY(-50%);
+}
+
+.showSlot {
+  flex: 1 1 0;
+  border-radius: 2px;
+  background: var(--fetchr-color-border-strong);
+  transition: background-color var(--fetchr-transition-base), transform var(--fetchr-transition-base);
+}
+
+.showSlotPassed {
+  background: var(--fetchr-color-text-secondary);
+}
+
+.showSlotProfane {
+  background: var(--fetchr-color-danger);
+}
+
+.showSlotCleaned {
+  background: var(--fetchr-color-danger-soft);
+  transform: scaleY(0.25);
+}
+
+.showPlayhead {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 2px;
+  background: var(--fetchr-color-text);
+  box-shadow: 0 0 0 1px var(--fetchr-color-app-bg);
+}
+
+.showChip {
+  position: absolute;
+  top: calc(50% - 82px);
+  left: 50%;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-danger);
+  transform: translateX(-50%);
+  animation: chipIn calc(var(--fetchr-dur-slower) * 2) var(--fetchr-ease-out) forwards;
+}
+
+@keyframes chipIn {
+  0% { transform: translateX(-50%) translateY(8px); }
+  25% { transform: translateX(-50%) translateY(0); }
+  100% { transform: translateX(-50%) translateY(0); opacity: 0.2; }
+}
+
+.showChipWord {
+  position: relative;
+  color: var(--fetchr-color-on-accent);
+  font-size: 15px;
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.showChipWord::after {
+  content: "";
+  position: absolute;
+  top: 55%;
+  right: -4px;
+  left: -4px;
+  height: 2px;
+  background: var(--fetchr-color-danger-bright);
+  transform-origin: left center;
+  animation: strike var(--fetchr-dur-slower) var(--fetchr-dur-base) var(--fetchr-ease-out) backwards;
+  display: none;
+}
+
+@keyframes strike {
+  from { transform: scaleX(0); }
+}
+
+.showCounter {
+  position: absolute;
+  top: var(--fetchr-space-8);
+  left: var(--fetchr-space-8);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-3) var(--fetchr-space-7);
+  border: 1px solid var(--fetchr-color-border-hairline);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-elevated);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.showCounter strong {
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-lg);
+}
+
+.showCounterPct {
+  padding-left: var(--fetchr-space-4);
+  border-left: 1px solid var(--fetchr-color-media-edge);
+}
+
+.showSummary {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  background: var(--fetchr-color-overlay-bg);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.showSummary strong {
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-display);
+}
+
+/* ── Видео: итог карточкой (вариант 2A) ─────────────────────────── */
+.showCardWrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--fetchr-color-overlay-bg);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.showCard {
+  display: grid;
+  width: min(320px, 100%);
+  justify-items: center;
+  gap: 10px;
+  border: 1px solid var(--fetchr-color-border-hairline);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: var(--fetchr-shadow-modal);
+  color: var(--fetchr-color-text-secondary);
+  font-size: 13px;
+  padding: 20px;
+  text-align: center;
+  animation: cardPop 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.showCard strong {
+  color: var(--fetchr-color-text);
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.showCard strong small {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.showCardDone strong {
+  font-size: 24px;
+}
+
+.showCardState {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.showCardTrack {
+  position: relative;
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--fetchr-color-border-strong);
+}
+
+.showCardTrack i {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: var(--fetchr-color-accent);
+  transform-origin: left center;
+  transition: transform 0.2s linear;
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showChip,
+  .showChipWord::after,
+  .showCard {
+    animation: none;
+  }
+
+  .showSlot {
+    transition: none;
+  }
+}
+
+/* Видимая кнопка «Пропустить»: показ не держит пользователя. */
+[data-fetchr-mute-page] .showSkip {
+  position: absolute;
+  top: var(--fetchr-space-6);
+  right: var(--fetchr-space-6);
+  z-index: 2;
+  background: color-mix(in srgb, var(--fetchr-color-panel) 80%, transparent);
+}
+
+.showSkipKey {
+  padding: 0 var(--fetchr-space-2);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-xs);
+  color: var(--fetchr-color-text-tertiary);
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+}

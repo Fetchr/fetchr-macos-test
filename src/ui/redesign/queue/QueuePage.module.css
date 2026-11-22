@@ -1,0 +1,879 @@
+/* Эталон карточки: hairline + одна ступень лестницы, без тени. */
+.panel {
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel);
+}
+
+.button {
+  composes: button from "../theme/primitives.module.css";
+}
+
+.primaryButton {
+  composes: buttonPrimary from "../theme/primitives.module.css";
+}
+
+.tabs {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.tab {
+  display: inline-flex;
+  height: 34px;
+  min-width: 88px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fetchr-space-4);
+  border: 0;
+  border-right: 1px solid var(--fetchr-color-border-subtle);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  letter-spacing: 0;
+  padding: 0 var(--fetchr-space-7);
+}
+
+.tab:last-child {
+  border-right: 0;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.tabActive {
+  background: rgb(var(--fetchr-accent-rgb) / 0.12);
+  color: var(--fetchr-color-text);
+}
+
+.tabCount {
+  border-radius: var(--fetchr-radius-pill);
+  background: rgba(255, 255, 255, 0.07);
+  color: currentColor;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-xs);
+  min-width: 20px;
+  padding: 2px 6px;
+}
+
+.tablePanel {
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tableToolbar {
+  composes: toolbar from "../theme/primitives.module.css";
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-8);
+}
+
+.viewButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+/* Правая группа тулбара. Класс был указан в разметке, но в модуле его не
+   было: styles.headerActions отдавал undefined, div приходил с пустым
+   class и без раскладки — кнопки стояли вплотную, зазор 0. */
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.iconButton {
+  composes: buttonIcon from "../theme/primitives.module.css";
+}
+
+.tableScroll {
+  min-height: 0;
+  min-width: 0;
+  flex: 1;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.table {
+  min-width: 0;
+  width: 100%;
+}
+
+.metaGroup {
+  display: contents;
+}
+
+.tableHeader,
+.row {
+  display: grid;
+  grid-template-columns: minmax(250px, 1.55fr) minmax(165px, 1fr) 96px 150px 96px 80px 88px minmax(145px, 0.82fr) 92px 88px;
+  align-items: center;
+  gap: var(--fetchr-space-7);
+  padding: 0 var(--fetchr-space-7);
+}
+
+.tableHeader {
+  composes: tableHeader from "../theme/primitives.module.css";
+}
+
+.tableHeaderScrolled {
+  composes: tableHeaderScrolled from "../theme/primitives.module.css";
+}
+
+/* Фон строки собран из двух слоёв картинки поверх цвета:
+   1) вспышка новой задачи — её альфу ведёт --row-flash (0…1), GSAP гасит
+      переменную после появления строки, как строку в промо-ролике;
+   2) --row-wash — постоянная подсветка состояния (у активной загрузки).
+   Цвет фона остаётся свободным под ховер, поэтому ховер и активная строка
+   больше не спорят и кромка-полоска слева не нужна. */
+.row {
+  --row-wash: linear-gradient(transparent, transparent);
+  min-height: 78px;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background-image:
+    linear-gradient(
+      90deg,
+      rgb(var(--fetchr-accent-rgb) / calc(0.22 * var(--row-flash, 0))),
+      rgb(var(--fetchr-accent-rgb) / calc(0.05 * var(--row-flash, 0)))
+    ),
+    var(--row-wash);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  transition:
+    background-color var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.row:hover {
+  background-color: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text);
+}
+
+/* Идущая загрузка: мягкая волна слева, без синих разделителей между
+   строками — статус и рейка прогресса уже говорят, что строка живая. */
+.rowActive {
+  --row-wash: linear-gradient(90deg, rgb(var(--fetchr-accent-rgb) / 0.1), rgb(var(--fetchr-accent-rgb) / 0.02) 55%, transparent 80%);
+}
+
+.titleCell {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+}
+
+.thumbnail {
+  width: 92px;
+  flex: 0 0 auto;
+}
+
+.taskText {
+  min-width: 0;
+}
+
+.taskTitle {
+  overflow: hidden;
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskSubtitle,
+.subtleText {
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskSubtitle {
+  margin-top: 3px;
+}
+
+.sourceCell {
+  min-width: 0;
+}
+
+.sourceTop {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+}
+
+.sourceUrl,
+.monoCell {
+  overflow: hidden;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourceUrl {
+  /* Копирование по клику — значит это цель, а не подпись: 24px по WCAG 2.2 */
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  margin-top: 3px;
+  color: var(--fetchr-color-text-muted);
+}
+
+.statusCell {
+  min-width: 0;
+}
+
+.statusDetail {
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusHint {
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--fetchr-color-warning);
+  font-size: var(--fetchr-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--fetchr-color-danger);
+  border-radius: var(--fetchr-radius-pill);
+  background: transparent;
+  color: var(--fetchr-color-danger);
+  font-size: var(--fetchr-font-size-xs);
+  font-weight: var(--fetchr-weight-strong);
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: color-mix(in srgb, var(--fetchr-color-danger) 14%, transparent);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  color: var(--fetchr-color-text-secondary);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--fetchr-radius-pill);
+  background: currentColor;
+}
+
+.statusRunning {
+  color: var(--fetchr-color-accent-hover);
+}
+
+.statusQueued,
+.statusPaused {
+  color: var(--fetchr-color-warning);
+}
+
+.statusDone {
+  color: var(--fetchr-color-success);
+}
+
+.statusError,
+.statusCancelled {
+  color: var(--fetchr-color-danger);
+}
+
+.progressCell {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+}
+
+.progressTrack {
+  position: relative;
+  height: 5px;
+  min-width: 58px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: var(--fetchr-radius-pill);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--fetchr-gradient-rail);
+  transition: width var(--fetchr-transition-base);
+}
+
+.progressStageFill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: inherit;
+  background: #ffffff;
+  opacity: 0.72;
+  transition: width var(--fetchr-transition-base);
+}
+
+.progressDone {
+  background: var(--fetchr-gradient-rail-done);
+}
+
+.progressError {
+  background: var(--fetchr-color-danger);
+}
+
+.progressValue {
+  width: 38px;
+  color: var(--fetchr-color-text-secondary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  text-align: right;
+}
+
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-2);
+}
+
+.detailsRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: var(--fetchr-space-6);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel-inset);
+  padding: var(--fetchr-space-7);
+}
+
+.detailCell {
+  display: grid;
+  min-width: 0;
+  gap: var(--fetchr-space-2);
+}
+
+.detailCellWide {
+  grid-column: span 2;
+}
+
+.detailCell span {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.detailCell strong {
+  min-height: 30px;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--fetchr-color-text-secondary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary {
+  display: flex;
+  min-width: 0;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-8);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  padding: 0 var(--fetchr-space-7);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+/* Значения в подвале на ступень ярче подписей: взгляд цепляется за
+   цифры, а не за слова вокруг них */
+.summaryValue {
+  color: var(--fetchr-color-text-secondary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-weight: var(--fetchr-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryLeft {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-7);
+}
+
+.summaryStats {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-7);
+}
+
+.toggle {
+  display: inline-flex;
+  /* Цель — вся подпись вместе с чекбоксом, поэтому 24px держит label */
+  min-height: 24px;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  color: var(--fetchr-color-text-tertiary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fetchr-color-accent);
+}
+
+.empty {
+  composes: emptyState from "../theme/primitives.module.css";
+  margin: var(--fetchr-space-12);
+}
+
+.emptyTitle {
+  composes: emptyTitle from "../theme/primitives.module.css";
+}
+
+.emptyText {
+  composes: emptyHint from "../theme/primitives.module.css";
+}
+
+.settingsBox,
+.stepsBox {
+  margin-top: var(--fetchr-space-8);
+  padding: var(--fetchr-space-7);
+}
+
+.settingsTitle {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.settingRow {
+  display: grid;
+  gap: var(--fetchr-space-3);
+  margin-top: var(--fetchr-space-6);
+}
+
+.settingLabel {
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.settingValue {
+  min-height: 32px;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: rgba(0, 0, 0, 0.16);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  padding: var(--fetchr-space-4) var(--fetchr-space-5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepList {
+  display: grid;
+  gap: var(--fetchr-space-6);
+  margin-top: var(--fetchr-space-7);
+}
+
+.inspectorStep,
+.pipelineStep {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+}
+
+.stepIndex {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--fetchr-radius-pill);
+  background: rgb(var(--fetchr-accent-rgb) / 0.24);
+  color: var(--fetchr-color-text);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.stepText {
+  min-width: 0;
+}
+
+.stepTitle {
+  overflow: hidden;
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepDescription {
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pipelineScroll {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  gap: var(--fetchr-space-5);
+}
+
+.pipelineStep {
+  min-width: 178px;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: rgba(255, 255, 255, 0.025);
+  padding: var(--fetchr-space-5);
+}
+
+.pipelineLink {
+  align-self: center;
+  color: var(--fetchr-color-success);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+@media (max-width: 1550px) {
+  .tableHeader > div:nth-child(3),
+  .tableHeader > div:nth-child(9),
+  .row > .metaGroup > div:nth-child(2),
+  .row > .metaGroup > div:nth-child(8) {
+    display: none;
+  }
+
+  .tableHeader,
+  .row {
+    grid-template-columns: minmax(220px, 1.5fr) minmax(150px, 1fr) 130px 96px 80px 88px minmax(130px, 0.8fr) 88px;
+    gap: var(--fetchr-space-5);
+  }
+}
+
+@media (max-width: 1300px) {
+  .tableHeader > div:nth-child(3),
+  .tableHeader > div:nth-child(5),
+  .tableHeader > div:nth-child(6),
+  .tableHeader > div:nth-child(9),
+  .row > .metaGroup > div:nth-child(2),
+  .row > .metaGroup > div:nth-child(4),
+  .row > .metaGroup > div:nth-child(5),
+  .row > .metaGroup > div:nth-child(8) {
+    display: none;
+  }
+
+  .tableHeader,
+  .row {
+    grid-template-columns: minmax(200px, 1.8fr) minmax(130px, 1fr) 130px 80px minmax(120px, 0.8fr) 88px;
+    gap: var(--fetchr-space-4);
+  }
+}
+
+@media (max-width: 1060px) {
+  .tableHeader > div:nth-child(2),
+  .tableHeader > div:nth-child(3),
+  .tableHeader > div:nth-child(5),
+  .tableHeader > div:nth-child(6),
+  .tableHeader > div:nth-child(7),
+  .tableHeader > div:nth-child(9),
+  .row > .metaGroup > div:nth-child(1),
+  .row > .metaGroup > div:nth-child(2),
+  .row > .metaGroup > div:nth-child(4),
+  .row > .metaGroup > div:nth-child(5),
+  .row > .metaGroup > div:nth-child(6),
+  .row > .metaGroup > div:nth-child(8) {
+    display: none;
+  }
+
+  .tableHeader,
+  .row {
+    grid-template-columns: minmax(180px, 1.8fr) 110px minmax(100px, 1.2fr) 88px;
+    gap: var(--fetchr-space-4);
+  }
+}
+
+@media (max-width: 760px) {
+  .tableHeader {
+    display: none;
+  }
+
+  .table {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--fetchr-space-4);
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    min-height: 0;
+    padding: var(--fetchr-space-5);
+    gap: var(--fetchr-space-4);
+    border: 1px solid var(--fetchr-color-border-subtle);
+    border-radius: var(--fetchr-radius-lg);
+    /* Карточка на узком окне — ступень лестницы над панелью. Только цвет:
+       шорткат background стёр бы слои вспышки и подсветки */
+    background-color: var(--fetchr-color-panel-raised);
+  }
+
+  .rowActive {
+    border-color: rgb(var(--fetchr-accent-rgb) / 0.42);
+  }
+
+  .row > .metaGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--fetchr-space-3);
+  }
+
+  .row > .metaGroup > div:nth-child(1) { /* sourceCell */
+    grid-column: 1 / -1;
+  }
+
+  .row > .metaGroup > div:nth-child(3) { /* statusCell */
+    grid-column: 1 / 2;
+  }
+
+  .row > .metaGroup > div:nth-child(6) { /* size */
+    grid-column: 2 / 3;
+    text-align: right;
+    align-self: center;
+    font-size: var(--fetchr-font-size-sm);
+  }
+
+  .row > .metaGroup > div:nth-child(7) { /* progressCell */
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .rowActions {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: var(--fetchr-space-2);
+    border-top: 1px solid var(--fetchr-color-border-subtle);
+    padding-top: var(--fetchr-space-4);
+  }
+
+  .detailsRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .detailCellWide {
+    grid-column: span 1;
+  }
+}
+
+/* Studio Layout Redesign Styles */
+.studioPage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  gap: 0;
+  background: var(--fetchr-color-app-bg);
+}
+
+.bottomSection {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* Единый отступ основной области — 12px на всех страницах */
+  padding: var(--fetchr-space-6);
+  background: var(--fetchr-color-app-bg);
+}
+
+.dockTabBar {
+  display: flex;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel-raised);
+}
+
+.dockTab {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  border: 0;
+  border-right: 1px solid var(--fetchr-color-border-subtle);
+  background: transparent;
+  color: var(--fetchr-color-text-tertiary);
+  font: inherit;
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  cursor: pointer;
+  padding: 0 var(--fetchr-space-8);
+  position: relative;
+  transition: background var(--fetchr-transition-fast), color var(--fetchr-transition-fast);
+}
+
+.dockTab:hover {
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.dockTabActive {
+  background: rgb(var(--fetchr-accent-rgb) / 0.12);
+  color: #ffffff;
+}
+
+.dockTabActive::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--fetchr-gradient-rail);
+  box-shadow: var(--fetchr-glow-accent);
+}
+
+.dockPanel {
+  composes: card from "../theme/primitives.module.css";
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dockScrollable {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--fetchr-space-5);
+}
+
+.selectedRowHighlight {
+  border-color: var(--fetchr-color-accent) !important;
+  background-color: var(--fetchr-color-panel-selected) !important;
+}
+
+
+.emptyAction {
+  composes: emptyAction from "../theme/primitives.module.css";
+}
+
+.sortButton {
+  composes: sortButton from "../theme/primitives.module.css";
+}
+
+.sortButtonActive {
+  composes: sortButtonActive from "../theme/primitives.module.css";
+}
+
+.sortArrow {
+  composes: sortArrow from "../theme/primitives.module.css";
+  width: 12px;
+  height: 12px;
+}
+
+.sortArrowActive {
+  composes: sortArrowActive from "../theme/primitives.module.css";
+}
+
+.sortArrowDesc {
+  composes: sortArrowDesc from "../theme/primitives.module.css";
+}
+
+.taskLog {
+  display: grid;
+  gap: var(--fetchr-space-4);
+  grid-column: 1 / -1;
+}
+
+.taskLogBar {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+}
+
+.taskLogBar span {
+  margin-right: auto;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-sm);
+}
+
+.taskLogBar em {
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  font-style: normal;
+}
+
+.taskLogView {
+  max-height: 280px;
+  margin: 0;
+  overflow: auto;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--fetchr-color-text-secondary);
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  font-size: var(--fetchr-font-size-sm);
+  line-height: 1.5;
+  padding: var(--fetchr-space-5);
+  user-select: text;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

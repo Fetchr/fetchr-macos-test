@@ -1,0 +1,62 @@
+.frame {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.frame[data-dock="left"] {
+  flex-direction: row;
+}
+
+.frame[data-dock="right"] {
+  flex-direction: row-reverse;
+}
+
+.frame[data-dock="bottom"] {
+  flex-direction: column-reverse;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dock {
+  position: relative;
+  z-index: 15;
+  flex: none;
+  background: var(--fetchr-color-chrome);
+}
+
+.frame[data-dock="left"] .dock,
+.frame[data-dock="right"] .dock {
+  width: 208px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.frame[data-dock="left"] .dock {
+  border-right: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.frame[data-dock="right"] .dock {
+  border-left: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.frame[data-dock="bottom"] .dock {
+  height: 42px;
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-chrome-raised);
+}
+
+/* Тесное окно: боковая колонка остаётся иконками, подписи в подсказках. */
+@media (max-width: 1100px) {
+  .frame[data-dock="left"] .dock,
+  .frame[data-dock="right"] .dock {
+    width: 60px;
+  }
+
+}

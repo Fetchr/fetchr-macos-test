@@ -1,0 +1,428 @@
+/* Tokens map the Stageshow kit onto the Fetchr palette, so a demo reads as the
+   app around it. Nothing here reaches outside .fd. */
+.fd {
+  max-width: 560px;
+}
+
+.fd-slot {
+  flex: none;
+  width: 100%;
+  max-width: 560px;
+  pointer-events: none;
+}
+
+.fd .ss-stage {
+  --ss-font: "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif;
+  --ss-surface: var(--fetchr-color-graphite-850);
+  --ss-raised: var(--fetchr-color-graphite-750);
+  --ss-accent: rgb(var(--fetchr-accent-rgb));
+  --ss-accent-2: rgb(var(--fetchr-accent-bright-rgb));
+  --ss-accent-soft: rgb(var(--fetchr-accent-rgb) / 0.16);
+  --ss-success: rgb(var(--fetchr-success-rgb));
+  --ss-success-soft: rgb(var(--fetchr-success-rgb) / 0.14);
+  --ss-success-text: rgb(var(--fetchr-success-rgb));
+  --ss-danger: rgb(var(--fetchr-danger-rgb));
+  --ss-danger-soft: rgb(var(--fetchr-danger-rgb) / 0.14);
+  --ss-danger-text: rgb(var(--fetchr-danger-rgb));
+  --ss-line: var(--fetchr-color-graphite-700);
+  --ss-radius-window: 10px;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent);
+}
+
+.fd-panel {
+  position: absolute;
+  inset: 8px 8px -40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--ss-line);
+  border-radius: var(--ss-radius-window);
+  background: var(--ss-surface);
+  text-align: left;
+}
+
+.fd-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fd-bar .ss-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.fd-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  height: var(--ss-control);
+  padding: 0 14px;
+  border-radius: var(--ss-radius-md);
+  background: var(--ss-accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  transition: transform 0.12s ease, background-color 0.2s ease;
+}
+
+.fd-btn[data-pressed] {
+  transform: scale(0.97);
+}
+
+.fd-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.fd-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--ss-line);
+}
+
+.fd-list > :first-child .fd-row {
+  border-top: 0;
+}
+
+.fd-thumb {
+  width: 56px;
+  height: 32px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, rgb(var(--fetchr-accent-deep-rgb)), var(--fetchr-color-graphite-650));
+}
+
+.fd-thumb[data-quiet] {
+  background: var(--ss-ink-2);
+}
+
+.fd-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.fd-title {
+  overflow: hidden;
+  color: var(--ss-text-strong);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fd-meta {
+  color: var(--ss-text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 16px;
+}
+
+.fd-end {
+  min-width: 96px;
+}
+
+.fd-channel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fd-channel .fd-lines {
+  flex: 1;
+}
+
+.fd-clock {
+  color: var(--ss-text-strong);
+  font-size: 22px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 28px;
+}
+
+.fd-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ss-danger);
+}
+
+.fd-waves {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 44px;
+  padding-top: 4px;
+  opacity: 0.35;
+  transition: opacity 0.5s ease;
+}
+
+.fd-waves[data-on] {
+  opacity: 1;
+}
+
+.fd-waves i {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--ss-ink-4);
+  transition: background-color 0.5s ease;
+}
+
+.fd-waves[data-on] i {
+  background: rgb(var(--fetchr-danger-rgb) / 0.7);
+}
+
+.fd-track {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.fd-track > i {
+  flex: 1;
+  background: var(--ss-ink-2);
+}
+
+.fd-select {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border: 2px solid var(--ss-accent);
+  border-radius: 6px;
+  background: var(--ss-accent-soft);
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.fd-select[data-on] {
+  opacity: 1;
+}
+
+.fd-clip-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--ss-control);
+}
+
+.fd-clip-bar .fd-btn {
+  min-width: 176px;
+}
+
+.fd-btn[data-busy] {
+  background: var(--ss-raised);
+  color: var(--ss-text-strong);
+}
+
+.fd-busy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Живая запись умещается целиком: без обрезки и затухания у нижнего края. */
+.fd--whole .ss-stage {
+  mask-image: none;
+}
+
+.fd--whole .fd-panel {
+  bottom: 8px;
+}
+
+.fd-clock {
+  transition: opacity 0.3s ease;
+}
+
+.fd-clock[data-hidden] {
+  opacity: 0;
+}
+
+.fd-waves--scan i {
+  background: var(--ss-ink-3);
+  transition: background-color 0.2s ease;
+}
+
+.fd-waves--scan[data-on] i {
+  background: var(--ss-ink-3);
+}
+
+.fd-waves--scan[data-on] i[data-seen] {
+  background: rgb(var(--fetchr-accent-rgb) / 0.75);
+}
+
+.fd-waves--scan[data-on] i[data-hit] {
+  background: var(--ss-danger);
+}
+
+.fd-quote {
+  color: var(--ss-text-strong);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.fd-quote mark {
+  padding: 0 2px;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.fd-quote mark[data-on] {
+  background: var(--ss-danger);
+  color: var(--ss-danger);
+}
+
+.fd-stem {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.fd-stem__name {
+  color: var(--ss-text);
+  font-size: 12px;
+}
+
+.fd-stems {
+  display: grid;
+  gap: 8px;
+}
+
+.fd-waves--stem {
+  height: 30px;
+  padding: 0;
+}
+
+.fd-waves--stem[data-on] i {
+  background: var(--ss-ink-5);
+}
+
+.fd-waves--stem[data-tone="voice"][data-on] i {
+  background: rgb(var(--fetchr-accent-rgb) / 0.8);
+}
+
+.fd-waves--stem[data-tone="music"][data-on] i {
+  background: rgb(var(--fetchr-success-rgb) / 0.7);
+}
+
+.fd-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  align-items: stretch;
+}
+
+.fd-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: linear-gradient(140deg, var(--fetchr-color-graphite-650), rgb(var(--fetchr-accent-deep-rgb) / 0.55));
+}
+
+.fd-frame--wide {
+  flex: 1;
+  min-height: 0;
+}
+
+.fd-logo {
+  position: absolute;
+  top: 34px;
+  left: 36px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.fd-zone {
+  position: absolute;
+  border: 2px solid var(--ss-accent);
+  border-radius: 4px;
+  opacity: 0;
+  backdrop-filter: blur(9px);
+  transition: opacity 0.2s ease;
+}
+
+.fd-zone[data-on] {
+  opacity: 1;
+}
+
+.fd-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fd-zone-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border-radius: var(--ss-radius-md);
+  background: var(--ss-raised);
+}
+
+.fd-chat {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.fd-chat__line {
+  padding: 2px 0;
+  color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.7);
+}
+
+.fd-end--right {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.fd-panel--log {
+  gap: 0;
+  justify-content: flex-start;
+}
+
+.fd-log {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 38px;
+  border-top: 1px solid var(--ss-line);
+}
+
+.fd-panel--log > :first-child .fd-log {
+  border-top: 0;
+}
+
+.fd-log__time {
+  color: var(--ss-text-faint);
+  font-family: var(--ss-mono);
+  font-size: 12px;
+}

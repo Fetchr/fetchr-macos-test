@@ -1,0 +1,26 @@
+// Minimal subset of stageshow kit exports used by Fetchr demos.
+export { Stage } from './stage'
+export { useLook } from './looks'
+export { useReducedMotion } from './reduced-motion'
+export { inset, box, between, contains } from './measure'
+export type { StageProps, Play, LookTokens } from './stage'
+export type { Act, Script } from './act'
+export type { Point, Rect, Target } from './measure'
+export type { CursorKind, CursorStyle } from './cursor'
+export type { Theme, Palette, Fidelity, Layout } from './looks'
+export type { KeysAt } from './keys'
+export { clock, installVirtualClock } from './clock'
+export type { ClockControl } from './clock'
+
+export { Window, Bar, Text, Prompt, Caret } from './window'
+export type { WindowProps, BarProps, TextProps, PromptProps } from './window'
+
+export { Count, Collapse, States } from './motion'
+export type { CountProps } from './motion'
+export { EASE, bezier, css as easeCss } from './ease'
+export type { EaseName, Bezier } from './ease'
+
+export { Avatar, Check, Icon, Spinner, Meter } from './parts'
+export type { AvatarProps, IconName } from './parts'
+export { Field, Badge } from './controls'
+export type { FieldProps } from './controls'

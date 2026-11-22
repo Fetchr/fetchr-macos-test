@@ -1,0 +1,78 @@
+/* Полоса неприменённых правок: тёплый тинт предупреждения во всю ширину,
+   справа — отмена, сброс и единственная primary-кнопка экрана. */
+
+.bar {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fetchr-space-5) var(--fetchr-space-6);
+  padding: var(--fetchr-space-5) var(--fetchr-space-5) var(--fetchr-space-5) var(--fetchr-space-8);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--fetchr-color-warning) 35%, transparent);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-warning-soft);
+  color: var(--fetchr-color-warning);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-compact);
+}
+
+.icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.text {
+  min-width: 0;
+  flex: 1 1 260px;
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-3);
+  margin-left: auto;
+}
+
+/* Тонкая линия прогресса рендера по нижнему краю полосы. */
+.progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--fetchr-color-warning) 20%, transparent);
+}
+
+.progress i {
+  position: absolute;
+  inset: 0;
+  background: var(--fetchr-color-warning);
+  transform-origin: left center;
+  transition: transform var(--fetchr-transition-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress i {
+    transition: none;
+  }
+}
+
+/* «Применить» — главное действие полосы: primaryButton без растяжки на всю ширину. */
+[data-fetchr-mute-page] .apply {
+  width: auto;
+  padding: 0 var(--fetchr-space-8);
+}
+
+.applyKey {
+  padding: 0 var(--fetchr-space-2);
+  border: 1px solid color-mix(in srgb, var(--fetchr-color-on-accent) 35%, transparent);
+  border-radius: var(--fetchr-radius-xs);
+  font: inherit;
+  font-size: var(--fetchr-font-size-sm);
+  opacity: 0.85;
+}

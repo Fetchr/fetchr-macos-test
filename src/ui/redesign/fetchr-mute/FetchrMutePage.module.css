@@ -1,0 +1,38 @@
+/* Каркас страницы «Удалить маты». Общие классы и мост к AudioTool —
+   в shared.module.css; здесь только раскладка экрана проверки.
+
+   Экран проверки включает атрибут data-review на корне страницы
+   (корень помечен data-fetchr-mute-page). Модули компонентов не видят
+   хэш класса .page, поэтому предок пишется атрибутами: та же
+   специфичность, что у прежнего .page[data-review]. */
+
+/* ── Экран проверки ──────────────────────────────────────────────
+   Сверху вниз: строка файла, плеер, полоса правок и панель текста,
+   которая забирает остаток высоты и прокручивается внутри. */
+[data-fetchr-mute-page][data-review] .content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--fetchr-space-8) var(--fetchr-space-10) var(--fetchr-space-10);
+}
+
+[data-fetchr-mute-page][data-review] .workspace {
+  width: 100%;
+  min-height: 0;
+  flex: 1 0 auto;
+  gap: var(--fetchr-space-6);
+}
+
+/* Узкое окно: колонки стопкой, прокручивается вся раскладка (AudioTool),
+   поэтому content не режет содержимое — панель текста держит свою
+   высоту и прокручивается внутри. */
+@media (max-width: 860px) {
+  [data-fetchr-mute-page][data-review] .content {
+    flex: none;
+    overflow: visible;
+    padding: var(--fetchr-space-8);
+  }
+
+  [data-fetchr-mute-page][data-review] .workspace {
+    flex: none;
+  }
+}

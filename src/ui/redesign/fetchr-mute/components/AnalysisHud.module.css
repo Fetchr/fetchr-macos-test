@@ -1,0 +1,241 @@
+/* ── Анализ: спокойная карточка ──────────────────────────────────
+   Сверху состояние и время, крупный процент с названием текущего
+   этапа, тонкая полоса из отрезков по длине этапов, подписи этапов
+   мелко под ней, внизу ход работы и «Отменить». Без неона, тонкие линии.
+   Точка состояния — shared.hudDot. */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--fetchr-color-overlay-bg);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
+.hudCard {
+  display: flex;
+  width: min(520px, 100%);
+  flex-direction: column;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-10);
+  border: 1px solid var(--fetchr-color-border-hairline);
+  border-radius: 18px;
+  background: var(--fetchr-color-panel-elevated);
+  box-shadow: var(--fetchr-shadow-modal);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hudState {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fetchr-color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hudStepCount {
+  color: var(--fetchr-color-text-tertiary);
+  font-weight: 500;
+}
+
+.hudClock {
+  color: var(--fetchr-color-text-secondary);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+.hudState .hudClock {
+  margin-left: auto;
+  color: var(--fetchr-color-text-secondary);
+  font-weight: 500;
+}
+
+.hudPercent {
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hudPercent small {
+  margin-left: 2px;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-title);
+}
+
+/* Этапы одной дорожкой: пройденные синие, текущий заполняется, впереди серые. */
+.hudLane {
+  display: flex;
+  height: 6px;
+  gap: var(--fetchr-space-2);
+  min-width: 0;
+}
+
+.hudSeg {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--fetchr-color-border-strong);
+  transition: flex-grow 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.hudSeg i {
+  position: absolute;
+  inset: 0;
+  background: var(--fetchr-color-accent);
+  transform-origin: left center;
+  transition: transform 0.4s ease;
+  border-radius: 3px;
+}
+
+.hudSegActive {
+  flex-grow: initial;
+}
+
+.hudSegDone i {
+  background: var(--fetchr-color-accent);
+}
+
+.hudSteps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fetchr-space-2) var(--fetchr-space-6);
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.hudStepsDone {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.hudStepsDone::before {
+  content: "✓ ";
+  color: var(--fetchr-color-success);
+}
+
+.hudStepsActive {
+  color: var(--fetchr-color-text);
+}
+
+/* ── Аудио: анализ волной (вариант 1B) ───────────────────────────
+   Волна проявляется слева направо по ходу анализа, под ней этапы. */
+.hudWave {
+  position: relative;
+  display: flex;
+  height: 64px;
+  align-items: center;
+  gap: 2px;
+}
+
+.hudWave i {
+  flex: 1 1 0;
+  border-radius: 2px;
+  background: var(--fetchr-color-border-strong);
+  transition: background 0.3s ease;
+}
+
+.hudWave i.hudWaveOn {
+  background: var(--fetchr-color-text-secondary);
+}
+
+.hudWaveHead {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--fetchr-color-accent);
+  transition: left 0.3s ease;
+}
+
+.hudStage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.hudStage > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hudStageDone {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.hudStageDone svg {
+  color: var(--fetchr-color-success);
+}
+
+.hudStageActive {
+  color: var(--fetchr-color-text);
+}
+
+.hudFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.hudMessage {
+  min-height: 1.5em;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 13px;
+}
+
+.hudFooter .hudMessage {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--fetchr-color-text-secondary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .hudLane {
+    flex-direction: column;
+  }
+
+  .hudSeg {
+    height: 28px;
+  }
+}
+
+/* Подтверждение отмены анализа: строка под прогрессом. */
+.hudConfirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  padding-top: var(--fetchr-space-4);
+  border-top: 1px solid var(--fetchr-color-border-subtle);
+}
+
+.hudConfirmText {
+  min-width: 0;
+  flex: 1 1 200px;
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-md);
+}

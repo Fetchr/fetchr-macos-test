@@ -1,0 +1,55 @@
+/* ---------- Файл ---------- */
+/* .source висит рядом с shared.source и несёт только переопределения:
+   компактная строка — иконка, имя, длительность и действия справа. */
+
+/* Переопределения примитивов идут с префиксом [data-fetchr-mute-page]:
+   копии примитивов из CSS других страниц (их композят все страницы)
+   подгружаются позже и при равной специфичности перебили бы правило. */
+[data-fetchr-mute-page] .source {
+  flex: none;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-4) var(--fetchr-space-4) var(--fetchr-space-4) var(--fetchr-space-6);
+  border-radius: var(--fetchr-radius-lg);
+}
+
+.fileIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  color: var(--fetchr-color-text-secondary);
+}
+
+.fileIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  font-weight: var(--fetchr-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duration {
+  flex: none;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.overflow {
+  position: relative;
+  flex: none;
+}
+
+.overflowMenu {
+  position: absolute;
+  top: calc(100% + var(--fetchr-space-2));
+  right: 0;
+}

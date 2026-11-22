@@ -1,0 +1,70 @@
+node_modules
+dist
+dist-ssr
+.env
+.env.local
+.env.*
+!.env.example
+*.log
+beta-keys.generated.csv
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+/Logs/
+/src-tauri/Logs/
+tmp-*/
+tmp-cdp-check-*/
+*.tsbuildinfo
+
+# Local captures, installers and downloaded playlist URLs
+m3u8-links.txt
+Fetchr-Setup*.exe
+*.msi
+*.zip
+*.m4s
+*.mp4
+*.m3u8
+src-tauri/* (live) */
+
+# Tauri
+src-tauri/target
+setup/target
+installers-test/
+src-tauri/gen
+
+# Binaries that we reference but don't version
+src-tauri/binaries/*.exe
+*.exe
+!src-tauri/icons/*.exe
+_backups/
+
+# Stale FUSE/NFS temp files
+.fuse_hidden*
+
+
+# VPS recorder local secrets and test artifacts
+vps-recorder/token.txt
+vps-recorder/test-clip/
+
+# Build-time secrets: proxy credentials, VPS token, license signing key
+src-tauri/.cargo/config.toml
+build.env*
+!build.env.example
+
+# VPS operator tooling: root SSH password, systemd units with live tokens
+/vps-recorder/
+
+# Harvested server data: license keys, Telegram PII, chat transcripts
+vps_data/
+*.jsonl
+
+# Промо-ролик: сборка и рендеры
+promo/out/
+promo/dist/
+.backup/
+
+# Agent tool state
+.omc/
+
+.claude/design-mocks/

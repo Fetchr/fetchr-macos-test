@@ -1,0 +1,700 @@
+/* ============================================================
+   Запись на VPS — архив стримов.
+   Плотная сетка карточек с постерами, плеер с таймлайном,
+   библиотека клипов. Токены из fetchrTokens.css.
+   ============================================================ */
+
+.page {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--fetchr-color-app-bg);
+  color: var(--fetchr-color-text);
+  overflow: hidden;
+}
+
+.scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--fetchr-space-14) var(--fetchr-space-16) var(--fetchr-space-20);
+  background:
+    radial-gradient(900px 420px at 18% -10%, rgb(var(--fetchr-accent-rgb) / 0.07), transparent 60%),
+    rgba(0, 0, 0, 0.25);
+}
+
+/* Wide enough to actually use a maximised window: capped at 1180px the video
+   stayed postage-stamp sized on a 1920px screen while the sides sat empty.
+   Пороги — по области архива (окно минус сайдбар 244px): 1100→856, 700→456. */
+@container archive (max-width: 1100px) {
+  .scroll {
+    padding: var(--fetchr-space-10) var(--fetchr-space-10) var(--fetchr-space-16);
+  }
+}
+
+@container archive (max-width: 700px) {
+  .scroll {
+    padding: var(--fetchr-space-8) var(--fetchr-space-8) var(--fetchr-space-12);
+  }
+}
+
+.inner {
+  width: min(1760px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-12);
+}
+
+/* ---------- Статусы и мета ---------- */
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-2) var(--fetchr-space-6);
+  border-radius: var(--fetchr-radius-pill);
+  flex: none;
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+.barMeta {
+  display: flex;
+  gap: var(--fetchr-space-8);
+  flex-wrap: wrap;
+  font-size: var(--fetchr-font-size-md);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.barSpacer {
+  flex: 1 1 auto;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---------- Разделы страницы ---------- */
+
+.pageTabs {
+  display: flex;
+  gap: var(--fetchr-space-12);
+  border-bottom: 1px solid var(--fetchr-color-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pageTab {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-5) var(--fetchr-space-1);
+  border: none;
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fetchr-font-size-lg);
+  font-weight: var(--fetchr-weight-medium);
+  transition: color var(--fetchr-transition-fast);
+}
+
+.pageTab::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--fetchr-color-accent);
+  transform: scaleX(0);
+  transition: transform var(--fetchr-transition-base);
+}
+
+.pageTab:hover {
+  color: var(--fetchr-color-text);
+}
+
+.pageTab:focus-visible {
+  outline: none;
+  color: var(--fetchr-color-text);
+  box-shadow: inset 0 -2px 0 var(--fetchr-color-focus);
+}
+
+.pageTabActive {
+  color: var(--fetchr-color-text);
+}
+
+.pageTabActive::after {
+  transform: scaleX(1);
+}
+
+.pageTabCount {
+  min-width: 20px;
+  padding: 1px var(--fetchr-space-3);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.pageTabActive .pageTabCount {
+  background: var(--fetchr-color-accent-soft);
+  color: var(--fetchr-color-accent-bright);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageTab,
+  .pageTab::after {
+    transition: none;
+  }
+}
+
+/* ---------- Вкладки-переключатели ---------- */
+
+.tabs {
+  display: flex;
+  gap: var(--fetchr-space-2);
+  padding: var(--fetchr-space-1);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  align-self: flex-start;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-3);
+  padding: var(--fetchr-space-3) var(--fetchr-space-8);
+  border: none;
+  border-radius: var(--fetchr-radius-sm);
+  background: transparent;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: var(--fetchr-color-hover);
+  color: var(--fetchr-color-text);
+}
+
+.tabActive,
+.tabActive:hover {
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text);
+}
+
+.tabCount {
+  padding: 0 var(--fetchr-space-3);
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-elevated);
+  font-size: var(--fetchr-font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Панели и формы ---------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-10);
+  padding: var(--fetchr-space-12) var(--fetchr-space-14);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--fetchr-font-size-title);
+  font-weight: var(--fetchr-weight-strong);
+}
+
+.panelHelp {
+  max-width: 72ch;
+  margin: var(--fetchr-space-2) 0 0;
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-relaxed);
+  color: var(--fetchr-color-text-secondary);
+  text-wrap: pretty;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--fetchr-space-8);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.fieldLabel {
+  font-size: var(--fetchr-font-size-md);
+  font-weight: var(--fetchr-weight-medium);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.input {
+  width: 100%;
+  padding: var(--fetchr-space-5) var(--fetchr-space-7);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-md);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text);
+  font-size: var(--fetchr-font-size-base);
+  font-family: inherit;
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--fetchr-color-accent);
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.buttonRow {
+  display: flex;
+  gap: var(--fetchr-space-6);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.primaryButton {
+  composes: buttonPrimary from "../theme/primitives.module.css";
+}
+
+.ghostButton {
+  composes: button from "../theme/primitives.module.css";
+}
+
+.dangerButton {
+  composes: buttonDanger from "../theme/primitives.module.css";
+}
+
+.primaryButton svg,
+.ghostButton svg,
+.dangerButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+}
+
+.iconButton:hover:not(:disabled) {
+  color: var(--fetchr-color-text);
+  background: var(--fetchr-color-panel-hover);
+}
+
+.iconButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  font-size: var(--fetchr-font-size-md);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+}
+
+.errorBox,
+.noticeBox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-6) var(--fetchr-space-8);
+  border-radius: var(--fetchr-radius-lg);
+  font-size: var(--fetchr-font-size-md);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+.errorBox {
+  border: 1px solid rgb(var(--fetchr-danger-rgb) / 0.35);
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+}
+
+.details {
+  margin-top: var(--fetchr-space-3);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+.details > summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.noticeText {
+  flex: 1;
+  min-width: 0;
+  align-self: center;
+}
+
+.noticeBox {
+  border: 1px solid var(--fetchr-color-border-subtle);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-secondary);
+}
+
+.log {
+  margin: 0;
+  padding: var(--fetchr-space-6);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-inset);
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-sm);
+  line-height: var(--fetchr-line-height-normal);
+  list-style: none;
+}
+
+/* ---------- Постеры (PosterImage) ---------- */
+
+.posterImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.posterEmpty {
+  color: var(--fetchr-color-text-disabled);
+}
+
+.recDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fetchr-color-danger);
+  animation: recPulse var(--fetchr-dur-pulse) var(--fetchr-ease-standard) infinite;
+}
+
+@keyframes recPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.spinning {
+  animation: spin var(--fetchr-dur-spin) var(--fetchr-ease-linear) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Чат записи ---------- */
+
+/* Слот заполняет боковую панель просмотра; сама панель чата вынута из
+   потока, иначе длинный список сообщений раздувал бы высоту строки. */
+.chatSlot {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.chatPanel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.chatHeader {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+  padding: var(--fetchr-space-4) var(--fetchr-space-8);
+  border-bottom: 1px solid var(--fetchr-color-border-subtle);
+  font-size: var(--fetchr-font-size-md);
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.chatHeader svg {
+  width: 13px;
+  height: 13px;
+}
+
+.chatWaiting {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--fetchr-space-5);
+  padding: var(--fetchr-space-6) 0;
+  color: var(--fetchr-color-text-secondary);
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-normal);
+}
+
+.chatWaiting p {
+  margin: 0;
+}
+
+.chatJump {
+  composes: buttonSmall from "../theme/primitives.module.css";
+}
+
+.chatSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-4) 0;
+}
+
+.chatSkeleton span {
+  height: 10px;
+  border-radius: var(--fetchr-radius-pill);
+  background: var(--fetchr-color-panel-raised);
+  animation: skeleton var(--fetchr-dur-loop) var(--fetchr-ease-standard) infinite;
+}
+
+@keyframes skeleton {
+  0%,
+  100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chatSkeleton span,
+  .recDot,
+  .spinning {
+    animation: none;
+  }
+}
+
+.chatBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--fetchr-space-5) var(--fetchr-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-3);
+}
+
+.chatLine {
+  font-size: var(--fetchr-font-size-base);
+  line-height: var(--fetchr-line-height-normal);
+  color: var(--fetchr-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.chatTime {
+  margin-right: var(--fetchr-space-3);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--fetchr-color-text-tertiary);
+  font-size: var(--fetchr-font-size-xs);
+  font-variant-numeric: tabular-nums;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.chatTime:hover {
+  color: var(--fetchr-color-accent);
+}
+
+.chatAuthor {
+  margin-right: var(--fetchr-space-2);
+  font-weight: var(--fetchr-weight-strong);
+  color: var(--fetchr-color-text);
+}
+
+.chatAuthor::after {
+  content: ":";
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.chatText {
+  color: var(--fetchr-color-text-secondary);
+}
+
+.chatEmote {
+  height: 24px;
+  vertical-align: -6px;
+  margin: 0 1px;
+}
+
+/* 7TV overlays sit exactly on top of the emote they decorate. */
+.chatEmoteStack {
+  position: relative;
+  display: inline-block;
+}
+
+.chatEmoteOverlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 24px;
+  margin: 0 1px;
+  pointer-events: none;
+}
+
+.chatBadge {
+  height: 15px;
+  vertical-align: -2px;
+  margin-right: var(--fetchr-space-2);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-5);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.rowMain {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rowMain strong {
+  font-weight: var(--fetchr-weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowMain small {
+  font-size: var(--fetchr-font-size-sm);
+  color: var(--fetchr-color-text-tertiary);
+}
+
+.rangeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-4);
+}
+
+.rangeRow .input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.filterRow {
+  display: flex;
+  gap: var(--fetchr-space-6);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ---------- Каналы ---------- */
+
+.targetList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fetchr-space-4);
+}
+
+.targetList .panelHelp {
+  margin: var(--fetchr-space-2) 0 0;
+  font-size: var(--fetchr-font-size-md);
+}
+
+.targetRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fetchr-space-6);
+  padding: var(--fetchr-space-5) var(--fetchr-space-5) var(--fetchr-space-5) var(--fetchr-space-7);
+  border: 1px solid var(--fetchr-color-border-subtle);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-inset);
+  font-size: var(--fetchr-font-size-base);
+}
+
+.stableLabel {
+  display: inline-grid;
+  justify-items: center;
+}
+
+.stableLabel > span {
+  grid-area: 1 / 1;
+}
+
+.stableLabelSizer {
+  visibility: hidden;
+}
+
+.statusRecording {
+  background: var(--fetchr-color-danger-soft);
+  color: var(--fetchr-color-danger-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.statusRecording .recDot {
+  background: currentcolor;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--fetchr-space-12);
+  background: rgb(0 0 0 / 0.5);
+}
+
+.modal {
+  display: flex;
+  width: min(440px, calc(100vw - var(--fetchr-space-16)));
+  max-height: calc(100vh - var(--fetchr-space-24));
+  overflow-y: auto;
+  flex-direction: column;
+  gap: var(--fetchr-space-10);
+  padding: var(--fetchr-space-14);
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-xl);
+  background: var(--fetchr-color-panel);
+  box-shadow: var(--fetchr-shadow-modal);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--fetchr-space-4);
+}
+
+.fieldError {
+  color: var(--fetchr-color-danger);
+  font-size: var(--fetchr-font-size-md);
+}
+
+.logFailed {
+  color: var(--fetchr-color-danger);
+}

@@ -1,0 +1,93 @@
+.group {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--fetchr-space-6);
+  max-width: 520px;
+}
+
+.option {
+  display: grid;
+  gap: var(--fetchr-space-4);
+  justify-items: center;
+  border: 1px solid var(--fetchr-color-border);
+  border-radius: var(--fetchr-radius-lg);
+  background: var(--fetchr-color-panel-raised);
+  color: var(--fetchr-color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  padding: var(--fetchr-space-6) var(--fetchr-space-4) var(--fetchr-space-5);
+  transition:
+    border-color var(--fetchr-transition-fast),
+    background var(--fetchr-transition-fast),
+    color var(--fetchr-transition-fast);
+}
+
+.option:hover {
+  border-color: var(--fetchr-color-border-strong);
+  color: var(--fetchr-color-text);
+}
+
+.option[data-active] {
+  border-color: var(--fetchr-color-accent);
+  background: var(--fetchr-color-accent-soft);
+  color: var(--fetchr-color-text);
+}
+
+.option:focus-visible {
+  outline: none;
+  box-shadow: var(--fetchr-shadow-focus);
+}
+
+.label {
+  font-size: var(--fetchr-font-size-sm);
+  font-weight: var(--fetchr-weight-medium);
+}
+
+/* Схема окна: тёмная страница и светлая полоса панели у нужного края. */
+.preview {
+  display: flex;
+  width: 100%;
+  max-width: 88px;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--fetchr-color-border-strong);
+  border-radius: var(--fetchr-radius-sm);
+  background: var(--fetchr-color-panel-inset);
+}
+
+.preview[data-pos="top"] {
+  flex-direction: column;
+}
+
+.preview[data-pos="bottom"] {
+  flex-direction: column-reverse;
+}
+
+.preview[data-pos="right"] {
+  flex-direction: row-reverse;
+}
+
+.bar {
+  flex: none;
+  background: var(--fetchr-color-text-tertiary);
+  opacity: 0.55;
+}
+
+.option[data-active] .bar {
+  background: var(--fetchr-color-accent);
+  opacity: 1;
+}
+
+.preview[data-pos="top"] .bar,
+.preview[data-pos="bottom"] .bar {
+  height: 24%;
+}
+
+.preview[data-pos="left"] .bar,
+.preview[data-pos="right"] .bar {
+  width: 24%;
+}
+
+.page {
+  flex: 1;
+}

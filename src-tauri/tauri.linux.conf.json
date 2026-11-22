@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "bundle": {
+    "targets": [
+      "deb",
+      "appimage"
+    ],
+    "resources": {
+      "../yt-dlp": "resources/yt-dlp",
+      "../N_m3u8DL-RE": "resources/N_m3u8DL-RE",
+      "../ffmpeg": "resources/ffmpeg",
+      "../ffprobe": "resources/ffprobe"
+    }
+  }
+}
