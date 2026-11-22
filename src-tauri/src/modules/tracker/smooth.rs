@@ -155,9 +155,16 @@ mod tests {
         BoxF::from_center(cx, cy, 120.0, 40.0)
     }
 
-    /// Deterministic pseudo-noise so the test cannot flake.
+    /// Deterministic pseudo-noise so the test cannot flake. Integer hashing
+    /// (splitmix64) rather than `sin` of large arguments: libm differs in the
+    /// last bits between Windows and macOS, which gave a different noise
+    /// sequence on each platform.
     fn noise(index: usize) -> f64 {
-        let value = ((index as f64 * 12.9898).sin() * 43758.5453).fract();
+        let mut x = (index as u64).wrapping_add(0x9E37_79B9_7F4A_7C15);
+        x = (x ^ (x >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        x = (x ^ (x >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+        x ^= x >> 31;
+        let value = (x >> 11) as f64 / (1u64 << 53) as f64;
         (value - 0.5) * 6.0
     }
 

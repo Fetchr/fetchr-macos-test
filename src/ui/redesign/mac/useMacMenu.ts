@@ -15,6 +15,7 @@ export interface MacMenuHandlers {
   startQueue: () => void;
   toggleSidebar: () => void;
   openWhatsNew: () => void;
+  checkUpdates: () => void;
   openHelpSite: () => void;
   openTour: () => void;
 }
@@ -33,6 +34,7 @@ export function routeMenuItem(id: string, handlers: MacMenuHandlers): boolean {
     "start-queue": handlers.startQueue,
     "toggle-sidebar": handlers.toggleSidebar,
     "whats-new": handlers.openWhatsNew,
+    "check-updates": handlers.checkUpdates,
     "help-site": handlers.openHelpSite,
     "help-tour": handlers.openTour,
   };

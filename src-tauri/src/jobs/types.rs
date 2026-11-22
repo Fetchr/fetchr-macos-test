@@ -900,7 +900,7 @@ mod tests {
         }
         .with_defaults();
 
-        assert_eq!(performance.network_concurrent_fragments, Some(32));
+        assert_eq!(performance.network_concurrent_fragments, Some(64));
         assert!(performance.cpu_threads.unwrap_or(0) >= 1);
         assert!(performance.render_workers.unwrap_or(0) >= 1);
         assert!(performance.is_turbo());

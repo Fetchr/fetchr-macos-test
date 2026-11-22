@@ -6,6 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 mkdir -p vps-recorder
 for name in agent.py api.py session_io.py hot_tier.py fetchr-agent.service fetchr-rec-api.service; do
-  [ -e "vps-recorder/$name" ] || : > "vps-recorder/$name"
+  # Не пустые: vps_ssh::tests::agent_sources_are_embedded проверяет, что файлы встроены.
+  [ -e "vps-recorder/$name" ] || echo "# CI stub: vps-recorder/ is not published" > "vps-recorder/$name"
 done
 [ -e vps-recorder/config.json ] || echo '{}' > vps-recorder/config.json

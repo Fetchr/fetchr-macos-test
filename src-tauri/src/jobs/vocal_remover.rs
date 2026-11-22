@@ -3665,7 +3665,9 @@ mod tests {
 
     #[test]
     fn output_paths_are_written_next_to_input() {
-        let paths = output_paths_for_input(Path::new(r"C:\media\clip.mp4")).unwrap();
+        // Путь с разделителем текущей ОС: «C:\media» на macOS — это имя файла, а не папка.
+        let input = Path::new("media").join("clip.mp4");
+        let paths = output_paths_for_input(&input).unwrap();
         assert!(paths.vocals.ends_with("clip_vocals.wav"));
         assert!(paths.instrumental.ends_with("clip_instrumental.wav"));
         assert!(paths.anti_copyright.ends_with("clip_anti_copyright.wav"));

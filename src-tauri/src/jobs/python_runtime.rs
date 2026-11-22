@@ -502,8 +502,10 @@ mod tests {
     #[test]
     fn install_is_not_ready_without_marker() {
         let runtime = std::env::temp_dir().join(format!("fetchr-py-{}", uuid::Uuid::new_v4()));
-        std::fs::create_dir_all(embedded_dir(&runtime)).unwrap();
-        std::fs::write(embedded_python(&runtime), b"stub").unwrap();
+        // На macOS и Linux интерпретатор лежит в python/bin/, а не прямо в python/.
+        let python = embedded_python(&runtime);
+        std::fs::create_dir_all(python.parent().unwrap()).unwrap();
+        std::fs::write(&python, b"stub").unwrap();
         assert!(!is_installed(&runtime));
         std::fs::write(ready_marker(&runtime), EMBEDDED_PYTHON_VERSION).unwrap();
         assert!(is_installed(&runtime));

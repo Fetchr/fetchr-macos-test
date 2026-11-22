@@ -627,7 +627,10 @@ mod tests {
         let _ = std::fs::remove_file(&path);
     }
 
+    /// Читает реальную выгрузку чата с машины разработчика. На других машинах
+    /// (CI, Mac) файла нет: запуск вручную — `cargo test -- --ignored`.
     #[test]
+    #[ignore = "needs a local chat export in Downloads"]
     fn test_parse_user_file() {
         let path =
             std::path::Path::new("C:\\Users\\h3r0n\\Downloads\\выфвыфвыфвф_twitch_live_chat.json");

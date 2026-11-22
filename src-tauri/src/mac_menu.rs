@@ -53,6 +53,7 @@ pub fn build<R: Runtime, M: Manager<R>>(manager: &M) -> tauri::Result<Menu<R>> {
         .about(Some(about))
         .separator()
         .item(&item(manager, "settings", "Настройки…", Some("CmdOrCtrl+,"))?)
+        .item(&item(manager, "check-updates", "Проверить обновления…", None)?)
         .item(&item(manager, "whats-new", "Что нового", None)?)
         .separator()
         .services()

@@ -24,6 +24,7 @@ import { NavDockFrame, TopAppBar, type AppNavigationItemId } from "@/ui/redesign
 import { PageTransition } from "@/ui/redesign/layout/PageTransition";
 import { FirstRunSetup } from "@/ui/redesign/setup/FirstRunSetup";
 import { UpdateModal } from "@/ui/redesign/updates/UpdateModal";
+import { useManualUpdateNotice } from "@/ui/redesign/updates/useManualUpdateNotice";
 import { WhatsNewTrigger } from "@/ui/redesign/updates/WhatsNewTrigger";
 
 interface AppLayoutProps {
@@ -215,6 +216,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [macShell]);
 
   useDockBadge(counts.queued + counts.running);
+  const manualUpdate = useManualUpdateNotice();
   useMacMenu({
     navigate: (section) => {
       if (section === "presets") void navigate({ to: "/presets" });
@@ -226,6 +228,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     startQueue: () => void ipc.startQueue(maxConcurrentJobs),
     toggleSidebar: macSidebar.toggle,
     openWhatsNew: () => useUI.getState().openWhatsNew(),
+    checkUpdates: manualUpdate.checkNow,
     openHelpSite: () => void openUrl("https://fetchr.fun").catch(() => undefined),
     openTour,
   });
