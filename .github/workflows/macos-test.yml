@@ -51,6 +51,10 @@ jobs:
       # хватает пустых файлов, настоящие качает только job bundle.
       - name: Placeholder bundled tools
         run: touch yt-dlp N_m3u8DL-RE
+      # vps-recorder/ не публикуется (серверный код), а src-tauri встраивает его
+      # файлы через include_str!. Пустые заглушки: VPS в тестовой сборке выключен.
+      - name: Placeholder recorder files
+        run: ./.github/scripts/recorder-stubs.sh
       - name: Rust tests
         working-directory: src-tauri
         run: cargo test --lib --locked
@@ -88,6 +92,8 @@ jobs:
           tar -xf "$RUNNER_TEMP/nm.tar.gz" -C "$RUNNER_TEMP/nm"
           cp "$(find "$RUNNER_TEMP/nm" -type f -name 'N_m3u8DL-RE' | head -n1)" "$root/N_m3u8DL-RE"
           chmod +x "$root/N_m3u8DL-RE"
+      - name: Placeholder recorder files
+        run: ./.github/scripts/recorder-stubs.sh
       # Тестовая сборка: без секретов (VPS, резолвер, ключ обновлений) эти функции выключены.
       - name: Build universal .app and .dmg
         env:
