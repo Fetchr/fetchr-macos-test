@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
-import { useSettings } from "@/stores/settings";
+import { useSettings, usesSimpleContent } from "@/stores/settings";
 import { BrandMark } from "@/ui/redesign/brand/FetchrBrand";
 import { RedesignIcon, type RedesignIconName } from "@/ui/redesign/icons/iconMap";
 import { isToolEnabled } from "@/ui/redesign/setup/setupTools";
@@ -40,7 +40,7 @@ export interface MacSidebarProps {
 export function MacSidebar({ activeCategory, onNavigate, queueCount = 0, errorCount = 0, version }: MacSidebarProps) {
   const { t } = useTranslation();
   const enabledTools = useSettings((s) => s.enabledTools);
-  const simple = useSettings((s) => s.uiMode) === "simple";
+  const simple = usesSimpleContent(useSettings((s) => s.uiMode));
 
   const isVisible = (item: NavItem) => {
     if (item.id === "download") return simple;

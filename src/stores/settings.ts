@@ -94,18 +94,27 @@ export const defaultIntegrationSettings: IntegrationSettings = {
 export type NavPosition = "top" | "bottom" | "left" | "right";
 
 /**
- * simple («Новый»): поиск и мультивыбор вместо ручных форм, вкладки сверху.
- * macos («MacOS»): полный интерфейс в оболочке macOS — боковая панель и
+ * simple («Fetchr»): новый интерфейс, разделы вкладками сверху.
+ * macos («MacOS»): тот же интерфейс в оболочке macOS — боковая панель и
  * Liquid Glass. На Mac доступен только он.
  */
 export type UiMode = "simple" | "macos";
 
+/**
+ * Содержимое страниц из нового интерфейса (поиск, мультивыбор, «Скачать»).
+ * Оба режима его показывают: MacOS меняет только оболочку окна. Прежние
+ * формы («Старый») убраны.
+ */
+export function usesSimpleContent(mode: UiMode): boolean {
+  return mode === "simple" || mode === "macos";
+}
+
 /** На Mac режим всегда macos: другой оболочки там нет. */
 export function normalizeUiMode(value: unknown): UiMode {
   if (IS_MACOS) return "macos";
-  if (value === "simple") return "simple";
-  // «Старый» (advanced) убран: его формы живут в режиме MacOS.
-  if (value === "macos" || value === "advanced") return "macos";
+  if (value === "macos") return "macos";
+  // «Старый» (advanced) убран вместе с прежними формами: такие установки
+  // переходят на новый интерфейс.
   return "simple";
 }
 
@@ -206,7 +215,7 @@ export const useSettings = create<SettingsState>()(
       name: "fetchr-settings",
       version: 14,
       // Режим интерфейса проверяется при каждом чтении, а не миграцией: так
-      // «Старый» переезжает в MacOS, а на Mac режим всегда MacOS.
+      // «Старый» переезжает в Fetchr, а на Mac режим всегда MacOS.
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<SettingsState>;
         return { ...current, ...saved, uiMode: normalizeUiMode(saved.uiMode) };

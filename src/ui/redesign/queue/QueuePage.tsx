@@ -5,7 +5,7 @@ import { ipc } from "@/lib/ipc";
 import { useLogs } from "@/stores/logs";
 import { usePresets } from "@/stores/presets";
 import { useQueue } from "@/stores/queue";
-import { useSettings } from "@/stores/settings";
+import { useSettings, usesSimpleContent } from "@/stores/settings";
 import { useUI } from "@/stores/ui";
 import type { Job, JobStatus } from "@/types/job";
 import { fetchrThemeClassName } from "@/ui/redesign/theme";
@@ -24,7 +24,7 @@ export function QueuePage() {
   const lastLineByJob = useLogs((state) => state.lastLineByJob);
   const openAddDialog = useUI((state) => state.openAddDialog);
   const openDownload = useUI((state) => state.openDownload);
-  const simple = useSettings((state) => state.uiMode) === "simple";
+  const simple = usesSimpleContent(useSettings((state) => state.uiMode));
   const maxConcurrentJobs = useSettings((state) => state.maxConcurrentJobs);
   const presets = usePresets((state) => state.presets);
   const activePresetId = usePresets((state) => state.activePresetId);

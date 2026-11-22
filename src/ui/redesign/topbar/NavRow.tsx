@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { useFlipIndicator } from "@/hooks/useFlipIndicator";
 import { cn } from "@/lib/utils";
-import { useSettings } from "@/stores/settings";
+import { useSettings, usesSimpleContent } from "@/stores/settings";
 import type { M3U8StreamerPreset } from "@/stores/workflowPresets";
 import { RedesignIcon, type RedesignIconName } from "@/ui/redesign/icons/iconMap";
 import { isToolEnabled } from "@/ui/redesign/setup/setupTools";
@@ -66,7 +66,7 @@ export function NavRow({
   useFlipIndicator(activeCategory, "activeNavTab");
   const enabledTools = useSettings((s) => s.enabledTools);
   const uiMode = useSettings((s) => s.uiMode);
-  const simple = uiMode === "simple";
+  const simple = usesSimpleContent(uiMode);
   const vertical = orientation === "vertical";
 
   const visibleNavItems = NAV_ITEMS.filter((item) => {

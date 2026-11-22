@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { useLocalImageSrc } from "@/components/local-image";
 import { cn } from "@/lib/utils";
-import { useSettings } from "@/stores/settings";
+import { useSettings, usesSimpleContent } from "@/stores/settings";
 import type { SponsorTimelineThumbnails } from "@/lib/ipc";
 import type { BlurZone } from "@/types/job";
 import { RedesignIcon } from "@/ui/redesign/icons/iconMap";
@@ -105,7 +105,7 @@ export function SponsorTimeline({
   onStep,
 }: SponsorTimelineProps) {
   const { t } = useTranslation();
-  const simple = useSettings((state) => state.uiMode) === "simple";
+  const simple = usesSimpleContent(useSettings((state) => state.uiMode));
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem(COLLAPSED_KEY) === "1";

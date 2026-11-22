@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useSettings } from "@/stores/settings";
+import { useSettings, usesSimpleContent } from "@/stores/settings";
 import { isToolEnabled } from "@/ui/redesign/setup/setupTools";
 import { fetchrThemeClassName } from "@/ui/redesign/theme";
 
@@ -339,7 +339,7 @@ export function OnboardingTour({ onClose, onNavigate }: OnboardingTourProps) {
   const setDone = useSettings((s) => s.setOnboardingCompleted);
 
   const enabledTools = useSettings((s) => s.enabledTools);
-  const simple = useSettings((s) => s.uiMode) === "simple";
+  const simple = usesSimpleContent(useSettings((s) => s.uiMode));
   // Гайд идёт только по включённым инструментам: выбран один «Удалить маты» —
   // шагов про блюр спонсоров и рендер чата нет.
   const steps = useMemo(() => tourStepsFor(enabledTools, simple), [enabledTools, simple]);

@@ -16,8 +16,8 @@ pub const MENU_EVENT: &str = "mac-menu";
 /// Sections in View, in the same order as the sidebar. `nav:` ids are
 /// resolved to routes by the frontend.
 const SECTIONS: &[(&str, &str, &str)] = &[
-    ("nav:queue", "Очередь", "CmdOrCtrl+1"),
-    ("nav:finder", "M3U8 Finder", "CmdOrCtrl+2"),
+    ("nav:download", "Скачать", "CmdOrCtrl+1"),
+    ("nav:queue", "Загрузки", "CmdOrCtrl+2"),
     ("nav:live-recorder", "Запись стримов", "CmdOrCtrl+3"),
     ("nav:vps-recorder", "Архив VPS", "CmdOrCtrl+4"),
     ("nav:chat-render", "Рендер чата", "CmdOrCtrl+5"),

@@ -378,7 +378,7 @@
     "nav_position": "Panel position",
     "nav_position_help": "Where the section menu sits: top, bottom, left or right.",
     "ui_mode": "Interface",
-    "ui_mode_help": "New: search and pick recordings, tabs on top. MacOS: a macOS-style sidebar with every form in view."
+    "ui_mode_help": "Fetchr: sections as tabs on top. MacOS: the same interface with a Mac-style sidebar."
   },
   "palette": {
     "placeholder": "Type a command or search…",
@@ -1371,7 +1371,7 @@
       },
       "mode": {
         "title": "Which interface?",
-        "subtitle": "New fits most people. MacOS gives a Mac-style sidebar with every form in view."
+        "subtitle": "Both work the same; only where the sections sit differs."
       },
       "layout": {
         "title": "Where should the menu go?",
@@ -1431,10 +1431,10 @@
     "right": "Right"
   },
   "uimode": {
-    "simple": "New",
-    "simple_desc": "Paste a link, pick recordings, Fetchr does the rest. Tabs on top.",
+    "simple": "Fetchr",
+    "simple_desc": "Paste a link, pick recordings, Fetchr does the rest. Sections as tabs on top.",
     "macos": "MacOS",
-    "macos_desc": "Every section in a Liquid Glass sidebar, every form and setting in view."
+    "macos_desc": "The same Fetchr in Mac style: sections in a Liquid Glass sidebar."
   },
   "simple": {
     "hero_title": "What to download?",

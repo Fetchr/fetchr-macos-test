@@ -14,7 +14,7 @@ import { MacAppShell, MacSidebar, useDockBadge, useMacMenu, useMacSidebar } from
 import { useBoot } from "@/stores/boot";
 import { useLogs } from "@/stores/logs";
 import { useQueue, useJobCounts } from "@/stores/queue";
-import { defaultPerformanceSettings, useSettings } from "@/stores/settings";
+import { defaultPerformanceSettings, useSettings, usesSimpleContent } from "@/stores/settings";
 import { useUI } from "@/stores/ui";
 import { useWorkflowPresets } from "@/stores/workflowPresets";
 import { useFetchrMuteStore } from "@/stores/fetchrMute";
@@ -132,7 +132,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "n") {
         e.preventDefault();
-        if (useSettings.getState().uiMode === "simple") openDownload();
+        if (usesSimpleContent(useSettings.getState().uiMode)) openDownload();
         else openAdd();
         return;
       }
@@ -150,7 +150,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         const handler = (e2: KeyboardEvent) => {
           if (e2.defaultPrevented || e2.isComposing || isEditableKeyboardEvent(e2)) return;
           if (e2.key === "q") void navigate({ to: "/queue" });
-          if (e2.key === "d" && useSettings.getState().uiMode === "simple") openDownload();
+          if (e2.key === "d" && usesSimpleContent(useSettings.getState().uiMode)) openDownload();
           if (e2.key === "l") void navigate({ to: "/logs" });
           if (e2.key === "f") void navigate({ to: "/finder" });
           if (e2.key === "c") void navigate({ to: "/chat-render" });
@@ -173,8 +173,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   // Смена режима в настройках переносит с экрана, которого в новом режиме нет.
   useEffect(() => {
     // M3U8 Finder в простом режиме растворён в поиске скачивания.
-    if (uiMode === "simple" && pathname.startsWith("/finder")) void navigate({ to: "/queue" });
-    if (uiMode !== "simple") useUI.getState().closeDownload();
+    if (usesSimpleContent(uiMode) && pathname.startsWith("/finder")) void navigate({ to: "/queue" });
+    if (!usesSimpleContent(uiMode)) useUI.getState().closeDownload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uiMode]);
 
@@ -221,7 +221,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       else navigateCategory(section as AppNavigationItemId);
     },
     openSettings: () => void navigate({ to: "/settings" }),
-    addLink: () => (uiMode === "simple" ? openDownload() : openAdd()),
+    addLink: () => (usesSimpleContent(uiMode) ? openDownload() : openAdd()),
     openPalette: togglePalette,
     startQueue: () => void ipc.startQueue(maxConcurrentJobs),
     toggleSidebar: macSidebar.toggle,
@@ -297,7 +297,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {shell}
         <CommandPalette />
         <AddDialog />
-        {uiMode === "simple" && <DownloadOverlay />}
+        {usesSimpleContent(uiMode) && <DownloadOverlay />}
         <QueueFlightLayer />
         <UpdateModal />
         <WhatsNewTrigger />
@@ -319,6 +319,8 @@ function sectionTitle(
   t: TFunction,
 ): string {
   if (pathname.startsWith("/presets")) return t("mac.presets", "Пресеты");
+  // Новый интерфейс зовёт очередь «Загрузки», как и боковая панель.
+  if (category === "queue") return t("nav.downloads", "Загрузки");
   return t(`nav.${category.replaceAll("-", "_")}`);
 }
 
